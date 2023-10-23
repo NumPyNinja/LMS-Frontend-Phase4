@@ -1,11 +1,13 @@
 export interface Attendance {
     attId?: string;
-    csId?:string;
+    csId?:number;
+    csName?: string;
     studentId?:string;
     studentName?:string;
-    programName?: string;
-    programId?: string;
     users?: [] ;
     attendance?: string;
     attendanceList?:[];
+    creationTime?: Date;
+    batchId?: string;
+    batchName?: string;
 }

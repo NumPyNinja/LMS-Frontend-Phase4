@@ -19,7 +19,7 @@
                     </span>
                 </div>
                 <div>
-                    <button pButton pRipple id="new" label="A New Attendance" icon="pi pi-plus"
+                    <button pButton pRipple id="new" label="Add Attendance" icon="pi pi-plus"
                         class="p-button-rounded p-button-success" (click)="openNew()"></button>
                 </div>
 
@@ -32,7 +32,7 @@
             </div>
 
             <p-table #dt responsiveLayout="stack" [value]="attendances" [rows]="5" [paginator]="true"
-                [globalFilterFields]="['attId','csId','studentId']" [(selection)]="selectedAttendances"
+                [globalFilterFields]="['attId','csId','studentId', 'batchId']" [(selection)]="selectedAttendances"
                 [rowHover]="true" dataKey="attId"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 [showCurrentPageReport]="true">
@@ -45,20 +45,23 @@
                        <!-- <th style="width: 20%" pSortableColumn="atttId">Attendance ID <p-sortIcon
                                 field="attId"></p-sortIcon>
                         </th>-->
-                        <th style="width: 22%" pSortableColumn="csId">Class ID
-                            <p-sortIcon field="description">
-                            </p-sortIcon>
+                        <th style="width:25%" pSortableColumn="date">Date
+                            <p-sortIcon field="Comments"> </p-sortIcon>
                         </th>
-                        <th style="width: 20%" pSortableColumn="studentId">Student ID <p-sortIcon
-                                field="Comments"></p-sortIcon>
+                        <th style="width:25%" pSortableColumn="studentName">Student Name
+                            <p-sortIcon field="Comments"></p-sortIcon>
                         </th>
-                        <th style="width:25%" pSortableColumn="attendance">Present <p-sortIcon field="Comments">
-                            </p-sortIcon>
+                        <th style="width: 22%" pSortableColumn="csName">Class Name
+                            <p-sortIcon field="description"></p-sortIcon> 
                         </th>
-                        
+                        <th style="width: 20%" pSortableColumn="batchName">Batch Name 
+                             <p-sortIcon field="Comments"></p-sortIcon>
+                        </th>
+                        <th style="width:25%" pSortableColumn="attendance">Attendance
+                            <p-sortIcon field="Comments"></p-sortIcon>
+                        </th>                       
 
-                        <th style="width: 15%"> Edit / Delete
-                        </th>
+                        <th style="width: 15%"> Edit / Delete </th>
                     </tr>
                 </ng-template>
 
@@ -67,10 +70,12 @@
                         <td>
                             <p-tableCheckbox [value]="attendance"></p-tableCheckbox>
                         </td>
-                      <!-- <td>{{attendance.attId}}</td>--> 
-                        <td>{{attendance.csId}}</td>
-                        <td>{{attendance.studentId}}</td>
-                        <td>{{attendance.attendance}}</td>
+
+                        <td>{{attendance.creationTime|date:"MM-dd-yyyy"}}</td>
+                        <td>{{attendance.studentName}}</td>
+                        <td>{{attendance.csName}}</td>
+                        <td>{{attendance.batchName}}</td>
+                        <td>{{attendance.attendance}}</td> 
 
                         <td>
                             <div class="action">
@@ -79,6 +84,7 @@
                                         class="p-button-rounded p-button-success"
                                         (click)="editAttendance(attendance)"></button>
                                 </span>
+                                &nbsp; 
                                 <span>
                                     <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
                                         (click)="deleteAttendance(attendance)"></button>
@@ -89,7 +95,7 @@
                 </ng-template>
                 <ng-template pTemplate="summary">
                     <div class="p-d-flex p-ai-center p-jc-between">
-                        In total there are {{attendances ? attendances.length : 0 }} Attendances.
+                        There are {{attendances ? attendances.length : 0 }} Attendances in total.
                     </div>
                 </ng-template>
             </p-table>
@@ -97,40 +103,43 @@
     </mat-card>
 </div>
 
-<p-dialog [(visible)]="attendanceDialogue" [style]="{width: '550px'}" header="Attendance Details" [modal]="true"
+<p-dialog [(visible)]="attendanceDialogue" [style]="{width: '550px'}" header="Add Attendance" [modal]="true"
     styleClass="p-fluid">
     <ng-template pTemplate="content">
         <div class="p-fluid p-grid p-formgrid">
-
+        <!-- 
             <div class="p-field">
-                <label for="programName">Program Name</label>
-                <p-dropdown [options]="programList" id="programName" [(ngModel)]="attendance.programName"
-                    placeholder="Select a Program name" editable="true" optionLabel="programName" [showClear]="true">
+                <label for="batchName">Batch Name</label>
+                <p-dropdown [options]="batchList" id="batchName" [(ngModel)]="attendance.batchName"
+                    placeholder="Select a Batch name" optionLabel="batchName" [showClear]="true">
                 </p-dropdown>
-            </div>
-            <div class="p-field">
-                <label for="class">Class Name</label>
-                <p-multiSelect id="classNameId" [options]="sessionList" [(ngModel)]="selectedClasses"
-                    defaultLabel="Select Class Name" optionLabel="classTopic" display="chip"></p-multiSelect>
-            </div>
+            </div>  
+          -->
             <div class="p-field">
                 <label for="studentId">Student Name</label>
                 <p-multiSelect id="studentId" [options]="users" [(ngModel)]="selectedStudents"
                     defaultLabel="Select students" optionLabel="userFirstName" display="chip"></p-multiSelect>
             </div>
-           
-           <div class="p-field">
-                <label for="Attendance">Attendance</label>
-                <p-dropdown [options]="attendanceDrop" id="Attendance" [(ngModel)]="selectedDrop" 
-                    placeholder="Select Attendance" display="'chip" [showClear]="true">
-                </p-dropdown>
-    
+
+            <div class="p-field">
+                <label for="class">Class Name</label>
+                <p-multiSelect id="classNameId" [options]="sessionList" [(ngModel)]="selectedClasses"
+                    defaultLabel="Select Class Name" optionLabel="classTopic" display="chip"></p-multiSelect>
             </div>
+
+            <div class="p-field">
+                <label for="Attendance">Attendance</label>
+                    <p-dropdown [options]="attendanceDrop" id="Attendance" [(ngModel)]="selectedDrop" 
+                    [showClear]="true" >
+                    </p-dropdown>
+            </div>
+       
             <div class="p-field p-col-12 p-md-4">
-                <label for="icon">Attendance Date</label>
-                <p-calendar [(ngModel)]="selectedDate" [showIcon]="true" inputId="icon" id="calendarDueDate"
+                <label for="creationTime">Attendance Date</label>
+                <p-calendar id="creationTime" [(ngModel)]="selectedDate" [showIcon]="true" inputId="icon" id="calendarDueDate"
                     dateFormat="dd/mm/yy" [style]="{ 'position': 'relative', 'z-index': '80'}"></p-calendar>
             </div>
+            
             <div></div>
         </div>
     </ng-template>
