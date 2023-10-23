@@ -1,0 +1,239 @@
+<p-toast></p-toast>
+
+<div class="signin-content">
+  <mat-card class="container">
+    <mat-card-title>
+      <div class="box">
+        Manage User<br>
+      </div><br>
+      <div class="box">
+        <div>
+          <button pButton pRipple icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedUsers()"
+            [disabled]="!selectedUsers || !selectedUsers.length"></button>
+        </div>
+
+        <div>
+          <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" id="filterGlobal" (input)="dt.filterGlobal($event.target.value, 'contains')"
+              placeholder="Search..." />
+          </span>
+        </div>
+        <div>
+          <button pButton pRipple id="new" label="Add New User" icon="pi pi-plus"
+            class="p-button-rounded p-button-success" (click)="openNew()"></button>
+        </div>
+        <div>
+          <button pButton pRipple id="Assign" label="Assign Staff" icon="pi pi-plus"
+            class="p-button-rounded p-button-success" (click)="openAssign()"></button>
+        </div>
+      </div>
+    </mat-card-title>
+    <mat-card-content>
+      <div fxLayout="row" fxLayoutAlign="space-around center" style="height:100%">
+        <mat-spinner [diameter]="50" strokeWidth="5" *ngIf="visibility"></mat-spinner>
+      </div>
+      <p-table #dt responsiveLayout="stack" [value]="users" [rows]="5" [paginator]="true"
+        [globalFilterFields]="['userFirstName', 'userMiddleName', 'lastName']" [(selection)]="selectedUsers"
+        [rowHover]="true" dataKey="userId"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th style="width: 6rem" pSortableColumn="userId">ID <p-sortIcon field="userId"></p-sortIcon>
+            </th>
+            <th style="width: 10rem" pSortableColumn="userFirstName">Name <p-sortIcon field="userFirstName">
+              </p-sortIcon>
+            </th>
+            <th style="width: 15rem" pSortableColumn="userLocation">Location <p-sortIcon field="userLocation">
+              </p-sortIcon>
+            </th>
+            <th style="width: 12rem" pSortableColumn="userPhoneNumber">Phone Number <p-sortIcon field="userPhoneNumber">
+              </p-sortIcon>
+            </th>
+            <th style="width: 10rem"> Edit / Delete</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td>
+              <p-tableCheckbox [value]="user"></p-tableCheckbox>
+            </td>
+            <td>{{user.userId}}</td>
+            <td>{{user.userFirstName}} {{user.userLastName}}</td>
+            <td style="word-wrap: break-word;">{{user.userLocation}}</td>
+            <td>{{user.userPhoneNumber}}</td>
+            <td>
+              <div class="action">
+                <span>
+                  <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success"
+                    (click)="editProgram(user)"></button>
+                </span>&nbsp;&nbsp;&nbsp;
+                <span>
+                  <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                    (click)="deleteUser(user)"></button>
+                </span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+          <div class="p-d-flex p-ai-center p-jc-between" style="text-align: center;"> In total there are {{users ?
+            users.length : 0 }} users.</div>
+        </ng-template>
+      </p-table>
+    </mat-card-content>
+  </mat-card>
+
+  <p-dialog [(visible)]="userDialogue" [style]="{width: '68%'}" header="User Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+      <form [formGroup]="userForm" novalidate (ngSubmit)="onSubmit()">
+        <mat-card class="user-card">
+          <mat-card-content>
+            <div class="row">
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <input matInput placeholder="First name" formControlName="userFirstName">
+                  <mat-error *ngIf="userForm.controls['userFirstName'].hasError('required')">First name is
+                    <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <input matInput placeholder="Middle name" formControlName="userMiddleName">
+                  <mat-error *ngIf="userForm.controls['userMiddleName'].hasError('required')">Middle name is
+                    <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <input matInput placeholder="Last name" formControlName="userLastName">
+                  <mat-error *ngIf="userForm.controls['userLastName'].hasError('required')">Last name is
+                    <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <input matInput placeholder="Location" formControlName="userLocation">
+                  <mat-error *ngIf="userForm.controls['userLocation'].hasError('required')">Location is
+                    <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <input matInput placeholder="Phone no" formControlName="userPhoneNumber">
+                  <mat-error *ngIf="userForm.controls['userPhoneNumber'].hasError('required')">Phone number is
+                    <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <input matInput placeholder="LinkedIn Url" formControlName="userLinkedinUrl">
+                  <mat-error *ngIf="userForm.controls['userLinkedinUrl'].hasError('required')">LinkedIn Url is
+                    <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <mat-form-field appearance="fill">
+                    <mat-label>User Role</mat-label>
+                    <mat-select [formControl]="userForm.get('userRoleMaps').controls[0].get('roleId')" (change)="userRoleMapStatusChanged($event.target.value)">
+                      <mat-option *ngFor="let role of userRoleMaps" [value]="role">{{role}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </mat-form-field>
+              </div>
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Role Status</mat-label>
+                     <mat-select [formControl]="userForm.get('userRoleMaps').controls[0].get('userRoleStatus')" (change)="userRoleStatusChanged($event.target.value)">
+                        <mat-option *ngFor="let status of roleStatus" [value]="status">{{status}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </mat-form-field>
+              </div>
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Visa Status</mat-label>
+                    <mat-select formControlName="userVisaStatus" (change)="visaStatusChanged($event)">
+                         <mat-option *ngFor="let v1 of userVisaStatus" [value]="v1">{{v1}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+            <div class="col">
+              <mat-form-field class="full-width" appearance="fill" formGroupName="userLogin">
+                <input matInput type="email" placeholder="Email address" formControlName="userLoginEmail">
+                <mat-error *ngIf="userForm.get('userLogin.userLoginEmail').hasError('required')">Email address is <strong>required</strong></mat-error>
+                <mat-error *ngIf="userForm.get('userLogin.userLoginEmail').hasError('email')">Please enter a valid email address</mat-error>
+              </mat-form-field>
+            </div></div>
+            <br>
+            <div class="row">
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <input matInput placeholder="Under Graduate" formControlName="userEduUg">
+                  <mat-error *ngIf="userForm.controls['userEduUg'].hasError('required')">Under Graduate is
+                    <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <input matInput placeholder="Post Graduate" formControlName="userEduPg">
+                  <mat-error *ngIf="userForm.controls['userEduPg'].hasError('required')">Post Graduate is
+                    <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <input matInput placeholder="Time Zone" formControlName="userTimeZone">
+                  <mat-error *ngIf="userForm.controls['userTimeZone'].hasError('required')">Time Zone is
+                    <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="col">
+              <mat-form-field class="full-width">
+                <input matInput placeholder="User Comments" formControlName="userComments">
+                <mat-error *ngIf="userForm.controls['userComments'].hasError('required')">User Comments is
+                  <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </mat-card-content>
+          <mat-card-actions style="display: flex; justify-content: center; text-align: center;">
+            <button mat-raised-button color="warn" type="submit">Cancel</button>
+            <button mat-raised-button color="primary" type="submit">Submit</button>
+          </mat-card-actions>
+        </mat-card>
+      </form>
+    </ng-template>
+  </p-dialog>
+
+  <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+</div>

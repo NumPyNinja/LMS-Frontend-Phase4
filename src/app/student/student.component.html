@@ -1,0 +1,49 @@
+<p-toast></p-toast>
+<div class="signin-content">
+    <mat-card>
+        <mat-card-content>
+            <mat-card-title>
+                <div class="box">
+                    Student Details<br>
+                </div><br>
+
+            </mat-card-title>
+
+            <p-dropdown class="user-drop" [options]="users" [(ngModel)]="selectedUsers" optionLabel="userFirstName"
+                [filter]="true" filterBy="userFirstName" [showClear]="true" placeholder="Select Student Name">
+                <ng-template pTemplate="selectedItem">
+                    <div class="user-item user-item-value" *ngIf="selectedUsers">
+                        <div>{{selectedUsers.userFirstName}}</div>
+                    </div>
+                </ng-template>
+                <ng-template let-user pTemplate="item">
+                    <div class="user-item">
+                        <div>{{user.userFirstName}}</div>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+            <p-dropdown class="batch-drop" [options]="batchList" [(ngModel)]="getBatchList" optionLabel="batchId"
+                [filter]="true" filterBy="batchId" [showClear]="true" placeholder="Select batch Id" dataKey="batchId">
+                <ng-template pTemplate="selectedItem">
+                    <div class="batch-item batch-item-value" *ngIf="getBatchList">
+                        <div>{{getBatchList.batchId}}</div>
+                    </div>
+                </ng-template>
+                <ng-template let-batch pTemplate="item">
+                    <div class="batch-item">
+                        <div>{{batch.batchId}}</div>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+            <div *ngIf="selectedUsers  && getBatchList"  class="student-details">
+                <h1><b>Student Details</b></h1>
+                <p><strong>Student Name:</strong>&nbsp; &nbsp; {{selectedUsers.userFirstName}} {{selectedUsers.userLastName}}</p>
+                <p><strong>Phone Number:</strong>&nbsp; &nbsp;{{selectedUsers.userPhoneNumber}}</p>
+                <p><strong>Location:</strong>&nbsp; &nbsp;{{selectedUsers.userLocation}}</p>
+                <p><strong>BatchName:</strong>
+                <p><strong>ProgramName:</strong>    
+            </div>
+
+        </mat-card-content>
+    </mat-card>
+</div>
