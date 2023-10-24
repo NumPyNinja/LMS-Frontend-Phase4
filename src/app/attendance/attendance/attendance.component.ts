@@ -75,9 +75,9 @@ export class AttendanceComponent implements OnInit {
     
     this.attendanceService.getAttendanceList().subscribe((res) => {
       this.attendances = res;
-      console.log('users' + this.users)
 
     for (let index = 0; index < this.attendances.length; index++) {
+      
        const student = this.users.find(student => student.userId == this.attendances[index].studentId);
        if (student != null)  this.attendances[index].studentName = student.userFirstName;
      
@@ -85,7 +85,7 @@ export class AttendanceComponent implements OnInit {
        if (cls != null)  this.attendances[index].csName = cls.classTopic;
 
        const batch = this.batchList.find(batch => batch.batchId == cls.batchId);
-       if (batch != null)  this.attendances[index].batchName = this.batchList[index].batchName;
+       if (batch != null)  this.attendances[index].batchName = batch.batchName;
 
     }
       console.log('Backend data' + res)
