@@ -123,17 +123,23 @@
 <p-dialog [(visible)]="assigmentDialogue" [style]="{width: '550px'}" header="Assigment Details" [modal]="true"
     styleClass="p-fluid">
     <ng-template pTemplate="content">
-        <label for="programName">Program Name</label>
-        <p-dropdown [options]="programList" id="programName" [(ngModel)]="assignment.programName"
-            placeholder="Select Program Name" optionLabel="programName" [showClear]="true"></p-dropdown>
+        
+        <div class="p-field">
+            <label for="programName">Program Name</label>
+            <p-dropdown [options]="programList"  [(ngModel)]="assignment.programName"
+                placeholder="Select Program Name" id="programName" optionLabel="programName" editable="true" [showClear]="true"></p-dropdown>
+        </div>
 
-        <label for="batchName">Batch Number</label>
-        <p-dropdown [options]="batchList" [(ngModel)]="assignment.batchName" placeholder="Select Batch"
-            optionLabel="batchName" [showClear]="true"></p-dropdown>
+        <div class="p-field">
+            <label for="batchName">Batch Number</label>
+            <p-dropdown [options]="batchList" [(ngModel)]="assignment.batchName" id="batchName" placeholder="Select Batch"
+                optionLabel="batchName" [showClear]="true" editable="true"></p-dropdown>
+        </div>
+
         <div class="p-field">
 
             <label for="assignment">Assignment Name</label>
-            <input type="text" pInputText id="assignment" [(ngModel)]="assignment.assignmentName" required autofocus />
+            <input type="text" pInputText id="assignment" [(ngModel)]="assignment.assignmentName" />
             <small class="p-invalid" *ngIf="submitted && !assignment.assignmentName">Name is required.</small>
         </div>
         <div class="p-field">
@@ -155,7 +161,7 @@
 
         <div class="p-field">
             <label for="icon">Assignment Due Date</label>
-            <p-calendar [(ngModel)]="assignment.dueDate" [showIcon]="true" inputId="icon"
+            <p-calendar [(ngModel)]="selectedDate" [showIcon]="true" inputId="icon"
                 [style]="{ 'position': 'relative', 'z-index': '100' }"></p-calendar>
         </div>
         <div class="p-field">
