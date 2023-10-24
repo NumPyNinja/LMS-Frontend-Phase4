@@ -1,7 +1,7 @@
 export interface Session {
 
     csId?:number;
-    batchId?:number;
+    batchId?:string;
     classNo?:number;
     classDate?:Date;
     classTopic?:string;
