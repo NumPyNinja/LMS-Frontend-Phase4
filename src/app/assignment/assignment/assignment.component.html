@@ -142,6 +142,7 @@
             <input type="text" pInputText id="assignment" [(ngModel)]="assignment.assignmentName" />
             <small class="p-invalid" *ngIf="submitted && !assignment.assignmentName">Name is required.</small>
         </div>
+
         <div class="p-field">
             <label for="programDescription">Assignment Description</label>
             <input type="text" id="assignmentDescription" pInputText [(ngModel)]="assignment.assignmentDescription"
@@ -149,7 +150,8 @@
         </div>
 
         <div class="p-field">
-            <label for="programDescription"> Grade By</label>
+            <!-- <label for="programDescription"> Grade By</label> -->
+            <label for="graderId"> Grade By</label>
             <input type="text" id="graderId" pInputText [(ngModel)]="assignment.graderId" required rows="3" cols="20" />
         </div>
 
@@ -161,8 +163,8 @@
 
         <div class="p-field">
             <label for="icon">Assignment Due Date</label>
-            <p-calendar [(ngModel)]="selectedDate" [showIcon]="true" inputId="icon"
-                [style]="{ 'position': 'relative', 'z-index': '100' }"></p-calendar>
+            <p-calendar [(ngModel)]="date" [showIcon]="true" inputId="icon" id="dueDate" appendTo="body"
+                [style]="{ 'position': 'relative', 'z-index': '100'  }"></p-calendar>
         </div>
         <div class="p-field">
             <label for="icon">Assignment File 1</label>
