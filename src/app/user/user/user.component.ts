@@ -245,12 +245,14 @@ export class UserComponent implements OnInit {
   deleteUser(user: User) {
     this.confirmationService.confirm({
         
-       // message: 'Are you sure you want to delete ' + user.userFirstName? + " " + user.userMiddleName+ " " + user.lastName +'?',
-        header: 'Confirm',
+       message: 'Are you sure you want to delete the user?', 
+       header: 'Confirm',
         icon: 'pi pi-exclamation-triangle',
         accept: () => {
             this.users = this.users.filter(val => val.userId !== user.userId);
-            //this.user = {};
+            this.userService.deleteUser(user).subscribe(response => {
+              console.log('User is deleted');
+            })
             this.messageService.add({severity:'success', summary: 'Successful', detail: 'User Deleted', life: 3000});
         }
     });
