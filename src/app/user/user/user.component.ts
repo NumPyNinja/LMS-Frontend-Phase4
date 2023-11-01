@@ -168,11 +168,16 @@ export class UserComponent implements OnInit {
 
 
   
-  editProgram(user: User) {
-
-    console.log('Tesggggggg')
-    this.userForm.setValue(user);
+  editUser(user: User) {
+    console.log('In Edit Module');
+    console.log('User Object:', user);
+    
+    this.userForm.patchValue(user);
+    
     this.userDialogue = true;
+    this.user={...user};
+    console.log('After patchValue:', this.userForm.value);
+    
    
   }
   visaStatusChanged(event: any) {
@@ -188,11 +193,15 @@ export class UserComponent implements OnInit {
   //Code for adding new user
   onSubmit() {
     this.submitted = true;
+    
     if (this.userForm.value) {
       if (this.userForm.value.userId) {
 
         this.users[this.findIndexById(this.userForm.value.userId)] = this.userForm.value.userId;
-      
+        this.userService.updateUser(this.user).subscribe((res) => {
+          console.log('User updated')
+        });
+
       } else {
        console.log('hjgjhgjhg');
        
