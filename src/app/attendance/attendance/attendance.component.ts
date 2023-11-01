@@ -39,7 +39,7 @@ export class AttendanceComponent implements OnInit {
   //selectedDate: Date;
   users: User[];
   attendanceDrop: string[]=['Present','Absent','Late','Excused'];
-  selectedDrop:string[]=this.attendanceDrop;   
+  selectedDrop:string[];
 
   constructor(
     private attendanceService: AttendanceService,
