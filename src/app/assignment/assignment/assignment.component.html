@@ -161,9 +161,10 @@
                 rows="3" cols="20" />
         </div> -->
 
+
         <div class="p-field">
             <label for="icon">Assignment Due Date</label>
-            <p-calendar [(ngModel)]="date" [showIcon]="true" inputId="icon" id="dueDate" appendTo="body"
+            <p-calendar [(ngModel)]="assignment.dueDate" [showIcon]="true" inputId="icon" id="assignDueDate" appendTo="body" 
                 [style]="{ 'position': 'relative', 'z-index': '100'  }"></p-calendar>
         </div>
         <div class="p-field">
