@@ -38,8 +38,8 @@ export class AttendanceComponent implements OnInit {
   selectedStudents: User[];
   //selectedDate: Date;
   users: User[];
-  attendanceDrop: string[]=['Unknown','Present','Absent','Late','Excused'];
-  selectedDrop:string[]=this.attendanceDrop;   
+  attendanceDrop: string[]=['Present','Absent','Late','Excused'];
+  selectedDrop:string[];
 
   constructor(
     private attendanceService: AttendanceService,
@@ -134,51 +134,44 @@ export class AttendanceComponent implements OnInit {
   saveAttendance() {
    
     this.submitted = true;
-    //edit
-    
-      if(this.attendance.batchId){
-         this.attendances[this.findIndexById(this.attendance.attId)] = this.attendance;
+    //checking attendance already exist or not
+    for (let index = 0; index < this.selectedStudents.length; index++) {
+      const newStudent = this.selectedStudents[index];
+      for (let i = 0; index < this.selectedClasses.length; index++) {
+        const newClass = this.selectedClasses[i];
+        let attendance = this.attendances.findIndex(att => att.csId === newClass.csId && att.studentId === newStudent.userId);
 
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Successful',
-        detail: 'Attendance Updated',
-        life: 3000,
-      });
-      
-      this.attendanceService.updateAttendance(this.attendance).subscribe((res) => {
-        console.log('an attendance is saved')
-      });
-      
-
-    } else {
-      let newAttendanceCount: number = 1;
-      this.selectedClasses.forEach((selectedClass) => {
-        this.selectedStudents.forEach((selectedStudent) => {
-          let attendance: Attendance = {};
-          attendance.csId = selectedClass.csId;
-          attendance.studentId = selectedStudent.userId;
-          attendance.attendance = this.selectedDrop.toString();
-          this.attendanceService.addAttendance(this.attendance).subscribe((res) => {
-            newAttendanceCount = newAttendanceCount + 1;
-          }, err => {
+        if(attendance != -1){
+          alert('Cannot add. Attendance already exist');
+        } else {
+            let newAttendanceCount: number = 1;
+            this.selectedClasses.forEach((selectedClass) => {
+              this.selectedStudents.forEach((selectedStudent) => {
+                let attendance: Attendance = {};
+                attendance.csId = selectedClass.csId;
+                attendance.studentId = selectedStudent.userId;
+                attendance.attendance = this.selectedDrop.toString();
+                this.attendanceService.addAttendance(attendance).subscribe((res) => {
+                  newAttendanceCount = newAttendanceCount + 1;
+                }, err => {
+                  this.messageService.add({
+                    severity: 'failure',
+                    summary: 'Failed',
+                    detail: 'Attendance creation failed',
+                    life: 3000,
+                  });
+                });
+              });
+            })
             this.messageService.add({
-              severity: 'failure',
-              summary: 'Failed',
-              detail: 'Attendance creation failed',
+              severity: 'success',
+              summary: 'Successful',
+              detail: newAttendanceCount + ' new attendances created',
               life: 3000,
             });
-          });
-        });
-      })
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Successful',
-        detail: newAttendanceCount + ' new attendances created',
-        life: 3000,
-      });
-      this.getAttendanceList();
-    }
+            this.getAttendanceList();
+          }
+      }}
     this.attendanceDialogue = false;
   }
   //delete
@@ -214,7 +207,7 @@ export class AttendanceComponent implements OnInit {
   findIndexById(id: string): number {
     let index = -1;
     for (let i = 0; i < this.attendances.length; i++) {
-      if (this.attendance[i].attendanceId === id) {
+      if (this.attendance[i].attId === id) {
         index = i;
         break;
       }
