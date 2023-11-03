@@ -11,12 +11,11 @@ export interface Assignment {
     pathAttachment4?: string;
     pathAttachment5?: string;
     createdBy?: string;
-    batchId?: number;
+    batchId?: string;
     graderId?: string;
     programId?: number;
     programName?: string;
     batchName?: string;
-    //date?: Date
 }
 
 export interface AssignmentSelect {

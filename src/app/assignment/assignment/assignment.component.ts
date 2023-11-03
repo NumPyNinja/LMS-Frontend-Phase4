@@ -35,6 +35,7 @@ export class AssignmentComponent implements OnInit {
   message1: Message[] = [];
   programList: Program[];
   batchList: Batch[];
+  editMode = false;
   //programName: string;
  // batchName: string;
  // date:Date;
@@ -110,6 +111,9 @@ export class AssignmentComponent implements OnInit {
     //this.assignment.programId = att.programId;
     if (this.assignment.assignmentName.trim()) { 
       if (this.assignment.assignmentId) { // in Edit 
+       
+        delete this.assignment.batchName;
+        delete this.assignment.programName;
       
         this.assignmentService.updateAssignment(this.assignment).subscribe((res) => {
           this.assignmentService.getAssignments().subscribe((res) => {
@@ -123,12 +127,13 @@ export class AssignmentComponent implements OnInit {
           });
         });
       } else { //create new Assignment
-         const assignBname : any = this.assignment.batchName;
-      this.assignment.batchId = assignBname.batchId;
-      this.assignment.batchName=assignBname.batchName;
-      const assignPname: any = this.assignment.programName;
-        this.assignment.programName = assignPname.programName;
-        this.assignment.createdBy=this.assignment.graderId;
+         
+          const assignBname : any = this.assignment.batchName;
+          this.assignment.batchId = assignBname.batchId;
+          this.assignment.createdBy=this.assignment.graderId;
+        
+          delete this.assignment.batchName;
+          delete this.assignment.programName;
         
        // this.assignmentSize = this.assignmentSize + 1;
        //this.assignment.batchId = this.assignmentSize;
@@ -180,9 +185,20 @@ export class AssignmentComponent implements OnInit {
   editAssignment(assigment: Assignment) {
     this.assignment = { ...assigment };
     this.assignment.dueDate = new Date(this.assignment.dueDate);
+    this.getBatchName(this.assignment.batchId);
+    this.editMode = true;
     this.assigmentDialogue = true;
   }
 
+  getBatchName(batchId : string){
+    for (const batch of this.batchList) {
+      if (batch.batchId === batchId) {
+          this.assignment.batchName= batch.batchName;
+          this.assignment.programName=batch.programName;
+          return; 
+      }
+    }
+  }
 
   findIndexById(id: string): number {
     let index = -1;
