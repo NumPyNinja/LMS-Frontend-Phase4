@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 
 import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
-import { Program } from 'src/app/program/program';
-import { ProgramService } from 'src/app/program/program.service';
 import { Session } from 'src/app/session/session';
 import { SessionService } from 'src/app/session/session.service';
 import { User } from 'src/app/user/user';
@@ -12,7 +10,6 @@ import { Attendance } from '../attendance';
 import { AttendanceService } from '../attendance.service';
 import { Batch } from 'src/app/batch/batch';
 import { BatchService } from 'src/app/batch/batch.service';
-import { StudentComponent } from 'src/app/student/student.component';
 
 @Component({
   selector: 'app-attendance',
@@ -37,7 +34,7 @@ export class AttendanceComponent implements OnInit {
   sessionList: Session[];
   selectedClasses: Session[];
   selectedStudents: User[];
-  //selectedDate: Date;
+  selectedAttToDelete: Attendance[];
   users: User[];
   attendanceDrop: string[]=['Present','Absent','Late','Excused'];
   selectedDrop:string[];
@@ -172,7 +169,6 @@ export class AttendanceComponent implements OnInit {
         if(attendance != -1){
           alert('Cannot add. Attendance already exist');
         } else {
-            let newAttendanceCount: number = 1;
             this.selectedClasses.forEach((selectedClass) => {
               this.selectedStudents.forEach((selectedStudent) => {
                 let attendance: Attendance = {};
@@ -180,7 +176,6 @@ export class AttendanceComponent implements OnInit {
                 attendance.studentId = selectedStudent.userId;
                 attendance.attendance = this.selectedDrop.toString();
                 this.attendanceService.addAttendance(attendance).subscribe((res) => {
-                  newAttendanceCount = newAttendanceCount + 1;
                 }, err => {
                   this.messageService.add({
                     severity: 'failure',
@@ -194,7 +189,7 @@ export class AttendanceComponent implements OnInit {
             this.messageService.add({
               severity: 'success',
               summary: 'Successful',
-              detail: newAttendanceCount + ' new attendances created',
+              detail: 'new attendances created',
               life: 3000,
             });
             this.getAttendanceList();
@@ -243,4 +238,31 @@ export class AttendanceComponent implements OnInit {
     }
     return index;
   }
+
+  deleteSelectedAttendances(){
+    
+    this.confirmationService.confirm({
+
+      message: 'Are you sure you want to delete the selected Attendances?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.attendances = this.attendances.filter(
+          (val) => this.selectedAttendances.includes(val)
+        );
+        console.log("AllAttendance " + this.attendances);
+        this.attendances.forEach((value)=> (
+          this.attendanceService.delete(value).subscribe(response => {      
+          })
+        ))
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Successful',
+          detail: 'Attendances Deleted',
+          life: 3000,
+        });
+      },
+    });
+  }
+
 }
