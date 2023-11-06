@@ -40,9 +40,7 @@ export class AttendanceComponent implements OnInit {
   //selectedDate: Date;
   users: User[];
   attendanceDrop: string[]=['Present','Absent','Late','Excused'];
-  selectedDrop:string[]=this.attendanceDrop;   
-  selectedStudent:string;
-  selectedClass:string;
+  selectedDrop:string[];
 
   constructor(
     private attendanceService: AttendanceService,
@@ -162,7 +160,7 @@ export class AttendanceComponent implements OnInit {
     this.getAttendanceList();
     this.editAttendanceDialogue = false;
   }
-   else{
+   else {
     this.submitted = true;
     //checking attendance already exist or not
     for (let index = 0; index < this.selectedStudents.length; index++) {

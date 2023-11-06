@@ -107,14 +107,6 @@
     styleClass="p-fluid">
     <ng-template pTemplate="content">
         <div class="p-fluid p-grid p-formgrid">
-        <!-- 
-            <div class="p-field">
-                <label for="batchName">Batch Name</label>
-                <p-dropdown [options]="batchList" id="batchName" [(ngModel)]="attendance.batchName"
-                    placeholder="Select a Batch name" optionLabel="batchName" [showClear]="true">
-                </p-dropdown>
-            </div>  
-          -->
             <div class="p-field">
                 <label for="studentId">Student Name</label>
                 <p-multiSelect id="studentId" [options]="users" [(ngModel)]="selectedStudents"
@@ -126,14 +118,12 @@
                 <p-multiSelect id="classNameId" [options]="sessionList" [(ngModel)]="selectedClasses"
                     defaultLabel="Select Class Name" optionLabel="classTopic" display="chip"></p-multiSelect>
             </div>
-
             <div class="p-field">
                 <label for="Attendance">Attendance</label>
-                    <p-dropdown [options]="attendanceDrop" id="Attendance" [(ngModel)]="selectedDrop" 
-                    [showClear]="true" >
-                    </p-dropdown>
+                <p-dropdown [options]="attendanceDrop" id="Attendance" [(ngModel)]="selectedDrop" 
+                    placeholder="Select Attendance" display="'chip" >
+                </p-dropdown>    
             </div>
-       
             <div class="p-field p-col-12 p-md-4">
                 <label for="creationTime">Attendance Date</label>
                 <p-calendar id="creationTime" [(ngModel)]="selectedDate" [showIcon]="true" inputId="icon" id="calendarDueDate"
