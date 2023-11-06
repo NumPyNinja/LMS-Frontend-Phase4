@@ -29,6 +29,7 @@ export class AttendanceComponent implements OnInit {
   visibility: boolean = false;
   attendance: Attendance;
   attendanceDialogue: boolean;
+  editAttendanceDialogue: boolean;
   selectedAttendance: Attendance[];
   submitted: boolean;
   batchList: Batch[];
@@ -127,12 +128,39 @@ export class AttendanceComponent implements OnInit {
 
   hideDialog() {
     this.attendanceDialogue = false;
+    this.editAttendanceDialogue = false;
     this.submitted = false;
   }
 
   //save an attendance 
   saveAttendance() {
-   
+   if(this.editAttendanceDialogue==true){
+    
+    let editedAttendance: Attendance = {};
+    editedAttendance.attId=this.attendance.attId;
+    editedAttendance.csId = this.attendance.csId;
+    editedAttendance.studentId = this.attendance.studentId;
+    editedAttendance.attendance = this.attendance.attendance;
+    editedAttendance.creationTime=this.attendance.creationTime;
+    this.attendanceService.updateAttendance(editedAttendance).subscribe((res) => {
+    }, err => {
+      this.messageService.add({
+        severity: 'failure',
+        summary: 'Failed',
+        detail: 'Attendance creation failed',
+        life: 3000,
+      });
+    });
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Successful',
+     
+      life: 3000,
+    });
+    this.getAttendanceList();
+    this.editAttendanceDialogue = false;
+  }
+   else {
     this.submitted = true;
     //checking attendance already exist or not
     for (let index = 0; index < this.selectedStudents.length; index++) {
@@ -173,7 +201,7 @@ export class AttendanceComponent implements OnInit {
           }
       }}
     this.attendanceDialogue = false;
-  }
+  }}
   //delete
   deleteAttendance(attendance: Attendance) {
     this.confirmationService.confirm({
@@ -198,9 +226,10 @@ export class AttendanceComponent implements OnInit {
 
   editAttendance(attendance: Attendance) {
     this.attendance = { ...attendance };
-    this.attendanceDialogue = true;
-    //data:attendance;
-    this.attendance={};
+    this.editAttendanceDialogue = true;
+    this.attendance.creationTime = new Date(this.attendance.creationTime);
+    this.submitted=false;
+    
   }
 
 

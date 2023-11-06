@@ -142,3 +142,44 @@
     </ng-template>
 </p-dialog>
 <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+
+<p-dialog [(visible)]="editAttendanceDialogue" [style]="{width: '550px'}" header="Edit Attendance" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="p-fluid p-grid p-formgrid">
+            <div class="p-field">
+                <label for="studentId">Student Name</label>
+                <input type="text" pInputText id="studentId" [(ngModel)]="attendance.studentName" required autofocus disabled/>
+                
+            </div>
+
+            <div class="p-field">
+                <label for="class">Class Name</label>
+                <input type="text" pInputText id="classNameId" [(ngModel)]="attendance.csName" required autofocus disabled />
+            </div>
+         
+            <div class="p-field">
+                <label for="Attendance">Attendance</label>
+                <p-dropdown [options]="attendanceDrop" [(ngModel)]="attendance.attendance" placeholder="Select attendance" id="attendance"
+                    editable="true" [showClear]="true"></p-dropdown>
+            </div>
+
+            <div class="p-field p-col-12 p-md-4">
+                <label for="creationTime">Attendance Date</label>
+                <p-calendar id="creationTime" [(ngModel)]="attendance.creationTime" [showIcon]="true" inputId="icon" id="calendarDueDate"
+                    [style]="{ 'position': 'relative', 'z-index': '80'}"></p-calendar>
+            </div>
+
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-rounded p-button-danger"
+            (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" id="saveAttendance" icon="pi pi-check"
+            class="p-button-rounded p-button-success" (click)="saveAttendance()"></button>
+    </ng-template>
+</p-dialog>
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
