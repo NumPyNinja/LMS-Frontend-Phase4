@@ -184,7 +184,7 @@ export class AttendanceComponent implements OnInit {
         this.messageService.add({
           severity: 'success',
           summary: 'Successful',
-          detail: 'Attendance delete',
+          detail: 'Attendance deleted',
           life: 3000,
         });
       },
@@ -211,7 +211,7 @@ export class AttendanceComponent implements OnInit {
   }
 
   deleteSelectedAttendances(){
-    
+
     this.confirmationService.confirm({
 
       message: 'Are you sure you want to delete the selected Attendances?',
@@ -221,19 +221,26 @@ export class AttendanceComponent implements OnInit {
         this.attendances = this.attendances.filter(
           (val) => this.selectedAttendances.includes(val)
         );
-        console.log("AllAttendance " + this.attendances);
+        
         this.attendances.forEach((value)=> (
           this.attendanceService.delete(value).subscribe(response => {      
           })
-        ))
+        )), err => {
+          this.messageService.add({
+            severity: 'failure',
+            summary: 'Failed',
+            detail: 'Attendance deletion failed',
+            life: 3000,
+          });   
         this.messageService.add({
           severity: 'success',
           summary: 'Successful',
-          detail: 'Attendances Deleted',
+          detail: 'Selected attendances deleted',
           life: 3000,
         });
-      },
-    });
-  }
+      }
+    }
+   })
 
+  }
 }
