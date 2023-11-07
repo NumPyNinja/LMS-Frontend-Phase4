@@ -97,6 +97,7 @@ export class AssignmentComponent implements OnInit {
 
   //add a new assignment 
   openNew() {
+    this.editMode=false;
     this.assignment = {};
     this.submitted = false;
     this.assigmentDialogue = true;
