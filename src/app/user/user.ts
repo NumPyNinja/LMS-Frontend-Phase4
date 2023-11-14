@@ -14,6 +14,7 @@ export interface User {
     userEduPg?: string,
     userComments?: string;
     userVisaStatus?: string;
+    userLoginEmail?:string;
     userLogin?: UserLogin;
     userRoleMaps?: UserRoleMaps[]; 
 }

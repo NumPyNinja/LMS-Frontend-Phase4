@@ -171,9 +171,10 @@ export class UserComponent implements OnInit {
   editUser(user: User) {
     console.log('In Edit Module');
     console.log('User Object:', user);
-    
+    const userEmailAddress:string=user.userLoginEmail;
+
     this.userForm.patchValue(user);
-    
+    this.userForm.get('userLogin.userLoginEmail').patchValue(userEmailAddress);
     this.userDialogue = true;
     this.user={...user};
     console.log('After patchValue:', this.userForm.value);
