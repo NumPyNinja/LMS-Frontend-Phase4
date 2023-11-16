@@ -35,8 +35,10 @@ export class AssignmentComponent implements OnInit {
   message1: Message[] = [];
   programList: Program[];
   batchList: Batch[];
-  programName: string;
-  batchName: string
+  editMode = false;
+  //programName: string;
+ // batchName: string;
+ // date:Date;
 
 
   constructor(
@@ -95,6 +97,7 @@ export class AssignmentComponent implements OnInit {
 
   //add a new assignment 
   openNew() {
+    this.editMode=false;
     this.assignment = {};
     this.submitted = false;
     this.assigmentDialogue = true;
@@ -103,12 +106,16 @@ export class AssignmentComponent implements OnInit {
   //save an assigment
   saveAssignment() {
     this.submitted = true;
-    const atd: any = this.assignment.batchName;
-    this.assignment.batchId = atd.batchId;
-    const att: any = this.assignment.programName;
-    this.assignment.programId = att.programId;
-    if (this.assignment.assignmentName.trim()) {
-      if (this.assignment.assignmentId) {
+   // const atd: any = this.assignment.batchName;
+  //  this.assignment.batchId = atd.batchId;
+   // const att: any = this.assignment.programName;
+    //this.assignment.programId = att.programId;
+    if (this.assignment.assignmentName.trim()) { 
+      if (this.assignment.assignmentId) { // in Edit 
+       
+        delete this.assignment.batchName;
+        delete this.assignment.programName;
+      
         this.assignmentService.updateAssignment(this.assignment).subscribe((res) => {
           this.assignmentService.getAssignments().subscribe((res) => {
             this.assignments = res;
@@ -116,16 +123,24 @@ export class AssignmentComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: 'Successful',
-            detail: this.assignment.assignmentName + ' Updated',
-            life: 3000,
+            detail: 'Assignment Updated',
+            life: 2000,
           });
         });
-      } else {
-        this.assignmentSize = this.assignmentSize + 1;
-        this.assignment.batchId = this.assignmentSize;
-        this.assignment.graderId = this.userId;
-        this.assignment.programName = att.programName;
-        this.assignment.batchName = atd.batchName
+      } else { //create new Assignment
+         
+          const assignBname : any = this.assignment.batchName;
+          this.assignment.batchId = assignBname.batchId;
+          this.assignment.createdBy=this.assignment.graderId;
+        
+          delete this.assignment.batchName;
+          delete this.assignment.programName;
+        
+       // this.assignmentSize = this.assignmentSize + 1;
+       //this.assignment.batchId = this.assignmentSize;
+       // this.assignment.graderId = this.userId;
+       // this.assignment.programName = att.programName;
+       // this.assignment.batchName = atd.batchName
         this.assignmentService.saveAssignment(this.assignment).subscribe((res) => {
           this.assignmentService.getAssignments().subscribe((res) => {
             this.assignments = res;
@@ -170,9 +185,21 @@ export class AssignmentComponent implements OnInit {
 
   editAssignment(assigment: Assignment) {
     this.assignment = { ...assigment };
+    this.assignment.dueDate = new Date(this.assignment.dueDate);
+    this.getBatchName(this.assignment.batchId);
+    this.editMode = true;
     this.assigmentDialogue = true;
   }
 
+  getBatchName(batchId : string){
+    for (const batch of this.batchList) {
+      if (batch.batchId === batchId) {
+          this.assignment.batchName= batch.batchName;
+          this.assignment.programName=batch.programName;
+          return; 
+      }
+    }
+  }
 
   findIndexById(id: string): number {
     let index = -1;
