@@ -36,8 +36,9 @@ export class AssignmentComponent implements OnInit {
   programList: Program[];
   batchList: Batch[];
   programName: string;
-  batchName: string
-
+  batchName: string;
+  pattername: boolean;
+  patternDes: boolean;
 
   constructor(
     private assignmentService: AssignmentService,
@@ -102,11 +103,28 @@ export class AssignmentComponent implements OnInit {
 
   //save an assigment
   saveAssignment() {
+	this.submitted = true;
+    this.pattername= false;
+ 	this.patternDes=false;
+   
+   //pattern validation for Assignment Name
+	 const pattern=/^[a-zA-Z][a-zA-Z0-9 ]+$/;
+     if(!pattern.test(this.assignment.assignmentName)&& this.assignment.assignmentName ){
+		 this.pattername = true;
+	 }
+	 
+	   //pattern validation for Assignment Description
+	 const patternD=/^[a-zA-Z]{4}.*/;
+     if(!patternD.test(this.assignment.assignmentDescription)&& this.assignment.assignmentDescription){
+		 this.patternDes = true;
+	 } 
+	
     this.submitted = true;
     const atd: any = this.assignment.batchName;
     this.assignment.batchId = atd.batchId;
     const att: any = this.assignment.programName;
     this.assignment.programId = att.programId;
+   if(this.assignment.assignmentName && this.assignment.assignmentDescription && this.assignment.batchName && this.assignment.dueDate && this.assignment.graderId){
     if (this.assignment.assignmentName.trim()) {
       if (this.assignment.assignmentId) {
         this.assignmentService.updateAssignment(this.assignment).subscribe((res) => {
@@ -141,6 +159,7 @@ export class AssignmentComponent implements OnInit {
       this.assignments = [...this.assignments];
       this.assigmentDialogue = false;
       this.assignment = {};
+    }
     }
 
   }

@@ -123,28 +123,41 @@
 <p-dialog [(visible)]="assigmentDialogue" [style]="{width: '550px'}" header="Assigment Details" [modal]="true"
     styleClass="p-fluid">
     <ng-template pTemplate="content">
-        <label for="programName">Program Name</label>
+        <label for="programName">Program Name*</label>
         <p-dropdown [options]="programList" id="programName" [(ngModel)]="assignment.programName"
-            placeholder="Select Program Name" optionLabel="programName" [showClear]="true"></p-dropdown>
+            placeholder="Select Program Name" optionLabel="programName" [showClear]="true" required></p-dropdown>
+            <small class="p-invalid" *ngIf="submitted && !assignment.programName" id="text-danger">Program Name is required.</small>
+            
+                                     
 
-        <label for="batchName">Batch Number</label>
-        <p-dropdown [options]="batchList" [(ngModel)]="assignment.batchName" placeholder="Select Batch"
-            optionLabel="batchName" [showClear]="true"></p-dropdown>
+        <label for="batchName">Batch Number*</label>
+        <p-dropdown [options]="batchList" id="batchName" [(ngModel)]="assignment.batchName" placeholder="Select Batch"
+            optionLabel="batchName" [showClear]="true" required></p-dropdown>
+           <small class="p-invalid" *ngIf="submitted && !assignment.batchName" id="text-danger">Batch Name is required.</small>
+
         <div class="p-field">
+            <label for="assignmentName">Assignment Name*</label>
+            <input type="text" pattern="^[a-zA-Z][a-zA-Z0-9 ]+$" minlength="4" maxlength="25" id="assignmentName" pInputText [(ngModel)]="assignment.assignmentName"
+                   required rows="3" cols="20" />
+            <small color:red class="p-invalid" *ngIf="submitted && !assignment.assignmentName" id="text-danger">Assignment Name required(min 4 max 25 character ).</small>
+            <small class="p-invalid" *ngIf="pattername" id="text-danger">This field should be start with alphabet & no special character.</small>
 
-            <label for="assignment">Assignment Name</label>
-            <input type="text" pInputText id="assignment" [(ngModel)]="assignment.assignmentName" required autofocus />
-            <small class="p-invalid" *ngIf="submitted && !assignment.assignmentName">Name is required.</small>
         </div>
+
         <div class="p-field">
-            <label for="programDescription">Assignment Description</label>
-            <input type="text" id="assignmentDescription" pInputText [(ngModel)]="assignment.assignmentDescription"
+            <label for="assignmentDescription">Assignment Description*</label>
+            <input type="text" pattern="^[a-zA-Z].*"  minlength="4"  maxlngth="25" id="assignmentDescription" pInputText [(ngModel)]="assignment.assignmentDescription"
                 required rows="3" cols="20" />
+                <small class="p-invalid" *ngIf="submitted && !assignment.assignmentDescription " id="text-danger">Assignment Decription is required(min 4 max 25 char).</small>
+                <small class="p-invalid" *ngIf="patternDes" id="text-danger">This field should start with alphabet and min 4 character</small>
         </div>
 
         <div class="p-field">
-            <label for="programDescription"> Grade By</label>
-            <input type="text" id="graderId" pInputText [(ngModel)]="assignment.graderId" required rows="3" cols="20" />
+            <label for="gradeId"> Grade By *</label>
+           <!-- <p-dropdown [options]="userlist" [(ngModel)]="assignment.graderId" placeholder="Select grader Id"
+            optionLabel="batchName" [showClear]="true"></p-dropdown>-->
+            <input type="text" id="graderId" pInputText [(ngModel)]="assignment.graderId" required rows="3" cols="20"/>
+             <small class="p-invalid" *ngIf="submitted && !assignment.graderId" id="text-danger">Grade By is required </small>
         </div>
 
         <!-- <div class="p-field">
@@ -154,10 +167,11 @@
         </div> -->
 
         <div class="p-field">
-            <label for="icon">Assignment Due Date</label>
-            <p-calendar [(ngModel)]="assignment.dueDate" [showIcon]="true" inputId="icon"
-                [style]="{ 'position': 'relative', 'z-index': '100' }"></p-calendar>
+            <label for="icon">Assignment Due Date *</label>
+            <p-calendar [(ngModel)]="assignment.dueDate" [showIcon]="true" inputId="icon" required id="dueDate" appendTo="body" [style]="{ 'position': 'relative', 'z-index': '100' }"></p-calendar>
+                 <small class="p-invalid" *ngIf="submitted && !assignment.dueDate" id="text-danger">Assignment Data is required.</small>
         </div>
+    
         <div class="p-field">
             <label for="icon">Assignment File 1</label>
             <input id="Path1" type="path" pInputText [(ngModel)]="assignment.pathAttachment1" [showIcon]="true"
