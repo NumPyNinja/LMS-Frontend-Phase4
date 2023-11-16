@@ -3,14 +3,15 @@ import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
-import { Assignment, AssignmentSelect, UploadedAssignment } from '../assignment';
+import { Assignment, AssignmentSelect,AssignmentSubmit, UploadedAssignment } from '../assignment';
 import { AssignmentService } from '../assignment.service';
 import { Message } from 'primeng/api'
 import { ProgramService } from 'src/app/program/program.service';
 import { Program } from 'src/app/program/program';
 import { BatchService } from 'src/app/batch/batch.service';
 import { Batch } from 'src/app/batch/batch';
-
+import { User } from 'src/app/user/user';
+import { UserService } from 'src/app/user/user.service';
 
 @Component({
   selector: 'app-assignment',
@@ -39,6 +40,16 @@ export class AssignmentComponent implements OnInit {
   batchName: string;
   pattername: boolean;
   patternDes: boolean;
+  
+  assignmentsubmits: AssignmentSubmit[];
+  assignmentsubmit: AssignmentSubmit;
+  assignmentNameList:Assignment[]=[];
+  userList: User[] = [];   
+  manageDialogue: boolean;
+  userManage: AssignmentSubmit[];
+  userServices: UserService[];
+  assignsub: string[] = ['Yes','No'];
+
 
   constructor(
     private assignmentService: AssignmentService,
@@ -46,6 +57,7 @@ export class AssignmentComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private programService: ProgramService,
     private batchService: BatchService,
+    private userService: UserService,
     private authService: AuthService) {
     {
       this.programService.getPrograms().subscribe(list => {
@@ -57,6 +69,13 @@ export class AssignmentComponent implements OnInit {
         this.batchList = list;
       })
     }
+      this.userService.getAllUsers().subscribe(
+      user1List => { this.userList = user1List }
+     )
+
+      this.assignmentService.getAssignments().subscribe(
+      assignmentName1List => { this.assignmentNameList = assignmentName1List }
+    )
 
   }
 
@@ -93,6 +112,55 @@ export class AssignmentComponent implements OnInit {
       this.visibility = false;
     });
   }
+  
+  //open a Manage assignment Grade 
+
+openManage(assignId:number) {
+	    
+	  	this.getAssignmentsSubmit(assignId);
+        this.assignmentsubmit= {};
+        this.manageDialogue = true;
+        }
+
+ private getAssignmentsSubmit(assignId:number) {
+	 //this.visibilityManage=true;
+      this.assignmentService.getAssignmentSubmit(assignId).subscribe((res) => {
+      this.assignmentsubmit= res;
+    });
+    // this.visibilityManage=false;
+  }
+   private getAssignmentSubmitList() {
+    this.assignmentService.getAssignmentsSubmitList().subscribe((res) => {
+      this.assignmentsubmits = res;
+      //this.assignmentSize = this.getMaxAssignmentId(0);
+    });    
+  }
+  findStudentName(studentId: string) {
+	  var userdet: User = {};
+      var nameUser: String;
+      if(userdet = this.userList.find(x => x.userId == studentId)){
+      nameUser = userdet.userFirstName + '  ' +userdet.userLastName;
+      return nameUser;
+      }
+      else{
+      return nameUser="";
+      }
+  }
+    findAssignName(AssignNameId: number) {
+	  var AssignName: Assignment = {};
+      var Assignmentname: string;
+     if(AssignName = this.assignmentNameList.find(y => Number(y.assignmentId) == AssignNameId)){
+      Assignmentname = AssignName.assignmentName;
+      return Assignmentname; 
+	 }
+     else 
+      return Assignmentname="";  
+
+  }
+  
+ 
+
+
 
   //add a new assignment 
   openNew() {
@@ -233,6 +301,7 @@ export class AssignmentComponent implements OnInit {
   }
 
 }
+
 
 function hideDialog() {
   throw new Error('Function not implemented.');
