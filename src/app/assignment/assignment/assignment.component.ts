@@ -39,7 +39,9 @@ export class AssignmentComponent implements OnInit {
   //programName: string;
  // batchName: string;
  // date:Date;
-
+  pattername: boolean;
+  patternDes: boolean;
+  visibilityManage: boolean = false;
 
   constructor(
     private assignmentService: AssignmentService,
@@ -106,10 +108,24 @@ export class AssignmentComponent implements OnInit {
   //save an assigment
   saveAssignment() {
     this.submitted = true;
+    this.pattername= false;
+ 	this.patternDes=false;  
+   //pattern validation for Assignment Name
+	 const pattern=/^[a-zA-Z][a-zA-Z0-9]{3,25}.*/;
+	 //const pattern1=/^[a-zA-Z0-9]{3,25}.*/;
+     if(!pattern.test(this.assignment.assignmentName)&& this.assignment.assignmentName){
+		 this.pattername = true;
+	 } 
+     //pattern validation for Assignment Description
+	 const patternD=/^[a-zA-Z][a-zA-Z0-9]{3,25}.*/;
+     if(!patternD.test(this.assignment.assignmentDescription)&& this.assignment.assignmentDescription ){
+		 this.patternDes = true;
+	 } 
    // const atd: any = this.assignment.batchName;
   //  this.assignment.batchId = atd.batchId;
    // const att: any = this.assignment.programName;
     //this.assignment.programId = att.programId;
+    if(this.assignment.assignmentName && this.assignment.assignmentDescription && this.assignment.batchName && this.assignment.dueDate && this.assignment.graderId && !this.pattername && !this.patternDes) {
     if (this.assignment.assignmentName.trim()) { 
       if (this.assignment.assignmentId) { // in Edit 
        
@@ -156,6 +172,7 @@ export class AssignmentComponent implements OnInit {
       this.assignments = [...this.assignments];
       this.assigmentDialogue = false;
       this.assignment = {};
+    }
     }
 
   }
