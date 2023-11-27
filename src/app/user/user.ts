@@ -1,5 +1,6 @@
 import { UserLogin } from "../userlogin/userlogin";
 import { UserRoleMaps } from "./user-role-maps";
+import { UserRoleProgramBatch } from "./user-role-program-batch";
 
 export interface User {
     userId?:string;
@@ -16,5 +17,13 @@ export interface User {
     userVisaStatus?: string;
     userLogin?: UserLogin;
     userRoleMaps?: UserRoleMaps[]; 
+    programName?: string;
+    batchName?: string;
+    userStatus?: boolean;
+    programId?:number;
+    batchid ?:number;
+    userRole ? : string;
+    userid ?:string;
+    userRoleProgramBatches ? : UserRoleProgramBatch[];    
 }
 
