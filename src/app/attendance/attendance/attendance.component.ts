@@ -66,7 +66,7 @@ export class AttendanceComponent implements OnInit {
         
   }
 
-  private getAttendanceList() {
+  getAttendanceList() {
     this.visibility = true;
    
     
@@ -158,16 +158,18 @@ export class AttendanceComponent implements OnInit {
                 });
               });
             })
+            this.getAttendanceList();
             this.messageService.add({
               severity: 'success',
               summary: 'Successful',
               detail: 'new attendances created',
               life: 3000,
             });
-            this.getAttendanceList();
-          }
+            
+          }        
       }}
-    this.attendanceDialogue = false;
+      this.getAttendanceList();
+      this.attendanceDialogue = false;
   }
   //delete
   deleteAttendance(attendance: Attendance) {
@@ -220,27 +222,20 @@ export class AttendanceComponent implements OnInit {
       accept: () => {
         this.attendances = this.attendances.filter(
           (val) => this.selectedAttendances.includes(val)
-        );
-        
+        );        
         this.attendances.forEach((value)=> (
-          this.attendanceService.delete(value).subscribe(response => {      
-          })
-        )), err => {
-          this.messageService.add({
-            severity: 'failure',
-            summary: 'Failed',
-            detail: 'Attendance deletion failed',
-            life: 3000,
-          });   
+          this.attendanceService.delete(value).subscribe(response => {   
+          })   
+        )) 
+        this.getAttendanceList();  
         this.messageService.add({
           severity: 'success',
           summary: 'Successful',
           detail: 'Selected attendances deleted',
           life: 3000,
         });
-      }
-    }
-   })
-
-  }
+        this.getAttendanceList();
+      }      
+    })
+   }
 }
