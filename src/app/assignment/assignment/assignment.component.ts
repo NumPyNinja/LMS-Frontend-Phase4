@@ -52,7 +52,8 @@ export class AssignmentComponent implements OnInit {
   userManage: AssignmentSubmit[];
   userServices: UserService[];
   assignsub: string[] = ['Yes','No'];
-
+  today = new Date();
+  
   constructor(
     private assignmentService: AssignmentService,
     private messageService: MessageService,
@@ -87,6 +88,7 @@ export class AssignmentComponent implements OnInit {
     this.subscription = this.authService.loggedInUserId.subscribe((res) => {
       this.userId = res;
     });
+ 
   }
 
   ngOnDestroy(): void {
@@ -169,7 +171,7 @@ private getAssignmentsSubmit(assignId) {
 //pattern validation for Assignment Name
 patternDesc()
 {
-	 const pattern=/^[a-zA-Z][a-zA-Z0-9]{3,25}.*/;
+	 const pattern=/^[a-zA-Z][a-zA-Z0-9 -_]{3,25}.*/;
      if(!pattern.test(this.assignment.assignmentDescription)){
 		  this.patternDes=true;
 		 return true;
@@ -181,7 +183,7 @@ patternDesc()
 //pattern validation for Assignment Description
 patternName()
 {
-	 const pattern=/^[a-zA-Z][a-zA-Z0-9]{3,25}.*/;
+	 const pattern=/^[a-zA-Z][a-zA-Z0-9 ]{3,25}$/;
      if(!pattern.test(this.assignment.assignmentName)){
 		 this.pattername=true;
 		 return true;
