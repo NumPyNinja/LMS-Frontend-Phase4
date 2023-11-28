@@ -32,7 +32,7 @@
             </div>
 
             <p-table #dt responsiveLayout="stack" [value]="attendances" [rows]="5" [paginator]="true"
-                [globalFilterFields]="['attId','csId','studentId', 'batchId']" [(selection)]="selectedAttendances"
+                [globalFilterFields]="['studentName', 'batchName','csName']" [(selection)]="selectedAttendances"
                 [rowHover]="true" dataKey="attId"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 [showCurrentPageReport]="true">
