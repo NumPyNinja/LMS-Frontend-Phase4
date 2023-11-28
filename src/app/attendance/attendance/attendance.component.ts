@@ -196,8 +196,8 @@ export class AttendanceComponent implements OnInit {
             
           }        
       }}
-    this.attendanceDialogue = false;
-    this.getAttendanceList();
+      this.getAttendanceList();
+      this.attendanceDialogue = false;
   }}
   //delete
   deleteAttendance(attendance: Attendance) {
@@ -264,7 +264,9 @@ export class AttendanceComponent implements OnInit {
           life: 3000,
         });
         this.getAttendanceList();
+        this.selectedAttendances = null;
       }      
     })
+    
    }
 }
