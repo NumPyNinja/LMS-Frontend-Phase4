@@ -1,7 +1,6 @@
 export interface Session {
-
     csId?:number;
-    batchId?:string;
+    batchId?:any;
     classNo?:number;
     classDate?:Date;
     classTopic?:string;
@@ -11,4 +10,5 @@ export interface Session {
     classNotes?:any;
     classRecordingPath?:any;
     sessionStatus?:any;
+    batchName?:string;
 }
