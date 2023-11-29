@@ -111,7 +111,7 @@
         <div class="p-field">
             <label for="batchName">Name</label>
             <input type="text" pInputText id="batchName" [(ngModel)]="batch.batchName" required autofocus />
-            <small class="p-invalid" *ngIf="submitted && !batch.batchName">Name is required.</small>
+            <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="submitted && !batch.batchName">Batch Name is required.</small>
         </div>
         <div class="p-field">
             <label for="batchDescription">Description</label>
@@ -122,7 +122,8 @@
         <div class="p-field">
             <label for="programName">Program Name</label>
             <p-dropdown [options]="programList" [(ngModel)]="batch.programName" placeholder="Select a Program name" id="programName"
-                editable="true" optionLabel="programName" [showClear]="true"></p-dropdown>
+                editable="true" [disabled]="onEdit" optionLabel="programName" [showClear]="true"  required></p-dropdown>
+                <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="submitted && !batch.programName">Program Name is required.</small>
         </div>
 
         <div class="radio">

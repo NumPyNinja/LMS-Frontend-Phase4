@@ -31,6 +31,7 @@ export class BatchComponent implements OnInit {
   programName: string;
   status: string[] = ['ACTIVE', 'INACTIVE'];
   programList: Program[];
+  onEdit : boolean = false;
   constructor(
     private batchService: BatchService,
     private programService: ProgramService,
@@ -51,26 +52,27 @@ export class BatchComponent implements OnInit {
 
   }
   openNew() {
+    this.onEdit=false;
     this.batch = {};
     this.submitted = false;
     this.batchDialogue = true;
   }
+
   hideDialog() {
     this.batchDialogue = false;
     this.submitted = false;
   }
+
   saveBatch(): void {
     this.submitted = true;
+    if(this.batch.batchName){
+      if (this.batch.batchName.trim()) { //edit batch
 
-    if (this.batch.batchName.trim()) {
+      //const pro: any = this.batch.programName;
+      //const pro1: any = this.batch.programId;
+      //this.batch.programId = pro.programId;
+      //this.batch.programName = pro.programName;
 
-      const pro: any = this.batch.programName;
-      const pro1: any = this.batch.programId;
-      this.batch.programId = pro.programId;
-      this.batch.programName = pro.programName;
-
-
-      //edit batch
       if (this.batch.batchId) {
         this.batchList[this.findIndexById(this.batch.batchId)] = this.batch;
         this.messageService.add({
@@ -79,19 +81,17 @@ export class BatchComponent implements OnInit {
           detail: 'batch Updated',
           life: 3000,
         });
-        this.batch.programName = pro.programName;
-        this.batch.programId = pro1;
+      //  this.batch.programName = pro.programName;
+       // this.batch.programId = pro1;
         this.batchService.updateBatch(this.batch).subscribe((res) => {
           console.log('a batch is updated')
         });
-
       } else {
-
-
-        // add a new batch
-        this.programSize = this.programSize + 1;
-        this.batch.programName = pro.programName;
-        this.batchService.addBatch(this.batch).subscribe((res) => {
+          const pro: any = this.batch.programName;
+          this.programSize = this.programSize + 1;
+          this.batch.programName = pro.programName;
+          this.batch.programId=pro.programId;
+          this.batchService.addBatch(this.batch).subscribe((res) => {
           this.messageService.add({
             severity: 'success',
             summary: 'Successful',
@@ -112,6 +112,7 @@ export class BatchComponent implements OnInit {
       this.batchDialogue = false;
       this.batch = {};
     }
+  }
   }
 
   findIndexById(id: string): number {
@@ -136,13 +137,13 @@ export class BatchComponent implements OnInit {
     return max;
   }
 
-
-
   editBatch(batch: Batch) {
     // this.programName =pro;
+    this.onEdit=true;
     this.batch = { ...batch };
     this.batchDialogue = true;
   }
+
   deleteBatch(batch: Batch) {
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete ' + batch.batchName + '?',
