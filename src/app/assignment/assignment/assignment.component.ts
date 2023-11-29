@@ -37,6 +37,7 @@ export class AssignmentComponent implements OnInit {
   message1: Message[] = [];
   programList: Program[];
   batchList: Batch[];
+  batchListTemp: Batch[];
   editMode = false;
   //programName: string;
  // batchName: string;
@@ -69,6 +70,7 @@ export class AssignmentComponent implements OnInit {
     {
       this.batchService.getBatchList().subscribe(list => {
         this.batchList = list;
+        this.batchListTemp=this.batchList;
       })
     }
       {
@@ -275,7 +277,9 @@ patternName()
   }
 
   editAssignment(assigment: Assignment) {
+
     this.assignment = { ...assigment };
+    this.batchList=this.batchListTemp;
     this.assignment.dueDate = new Date(this.assignment.dueDate);
     this.getBatchName(this.assignment.batchId);
     this.editMode = true;
@@ -290,6 +294,14 @@ patternName()
           return; 
       }
     }
+  }
+
+  updateFilteredBatchNames(){
+   
+    this.batchList = this.batchListTemp;
+    const progData :any = this.assignment.programName;
+    const pid :any=progData.programId;
+    this.batchList = this.batchList.filter(item => item.programId === pid);
   }
 
   findIndexById(id: string): number {
