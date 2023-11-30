@@ -199,7 +199,6 @@ export class AttendanceComponent implements OnInit {
       this.attendanceDialogue = false;
       this.getAttendanceList();
       this.selectedAttendances = null;
-      this.attendanceDialogue = false;
   }}
   //delete
   deleteAttendance(attendance: Attendance) {
