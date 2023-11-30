@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Assignment, UploadedAssignment } from './assignment';
+import { Assignment,AssignmentSubmit, UploadedAssignment } from './assignment';
 
 @Injectable({
   providedIn: 'root'
@@ -30,5 +30,11 @@ export class AssignmentService {
   delete(attendance: Assignment) {
     return this.httpClient.delete<string>(this.url + "/assignments/" + attendance.assignmentId);
   }
-
+ // get AssignmentSubmittion
+   getAssignmentsSubmitList(): Observable<AssignmentSubmit[]> {
+		return this.httpClient.get<AssignmentSubmit[]>(this.url + "/assignmentsubmission");
+	}
+    getAssignmentSubmit(assignId: number): Observable<AssignmentSubmit> {
+		return this.httpClient.get<AssignmentSubmit>(this.url + "/assignmentsubmission/" + assignId);
+	}
 }

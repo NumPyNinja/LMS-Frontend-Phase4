@@ -5,6 +5,8 @@ import { tap, filter } from 'rxjs/operators';
 import { map, take } from 'rxjs/operators';
 
 import { User } from './user';
+//import { UserProgBatch } from './user-prog-batch';
+import { STRING_TYPE, Text } from '@angular/compiler';
 @Injectable({
   providedIn: 'root'
 })
@@ -46,6 +48,14 @@ export class UserService {
   deleteUser(user:User) {
     return this.httpClient.delete<User>(this.url + "/users/" + user.userId);
   }
-  }
-
   
+  assignProgBatch(pbData:any): Observable<any>{
+    return this.httpClient.put<any>(this.url + "/users/roleProgramBatchStatus/" + pbData.userId, pbData );
+  }
+/*** ignore the below extra method  
+assignProgBatchTemp(pbData:any): Observable<UserProgBatch>{
+    return this.httpClient.put<UserProgBatch>(this.url + "/users/roleProgramBatchStatus/" + pbData.userId, pbData );
+  }
+  **/    
+}
+

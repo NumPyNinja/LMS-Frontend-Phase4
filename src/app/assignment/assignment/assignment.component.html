@@ -94,7 +94,7 @@
                         <td>{{assignment.assignmentDescription}}</td>
                         <td>{{assignment.dueDate|date:'shortDate'}}</td>
                         <td> <button pButton pRipple type="button" label="Manage"
-                                class="p-button-raised p-button-text p-button-plain"></button></td>
+                                class="p-button-raised p-button-text p-button-sucess" (click)="openManage(assignment.assignmentId)"></button></td>
                         <td>
                             <div class="action">
                                 <span>
@@ -123,28 +123,43 @@
 <p-dialog [(visible)]="assigmentDialogue" [style]="{width: '550px'}" header="Assigment Details" [modal]="true"
     styleClass="p-fluid">
     <ng-template pTemplate="content">
-        <label for="programName">Program Name</label>
-        <p-dropdown [options]="programList" id="programName" [(ngModel)]="assignment.programName"
-            placeholder="Select Program Name" optionLabel="programName" [showClear]="true"></p-dropdown>
-
-        <label for="batchName">Batch Number</label>
-        <p-dropdown [options]="batchList" [(ngModel)]="assignment.batchName" placeholder="Select Batch"
-            optionLabel="batchName" [showClear]="true"></p-dropdown>
+        
         <div class="p-field">
-
-            <label for="assignment">Assignment Name</label>
-            <input type="text" pInputText id="assignment" [(ngModel)]="assignment.assignmentName" required autofocus />
-            <small class="p-invalid" *ngIf="submitted && !assignment.assignmentName">Name is required.</small>
+  
+            <label for="programName">Program Name</label>
+            <p-dropdown [options]="programList"  [(ngModel)]="assignment.programName" placeholder="Select Program Name" 
+              id="programName" optionLabel="programName"  [disabled]="editMode"  editable="true" [showClear]="true" (onChange)="updateFilteredBatchNames()"></p-dropdown>
+              <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !assignment.programName" id="text-danger" >Program Name is required.</small>
         </div>
+
+        <div class="p-field">
+            <label for="batchName">Batch Number</label>
+            <p-dropdown [options]="batchList" [(ngModel)]="assignment.batchName" id="batchName" placeholder="Select Batch"
+                optionLabel="batchName" [disabled]="editMode"></p-dropdown>
+                <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !assignment.batchName" id="text-danger">Batch Name is required.</small>
+        </div>
+
+        <div class="p-field">
+            <label for="assignment">Assignment Name</label>
+            <input type="text" pattern="^[a-zA-Z][a-zA-Z0-9]{3,25}.*" maxlngth="25"id="assignmentName" pInputText [(ngModel)]="assignment.assignmentName"
+                   required rows="3" cols="20" />
+            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !assignment.assignmentName" id="text-danger">Assignment Name required</small>
+            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="patternName()" id="text-danger">This field should be start with alphabet and min 4 character</small>
+        </div>
+
         <div class="p-field">
             <label for="programDescription">Assignment Description</label>
-            <input type="text" id="assignmentDescription" pInputText [(ngModel)]="assignment.assignmentDescription"
+            <input type="text" pattern="^[a-zA-Z][a-zA-Z0-9]{3,25}.*"  maxlngth="25" id="assignmentDescription" pInputText [(ngModel)]="assignment.assignmentDescription"
                 required rows="3" cols="20" />
+                <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !assignment.assignmentDescription " id="text-danger">Assignment Decription is required</small>
+                <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="patternDesc()" id="text-danger">This field should start with alphabet and min 4 character</small>
         </div>
 
         <div class="p-field">
-            <label for="programDescription"> Grade By</label>
+            <!-- <label for="programDescription"> Grade By</label> -->
+            <label for="graderId"> Grade By</label>
             <input type="text" id="graderId" pInputText [(ngModel)]="assignment.graderId" required rows="3" cols="20" />
+             <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !assignment.graderId" id="text-danger">Grade By is required </small>
         </div>
 
         <!-- <div class="p-field">
@@ -153,10 +168,12 @@
                 rows="3" cols="20" />
         </div> -->
 
+
         <div class="p-field">
             <label for="icon">Assignment Due Date</label>
-            <p-calendar [(ngModel)]="assignment.dueDate" [showIcon]="true" inputId="icon"
-                [style]="{ 'position': 'relative', 'z-index': '100' }"></p-calendar>
+            <p-calendar [(ngModel)]="assignment.dueDate" [showIcon]="true" inputId="icon" id="assignDueDate" appendTo="body" 
+                [style]="{ 'position': 'relative', 'z-index': '100'  }"></p-calendar>
+                <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !assignment.dueDate" id="text-danger">Assignment Data is required.</small>
         </div>
         <div class="p-field">
             <label for="icon">Assignment File 1</label>
@@ -190,6 +207,83 @@
         <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-rounded p-button-success"
             (click)="saveAssignment()"></button>
     </ng-template>
+ </p-dialog>   
+    <!-- Manage Assignment grade -->
+     
+    
+
+<p-dialog [(visible)]="manageDialogue" [style]="{width: '1200px'}" header="Manage Assigment Grade" [modal]="true"
+    styleClass="p-fluid">
+     <mat-card-content> 
+		            
+            <p-table #dt responsiveLayout="stack" [value]="assignmentsubmit" [rows]="6" [paginator]="true"
+                [globalFilterFields]="['assignmentId']"
+                [(selection)]="selectedAssignments" [rowHover]="true" dataKey="assignmentId"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true">
+
+                <ng-template pTemplate="header">
+                    <tr>
+                         <th style="width: 3%">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th style="width: auto" pSortableColumn="assignmentName">Assignment Name <p-sortIcon
+                                field="assignmentName"></p-sortIcon>
+                        </th>
+                        <th style="width: auto" >Student Name
+                           
+                        </th>
+                        <th style="width:auto">Assignment Submitted 
+
+                        </th>
+                        <th style="width: auto">Submitted Date
+                        </th>
+                        <th style="width: auto">Assignment Grade
+                        </th>
+                        <th style="width: auto"> Edit / Delete
+                        </th>
+                    </tr>
+                </ng-template>
+         
+
+                <ng-template pTemplate="body" let-assignmentsubmit>	
+                    <tr >
+						 <td>
+                            <p-tableCheckbox [value]="assignmentsubmit"></p-tableCheckbox>
+                        </td>
+						<td>{{findAssignName(assignmentsubmit.assignmentId)}}</td>
+                        <td>{{findStudentName(assignmentsubmit.userId)}} </td>
+                        <td>   
+                          <div class="radio" *ngFor="let check of assignsub">
+                           <p-radioButton [inputId]="check" name="check" [value]="check" [style]="{'display':'inline!important'}" id="assignsubmit" [(ngModel)]="assignmentsubmit.check">
+                            </p-radioButton> {{check}} </div>                
+                        </td>
+                  
+						 <td> {{assignmentsubmit.dueDate|date:'shortDate'}} </td>
+                        <td> <input id="grade" type="path" pInputText [(ngModel)]="assignmentsubmit.grade" [showIcon]="true"
+                        inputId="icon" placeholder="Grade" style="width:30"></td>
+                        <td>
+                            <div class="action">
+                                <span>
+                                    <button pButton pRipple icon="pi pi-pencil"
+                                        class="p-button-rounded p-button-success"></button>
+                                </span>
+                                <span>
+                                    <button pButton pRipple icon="pi pi-trash" 
+                                    class="p-button-rounded p-button-danger"></button>
+                                </span>
+                            </div>
+                        </td>
+                        
+                    </tr>
+                </ng-template>
+               
+
+            </p-table>
+    
+
+    </mat-card-content>
+
 </p-dialog>
 <p-messages [(value)]="message1"></p-messages>
 <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

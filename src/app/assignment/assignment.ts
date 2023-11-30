@@ -1,21 +1,21 @@
 export interface Assignment {
 
-    assignmentId?: string,
-    assignmentName?: string,
-    assignmentDescription?: string,
-    comments?: string,
-    dueDate?: Date,
-    pathAttachment1?: string,
-    pathAttachment2?: string,
-    pathAttachment3?: string,
-    pathAttachment4?: string,
-    pathAttachment5?: string,
-    createdBy?: string,
-    batchId?: number,
-    graderId?: string,
-    programId?: number
-    programName?: string,
-    batchName?: string
+    assignmentId?: string;
+    assignmentName?: string;
+    assignmentDescription?: string;
+    comments?: string;
+    dueDate?: Date;
+    pathAttachment1?: string;
+    pathAttachment2?: string;
+    pathAttachment3?: string;
+    pathAttachment4?: string;
+    pathAttachment5?: string;
+    createdBy?: string;
+    batchId?: string;
+    graderId?: string;
+    programId?: number;
+    programName?: string;
+    batchName?: string;
 }
 
 export interface AssignmentSelect {
@@ -30,3 +30,27 @@ export interface UploadedAssignment {
     uploadUser?: string,
     assignmentId?: string
 }
+
+export interface AssignmentSubmit{
+	
+    submissionId?: number,
+    assignmentId?:number,
+    userId?:string,
+    subDesc?:string,
+    subComments?:string,
+    subPathAttach1?:string,
+    subPathAttach2?:string,
+    subPathAttach3?:string,
+    subPathAttach4?:string,
+    subPathAttach5?:string,
+    subDataTime?: Date,
+    gradedBy?:string,
+    gradedDateTime?:Date,
+    grade?:number
+   
+}
+
+export interface AssignmentSubmitManage
+{
+	 assignId?:number
+	 }
