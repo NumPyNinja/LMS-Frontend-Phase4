@@ -11,7 +11,7 @@ import { STRING_TYPE, Text } from '@angular/compiler';
   providedIn: 'root'
 })
 export class UserService {
-
+  
   url: string = '/api';//'https://lms-admin-rest-service.herokuapp.com/programs';
   users: any;
   //staffList: User[];
@@ -45,6 +45,10 @@ export class UserService {
     
   }
 
+  deleteUser(user:User) {
+    return this.httpClient.delete<User>(this.url + "/users/" + user.userId);
+  }
+  
   assignProgBatch(pbData:any): Observable<any>{
     return this.httpClient.put<any>(this.url + "/users/roleProgramBatchStatus/" + pbData.userId, pbData );
   }
@@ -54,3 +58,4 @@ assignProgBatchTemp(pbData:any): Observable<UserProgBatch>{
   }
   **/    
 }
+
