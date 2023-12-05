@@ -11,4 +11,9 @@ export interface Session {
     classNotes?:any;
     classRecordingPath?:any;
     sessionStatus?:any;
+    classStaffName?:any;
+}
+export interface Staff{
+    userId?:string;
+    staffName?:string;
 }
