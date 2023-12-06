@@ -4,6 +4,7 @@ import{User}from '../user';
 import { UserService } from '../user.service';
 import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-user',
@@ -31,6 +32,7 @@ export class UserComponent implements OnInit {
   roleStatusValue:string;
   userRoleMapsControl:FormControl;
   userRoleMapsValue:string;
+  
   constructor(private userService: UserService,private fb: FormBuilder,private messageService: MessageService,
     private confirmationService: ConfirmationService) { }
  
@@ -77,6 +79,7 @@ export class UserComponent implements OnInit {
     this.userDialogue = true;
   }
     userForm = this.fb.group({
+      userId: [''],
       userComments: ['', Validators.required],
       userEduPg: ['', Validators.required],
       userEduUg: ['', Validators.required],
@@ -169,16 +172,46 @@ export class UserComponent implements OnInit {
 
   
   editUser(user: User) {
-    console.log('In Edit Module');
-    console.log('User Object:', user);
+    
     const userEmailAddress:string=user.userLoginEmail;
-
     this.userForm.patchValue(user);
     this.userForm.get('userLogin.userLoginEmail').patchValue(userEmailAddress);
     this.userDialogue = true;
     this.user={...user};
-    console.log('After patchValue:', this.userForm.value);
+    const getAllUsers$ = this.userService.getAllUsers();
+    const getUsers$ = this.userService.getUsers();
+    getAllUsers$.subscribe(
+      allUsers => console.log('allUsers:', allUsers),
+      error => console.error('Error fetching allUsers', error)
+    );
     
+    getUsers$.subscribe(
+      userRoleMap1 => console.log('userRoleMap1:', userRoleMap1),
+      error => console.error('Error fetching userRoleMap1', error)
+    );
+    forkJoin([getAllUsers$, getUsers$]).subscribe(
+      ([allUsers, userRoleMap1]) => {
+        this.users = allUsers;
+        allUsers.forEach(allUser => {
+          const correspondingUser = userRoleMap1.find(userMap => userMap.user?.userId == allUser.userId);
+          if (correspondingUser) {
+            const userRoleStatus = correspondingUser.userRoleStatus;
+            const userRoleId = correspondingUser.role.roleId;
+            this.userForm.get('userRoleMaps').get('0.userRoleStatus').setValue(userRoleStatus);
+            this.userForm.get('userRoleMaps').get('0.roleId').setValue(userRoleId);
+          this.user = { ...user, userId: user.userId };
+
+          }
+        });
+         
+        this.visibility = false;
+        
+      },
+      error => {
+        console.error('Error fetching data', error);
+        this.visibility = false;
+      }
+    ); 
    
   }
   visaStatusChanged(event: any) {
@@ -195,18 +228,47 @@ export class UserComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
     
-    if (this.userForm.value) {
+    if (this.userForm.valid) {
       if (this.userForm.value.userId) {
-
-        this.users[this.findIndexById(this.userForm.value.userId)] = this.userForm.value.userId;
-        this.userService.updateUser(this.user).subscribe((res) => {
-          console.log('User updated')
-        });
-
-      } else {
-       console.log('hjgjhgjhg');
-       
-       
+        const updatedUser = { ...this.userForm.value };
+        const userData = {
+          userId: this.userForm.value.userId,
+          userComments: this.userForm.value.userComments,
+          userEduPg: this.userForm.value.userEduPg,
+          userEduUg: this.userForm.value.userEduUg,
+          userFirstName: this.userForm.value.userFirstName,
+          userLastName: this.userForm.value.userLastName,
+          userLinkedinUrl: this.userForm.value.userLinkedinUrl,
+          userLocation: this.userForm.value.userLocation,
+          userMiddleName: this.userForm.value.userMiddleName,
+          userPhoneNumber: this.userForm.value.userPhoneNumber,
+          userTimeZone: this.userForm.value.userTimeZone,
+          userVisaStatus: this.userForm.value.userVisaStatus,
+        };
+        //this.users[this.findIndexById(this.userForm.value.userId)] = this.userForm.value.userId;
+        const index = this.findIndexById(this.userForm.value.userId);
+        this.users[index] = { ...this.userForm.value };
+         this.userService.updateUser(userData).subscribe((res) => {
+          console.log('User updated successfully');
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'User Updated Successfully',
+            life: 3000,
+            
+          });
+          this.getUserList();
+          this.userDialogue = false;
+        },
+        (error) => {
+          console.error('Error updating user', error);
+          alert('Error updating user details.');
+        }
+        );
+        this.userDialogue = false;
+       this.user = {};
+      }
+       else {
         this.userSize = this.userSize + 1;
         this.user.userId = this.userSize.toString();
         
@@ -223,7 +285,15 @@ export class UserComponent implements OnInit {
         this.userService.addUser(userData).subscribe({
           next:(res) => {
             this.userForm.reset();
-            alert("User added successfully");
+            this.submitted = false;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Successful',
+              detail: 'User Added Successfully',
+              life: 3000,
+          });
+            this.user={};
+            
           },
          error:() =>
           {
