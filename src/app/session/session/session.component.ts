@@ -85,10 +85,6 @@ staffIDFunction(){
     if (this.session.classTopic.trim()) {
       const bat: any = this.session.batchId;
       this.session.batchId = bat.batchId;
-
-      const user: any = this.session.classStaffName;
-      this.session.classStaffId = user.userId;
-      delete this.session.classStaffName;
       //edit class
       if (this.session.csId) {
         this.sessionList[this.findIndexById(this.session.csId)] = this.session;
@@ -99,8 +95,11 @@ staffIDFunction(){
           life: 3000,
         });
         this.session.batchId = bat;
-        delete this.session.classStaffName;
+        const user: any = this.session.classStaffName;
+        if(user.userId){
         this.session.classStaffId = user.userId;
+        }
+        delete this.session.classStaffName;
         this.sessionService.editSession(this.session).
           subscribe((res) => {
             console.log("Class is Updated")
@@ -111,10 +110,10 @@ staffIDFunction(){
 
         this.sessionList.push(this.session);
         this.session.batchId = bat.batchId;
+        const user: any = this.session.classStaffName;
         this.session.classStaffId = user.userId;
         delete this.session.classStaffName;
         this.sessionService.addSession(this.session).subscribe((res) => { });
-
         this.messageService.add({
           severity: 'success',
           summary: 'Successful',
