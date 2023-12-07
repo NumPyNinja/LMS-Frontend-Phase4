@@ -226,15 +226,17 @@ patternName()
   //  this.assignment.batchId = atd.batchId;
    // const att: any = this.assignment.programName;
     //this.assignment.programId = att.programId;
-    const user: any = this.assignment.staffName;
-    this.assignment.graderId = user.userId;
-    this.assignment.createdBy = user.userId;
-    delete this.assignment.staffName;
-    if(this.assignment.batchName && this.assignment.programName && this.assignment.dueDate && this.assignment.graderId && !this.pattername && !this.patternDes) {
+    if(this.assignment.batchName && this.assignment.programName && this.assignment.dueDate && this.assignment.staffName && !this.pattername && !this.patternDes) {
     if (this.assignment.assignmentName.trim()) {
       if (this.assignment.assignmentId) { // in Edit
         delete this.assignment.batchName;
         delete this.assignment.programName;
+        const user: any = this.assignment.staffName;
+        if(user.userId){
+        this.assignment.graderId = user.userId;
+        this.assignment.createdBy = user.userId;
+        }
+        delete this.assignment.staffName;
         this.assignmentService.updateAssignment(this.assignment).subscribe((res) => {
           this.assignmentService.getAssignments().subscribe((res) => {
             this.assignments = res;
@@ -249,6 +251,10 @@ patternName()
       } else { //create new Assignment
           const assignBname : any = this.assignment.batchName;
           this.assignment.batchId = assignBname.batchId;
+          const user: any = this.assignment.staffName;
+          this.assignment.graderId = user.userId;
+          this.assignment.createdBy = user.userId;
+          delete this.assignment.staffName;
           delete this.assignment.batchName;
           delete this.assignment.programName;
        // this.assignmentSize = this.assignmentSize + 1;
