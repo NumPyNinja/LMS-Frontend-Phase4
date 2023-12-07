@@ -1,15 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { MessageService } from 'primeng/api';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, Message, MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
-import { Assignment, AssignmentSelect, AssignmentSubmit, UploadedAssignment } from '../assignment';
-import { AssignmentService } from '../assignment.service';
-import { Message } from 'primeng/api'
-import { ProgramService } from 'src/app/program/program.service';
-import { Program } from 'src/app/program/program';
-import { BatchService } from 'src/app/batch/batch.service';
 import { Batch } from 'src/app/batch/batch';
+import { BatchService } from 'src/app/batch/batch.service';
+import { Program } from 'src/app/program/program';
+import { ProgramService } from 'src/app/program/program.service';
+import { Assignment, AssignmentSelect, AssignmentSubmit, Staff1, UploadedAssignment } from '../assignment';
+import { AssignmentService } from '../assignment.service';
 
 import { User } from 'src/app/user/user';
 import { UserService } from 'src/app/user/user.service';
@@ -54,6 +52,9 @@ export class AssignmentComponent implements OnInit {
   userServices: UserService[];
   assignsub: string[] = ['Yes','No'];
   today = new Date();
+  staffList:User[];
+  staffIDvaule:Staff1[]=[];
+
   
   constructor(
     private assignmentService: AssignmentService,
@@ -78,6 +79,10 @@ export class AssignmentComponent implements OnInit {
       this.userService.getAllUsers().subscribe(
       user1List => { this.userList = user1List }
      )
+}
+{
+  this.userService.getAllStaff().subscribe(
+    staff1List => { this.staffList = staff1List })
 }
 {
       this.assignmentService.getAssignments().subscribe(
@@ -111,10 +116,29 @@ export class AssignmentComponent implements OnInit {
     });
     return max;
   }
+//Staff name = FirstName + Last Name Dropdown
+staffIDFunction(){
+  this.staffList.forEach(item => {
+  if(this.staffIDvaule.filter(x => x.userId == item.userId).length == 0) {
+    this.staffIDvaule.push({userId:item.userId,staffName:item.userFirstName+" "+item.userLastName});
+  }
+});
+}
+//find staff Name by Staff ID
+  findStaffName(staffId: string) {
+    var nameUser: String;
+    var userdet: User = {};
+    if (this.userList.length != 0) {
+      userdet = this.userList.find(y => y.userId == staffId);
+      nameUser = userdet.userFirstName + '  ' + userdet.userLastName;
+      return nameUser;
+    }
+  }
   //add a new assignment 
   openNew() {
     this.editMode=false;
     this.assignment = {};
+    this.staffIDFunction();
     this.submitted = false;
     this.assigmentDialogue = true;
   }
@@ -189,27 +213,28 @@ patternName()
      if(!pattern.test(this.assignment.assignmentName)){
 		 this.pattername=true;
 		 return true;
-	 } 
+	 }
 	 else{
 	    this.pattername=false;
 	    return false;}
 }
 
-
   //save an assigment
   saveAssignment() {
-    this.submitted = true;  
+    this.submitted = true;
    // const atd: any = this.assignment.batchName;
   //  this.assignment.batchId = atd.batchId;
    // const att: any = this.assignment.programName;
     //this.assignment.programId = att.programId;
+    const user: any = this.assignment.staffName;
+    this.assignment.graderId = user.userId;
+    this.assignment.createdBy = user.userId;
+    delete this.assignment.staffName;
     if(this.assignment.batchName && this.assignment.programName && this.assignment.dueDate && this.assignment.graderId && !this.pattername && !this.patternDes) {
-    if (this.assignment.assignmentName.trim()) { 
-      if (this.assignment.assignmentId) { // in Edit 
-       
+    if (this.assignment.assignmentName.trim()) {
+      if (this.assignment.assignmentId) { // in Edit
         delete this.assignment.batchName;
         delete this.assignment.programName;
-      
         this.assignmentService.updateAssignment(this.assignment).subscribe((res) => {
           this.assignmentService.getAssignments().subscribe((res) => {
             this.assignments = res;
@@ -222,14 +247,10 @@ patternName()
           });
         });
       } else { //create new Assignment
-         
           const assignBname : any = this.assignment.batchName;
           this.assignment.batchId = assignBname.batchId;
-          this.assignment.createdBy=this.assignment.graderId;
-        
           delete this.assignment.batchName;
           delete this.assignment.programName;
-        
        // this.assignmentSize = this.assignmentSize + 1;
        //this.assignment.batchId = this.assignmentSize;
        // this.assignment.graderId = this.userId;
@@ -281,6 +302,11 @@ patternName()
   editAssignment(assigment: Assignment) {
 
     this.assignment = { ...assigment };
+    this.staffIDFunction();
+    if(this.assignment.graderId){
+      this.assignment.staffName=this.findStaffName(this.assignment.graderId);}
+      else
+      this.assignment.staffName="";
     this.batchList=this.batchListTemp;
     this.assignment.dueDate = new Date(this.assignment.dueDate);
     this.getBatchName(this.assignment.batchId);
