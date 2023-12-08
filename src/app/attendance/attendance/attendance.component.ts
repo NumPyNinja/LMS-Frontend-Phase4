@@ -186,7 +186,7 @@ export class AttendanceComponent implements OnInit {
                 });
               });
             })
-            this.getAttendanceList();
+            this.ngOnInit();
             this.messageService.add({
               severity: 'success',
               summary: 'Successful',
@@ -196,14 +196,15 @@ export class AttendanceComponent implements OnInit {
             
           }        
       }}
-      this.attendanceDialogue = false;
-      this.getAttendanceList();
+      this.attendanceDialogue = false;  
       this.selectedAttendances = null;
   }}
   //delete
   deleteAttendance(attendance: Attendance) {
+
+    console.log("confirmation dialogue method called");
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete ' + attendance.attId + '?',
+      message: 'Are you sure you want to delete the selected Attendance?',
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -212,15 +213,13 @@ export class AttendanceComponent implements OnInit {
         this.attendanceService.delete(attendance).subscribe(response => {
           
         })
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Attendance deleted',
-          life: 3000,
-        });
-      },
+        this.ngOnInit();  
+        this.messageService.add({severity:'info', summary:'Confirmed', detail:'You have accepted'});},
+      reject: () => {this.messageService.add({severity:'error', summary:'Rejected', detail:'Could not delete'});this.ngOnInit();},
+      key: "deleteDialog"
     });
   }
+  
 
   editAttendance(attendance: Attendance) {
     this.attendance = { ...attendance };
@@ -245,29 +244,24 @@ export class AttendanceComponent implements OnInit {
   deleteSelectedAttendances(){
 
     this.confirmationService.confirm({
-
       message: 'Are you sure you want to delete the selected Attendances?',
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.attendances = this.attendances.filter(
-          (val) => this.selectedAttendances.includes(val)
+            (val) => this.selectedAttendances.includes(val)
         );        
         this.attendances.forEach((value)=> (
           this.attendanceService.delete(value).subscribe(response => {   
-          })   
-        )) 
-        this.getAttendanceList();  
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Selected attendances deleted',
-          life: 3000,
-        });
-        this.getAttendanceList();
+          })  
+            )) ;
         this.selectedAttendances = null;
-      }      
-    })
+        this.ngOnInit();  
+        this.messageService.add({severity:'info', summary:'Confirmed', detail:'Selected attendences deleted'});},
+        reject: () => {this.messageService.add({severity:'error', summary:'Rejected', detail:'Could not delete'});
+        this.selectedAttendances = null;},
+        key: "myDialog"
+    });
     
-   }
+  }
 }
