@@ -8,8 +8,9 @@
             </div><br>
             <div class="box">
                 <div>
-                    <button pButton pRipple icon="pi pi-trash" class="p-button-danger"
-                        [disabled]="!selectedAttendances || !selectedAttendances.length"></button>
+                    <p-confirmDialog  rejectButtonStyleClass="p-button-text" key="myDialog" ></p-confirmDialog>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-danger"(click)="deleteSelectedAttendances()" 
+                    [disabled]="!selectedAttendances || !selectedAttendances.length"></button>
                 </div>
                 <div>
                     <span class="p-input-icon-left">
@@ -86,8 +87,8 @@
                                 </span>
                                 &nbsp; 
                                 <span>
-                                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
-                                        (click)="deleteAttendance(attendance)"></button>
+                                    <p-confirmDialog  rejectButtonStyleClass="p- .36button-text" key="deleteDialog" ></p-confirmDialog>
+                                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteAttendance(attendance)" ></button>
                                 </span>
                             </div>
                         </td>
