@@ -7,7 +7,7 @@
             </div><br>
             <div class="box">
                 <div>
-                    <button pButton pRipple icon="pi pi-trash" class="p-button-danger"
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-danger"  (click)="deleteSelectedAssignments()"
                         [disabled]="!selectedAssignments || !selectedAssignments.length"></button>
                 </div>
                 <div>
