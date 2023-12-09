@@ -12,10 +12,11 @@ export interface Assignment {
     pathAttachment5?: string;
     createdBy?: string;
     batchId?: string;
-    graderId?: string;
+    graderId?: any;
     programId?: number;
     programName?: string;
     batchName?: string;
+    staffName?:any;
 }
 
 export interface AssignmentSelect {
@@ -54,3 +55,8 @@ export interface AssignmentSubmitManage
 {
 	 assignId?:number
 	 }
+     export interface Staff1{
+        userId?:string;
+        staffName?:string;
+    }
+    

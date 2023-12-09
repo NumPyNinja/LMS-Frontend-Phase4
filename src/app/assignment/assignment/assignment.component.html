@@ -158,8 +158,10 @@
         <div class="p-field">
             <!-- <label for="programDescription"> Grade By</label> -->
             <label for="graderId"> Grade By</label>
-            <input type="text" id="graderId" pInputText [(ngModel)]="assignment.graderId" required rows="3" cols="20" />
-             <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !assignment.graderId" id="text-danger">Grade By is required </small>
+            <p-dropdown [options]="staffIDvaule" [(ngModel)]="assignment.staffName" placeholder="Select Staff Name"
+            id="userId" editable="true" optionLabel="staffName" [showClear]="true"></p-dropdown>
+           <!--<input type="text" id="graderId" pInputText [(ngModel)]="assignment.graderId" required rows="3" cols="20" /> -->
+             <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !assignment.staffName" id="text-danger">Grade By is required </small>
         </div>
 
         <!-- <div class="p-field">
