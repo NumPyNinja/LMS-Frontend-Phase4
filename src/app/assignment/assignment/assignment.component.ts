@@ -305,6 +305,29 @@ patternName()
     });
   }
 
+  deleteSelectedAssignments(){
+    this.confirmationService.confirm({
+
+      message: 'Are you sure you want to delete the selected assignmets?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.assignments = this.assignments.filter((val) => !this.selectedAssignments.includes(val));
+        this.selectedAssignments.forEach((value)=>(
+          this.assignmentService.delete(value).subscribe(response => {  
+            this.selectedAssignments = null;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Successful',
+              detail: 'Assignments Deleted',
+              life: 3000,
+            });
+          })  
+        )) ;
+      },
+    });
+  }
+
   editAssignment(assigment: Assignment) {
 
     this.assignment = { ...assigment };
