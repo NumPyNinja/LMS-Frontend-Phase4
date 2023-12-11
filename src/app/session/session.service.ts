@@ -18,11 +18,35 @@ export class SessionService {
     return this.httpClient.get<Session[]>(this.url + "/allClasses"); 
   }
   editSession(session: Session) {
-    return this.httpClient.put<Session>(this.url + "/updateClass/" + session.csId, session);
+    const payload = {
+      classTopic: session.classTopic,
+      classStaffId: session.classStaffId,
+      batchId:session.batchId,
+      classNo:session.classNo,
+      classDate:session.classDate,
+      classDescription:session.classDescription,
+      classComments:session.classComments,
+      classNotes:session.classNotes,
+      classRecordingPath:session.classRecordingPath
+
+    };
+    return this.httpClient.put<Session>(this.url + "/updateClass/" + session.csId, payload);
   
   }
   addSession(session: Session) :Observable<Session>{
-    return this.httpClient.post<Session>(this.url + "/CreateClassSchedule",session)
+    const payload = {
+      classTopic: session.classTopic,
+      classStaffId: session.classStaffId,
+      batchId:session.batchId,
+      classNo:session.classNo,
+      classDate:session.classDate,
+      classDescription:session.classDescription,
+      classComments:session.classComments,
+      classNotes:session.classNotes,
+      classRecordingPath:session.classRecordingPath
+
+    };
+    return this.httpClient.post<Session>(this.url + "/CreateClassSchedule",payload)
     .pipe(
       catchError(error => {
         let errorMsg: string;

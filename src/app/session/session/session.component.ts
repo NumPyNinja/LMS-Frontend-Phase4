@@ -36,8 +36,8 @@ export class SessionComponent implements OnInit {
   csId: string;
   userList: User[] = [];
   userId: string;
-  batchName: string
-  staffName: string
+  batchName: string;
+  staffName: string;
   public selectedSession: Session;
   public rowID: string;
   dialogRef: any;
@@ -83,8 +83,10 @@ staffIDFunction(){
 
     this.submitted = true;
     if (this.session.classTopic.trim()) {
+
       const bat: any = this.session.batchId;
       this.session.batchId = bat.batchId;
+
       //edit class
       if (this.session.csId) {
         this.sessionList[this.findIndexById(this.session.csId)] = this.session;
@@ -94,12 +96,14 @@ staffIDFunction(){
           detail: 'Class Updated',
           life: 3000,
         });
+
         this.session.batchId = bat;
         const user: any = this.session.classStaffName;
         if(user.userId){
         this.session.classStaffId = user.userId;
         }
         delete this.session.classStaffName;
+
         this.sessionService.editSession(this.session).
           subscribe((res) => {
             console.log("Class is Updated")
@@ -110,9 +114,11 @@ staffIDFunction(){
 
         this.sessionList.push(this.session);
         this.session.batchId = bat.batchId;
+
         const user: any = this.session.classStaffName;
         this.session.classStaffId = user.userId;
         delete this.session.classStaffName;
+
         this.sessionService.addSession(this.session).subscribe((res) => { });
         this.messageService.add({
           severity: 'success',
@@ -134,6 +140,14 @@ staffIDFunction(){
       this.session = {};
     }
   }
+  getBatchId(batchName: string) {
+    for (const batch of this.batchList) {
+          if (batch.batchName === batchName) {
+              this.session.batchId= batch.batchId;
+              return batch.batchId; 
+          }
+        }
+  }
   findIndexById(id: number): number {
     let index = -1;
     if (this.sessionList !== undefined)
@@ -152,14 +166,25 @@ staffIDFunction(){
     })
   }
   editSession(session: Session) {
+    
     this.session = { ...session };
+
     this.staffIDFunction();
     if(this.session.classStaffId){
       this.session.classStaffName=this.findStaffName(this.session.classStaffId);}
       else
       this.session.classStaffName="";
+
     this.session.classDate = new Date(this.session.classDate);
     this.sessionDialogue = true;
+  }
+  getBatchName(batchId: any) {
+    for (const batch of this.batchList) {
+      if (batch.batchId === batchId) {
+          this.session.batchName= batch.batchName;
+          return; 
+      }
+    }
   }
 
   getMaxClassId(max: number) {

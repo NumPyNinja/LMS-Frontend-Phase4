@@ -107,12 +107,12 @@
     <ng-template pTemplate="content">
 
 
+       
         <div class="p-field">
-            <label for="batchId">Batch Id</label>
-            <!-- <input type="text" id="batchId" pInputText [(ngModel)]="session.batchId" required autofocus
-                     />-->
-            <p-dropdown [options]="batchList" [(ngModel)]="session.batchId" placeholder="Select a Batch Id" id="batchId"
-                editable="true" optionLabel="batchId" [showClear]="true"></p-dropdown>
+            <label for="batchName">Batch Name</label>
+            
+            <p-dropdown [options]="batchList" [(ngModel)]="session.batchName" placeholder="Select a Batch Name" id="batchName"
+                editable="true" optionLabel="batchName" [showClear]="true"></p-dropdown>
         </div>
         <div class="p-field">
             <label for="classNo">No of Classes</label>
@@ -207,10 +207,7 @@
                     <mat-card-title>Class Recording Path</mat-card-title>
                     <mat-card-subtitle>{{selectedSession.classRecordingPath}}</mat-card-subtitle>
                 </div>
-                <!-- <div class="col">
-                  <mat-card-title>Session Status</mat-card-title>
-                  <mat-card-subtitle>{{selectedSession.sessionStatus}}</mat-card-subtitle>
-                </div> -->
+        
             </div>
         </mat-card-content>
         <mat-dialog-actions>

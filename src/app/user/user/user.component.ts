@@ -4,12 +4,14 @@ import{User}from '../user';
 import { UserService } from '../user.service';
 import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { ProgramService } from 'src/app/program/program.service';
 import { Program } from 'src/app/program/program';
 import { BatchService } from 'src/app/batch/batch.service';
 import { Batch } from 'src/app/batch/batch';
 import { SelectItem } from 'primeng/api';
 import { UserProgBatch } from '../user-prog-batch';
+
 
 @Component({
   selector: 'app-user',
@@ -38,6 +40,10 @@ export class UserComponent implements OnInit {
   roleStatusValue:string;
   userRoleMapsControl:FormControl;
   userRoleMapsValue:string;
+  
+  constructor(private userService: UserService,private fb: FormBuilder,private messageService: MessageService,
+    private confirmationService: ConfirmationService) { }
+
   assignProgBatchDialogue : boolean;
   programList: Program[];
   batchList : Batch[];
@@ -121,27 +127,28 @@ updateFilteredBatchNames(){
     this.userDialogue = true;
   }
 
-  userForm = this.fb.group({
-    userComments: ['', Validators.required],
-    userEduPg: ['', Validators.required],
-    userEduUg: ['', Validators.required],
-    userFirstName: ['', Validators.required],
-    userLastName: ['', Validators.required],
-    userLinkedinUrl: ['', Validators.required],
-    userLocation: ['', Validators.required],
-    userMiddleName: [''],
-    userPhoneNumber: ['', Validators.required],
-    userTimeZone: ['', Validators.required],
-    userVisaStatus: ['', Validators.required],
-    userLogin: this.fb.group({
-      loginStatus: ['Active', Validators.required],
-      password: [''],
-      userLoginEmail: ['', [Validators.required, Validators.email]],
-    }),
-    userRoleMaps: this.fb.array([
-      this.fb.group({
-        roleId: ['',Validators.required],
-        userRoleStatus: ['',Validators.required],
+    userForm = this.fb.group({
+      userId: [''],
+      userComments: ['', Validators.required],
+      userEduPg: ['', Validators.required],
+      userEduUg: ['', Validators.required],
+      userFirstName: ['', Validators.required],
+      userLastName: ['', Validators.required],
+      userLinkedinUrl: ['', Validators.required],
+      userLocation: ['', Validators.required],
+      userMiddleName: [''],
+      userPhoneNumber: ['', Validators.required],
+      userTimeZone: ['', Validators.required],
+      userVisaStatus: ['', Validators.required],
+      userLogin: this.fb.group({
+        loginStatus: ['Active', Validators.required],
+        password: [''],
+        userLoginEmail: ['', [Validators.required, Validators.email]],
+      }),
+      userRoleMaps: this.fb.array([
+        this.fb.group({
+          roleId: ['',Validators.required],
+          userRoleStatus: ['',Validators.required],
         })
       ]),
     });
@@ -218,10 +225,52 @@ updateFilteredBatchNames(){
     { name: 'Wyoming', abbreviation: 'WY' }
   ];
 
-  editProgram(user: User) {
-    console.log('Tesggggggg')
-    this.userForm.setValue(user);
+
+
+  
+  editUser(user: User) {
+    
+    const userEmailAddress:string=user.userLoginEmail;
+    this.userForm.patchValue(user);
+    this.userForm.get('userLogin.userLoginEmail').patchValue(userEmailAddress);
     this.userDialogue = true;
+    this.user={...user};
+    const getAllUsers$ = this.userService.getAllUsers();
+    const getUsers$ = this.userService.getUsers();
+    getAllUsers$.subscribe(
+      allUsers => console.log('allUsers:', allUsers),
+      error => console.error('Error fetching allUsers', error)
+    );
+    
+    getUsers$.subscribe(
+      userRoleMap1 => console.log('userRoleMap1:', userRoleMap1),
+      error => console.error('Error fetching userRoleMap1', error)
+    );
+    forkJoin([getAllUsers$, getUsers$]).subscribe(
+      ([allUsers, userRoleMap1]) => {
+        this.users = allUsers;
+        allUsers.forEach(allUser => {
+          const correspondingUser = userRoleMap1.find(userMap => userMap.user?.userId == allUser.userId);
+          if (correspondingUser) {
+            const userRoleStatus = correspondingUser.userRoleStatus;
+            const userRoleId = correspondingUser.role.roleId;
+            this.userForm.get('userRoleMaps').get('0.userRoleStatus').setValue(userRoleStatus);
+            this.userForm.get('userRoleMaps').get('0.roleId').setValue(userRoleId);
+          this.user = { ...user, userId: user.userId };
+
+          }
+        });
+         
+        this.visibility = false;
+        
+      },
+      error => {
+        console.error('Error fetching data', error);
+        this.visibility = false;
+      }
+    ); 
+   
+
   }
 
   visaStatusChanged(event: any) {
@@ -238,15 +287,48 @@ updateFilteredBatchNames(){
   //Code for adding new user
   onSubmit() {
     this.submitted = true;
-    if (this.userForm.value) {
+    
+    if (this.userForm.valid) {
       if (this.userForm.value.userId) {
-
-        this.users[this.findIndexById(this.userForm.value.userId)] = this.userForm.value.userId;
-      
-      } else {
-       console.log('hjgjhgjhg');
-       
-       
+        const updatedUser = { ...this.userForm.value };
+        const userData = {
+          userId: this.userForm.value.userId,
+          userComments: this.userForm.value.userComments,
+          userEduPg: this.userForm.value.userEduPg,
+          userEduUg: this.userForm.value.userEduUg,
+          userFirstName: this.userForm.value.userFirstName,
+          userLastName: this.userForm.value.userLastName,
+          userLinkedinUrl: this.userForm.value.userLinkedinUrl,
+          userLocation: this.userForm.value.userLocation,
+          userMiddleName: this.userForm.value.userMiddleName,
+          userPhoneNumber: this.userForm.value.userPhoneNumber,
+          userTimeZone: this.userForm.value.userTimeZone,
+          userVisaStatus: this.userForm.value.userVisaStatus,
+        };
+        //this.users[this.findIndexById(this.userForm.value.userId)] = this.userForm.value.userId;
+        const index = this.findIndexById(this.userForm.value.userId);
+        this.users[index] = { ...this.userForm.value };
+         this.userService.updateUser(userData).subscribe((res) => {
+          console.log('User updated successfully');
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'User Updated Successfully',
+            life: 3000,
+            
+          });
+          this.getUserList();
+          this.userDialogue = false;
+        },
+        (error) => {
+          console.error('Error updating user', error);
+          alert('Error updating user details.');
+        }
+        );
+        this.userDialogue = false;
+       this.user = {};
+      }
+       else {
         this.userSize = this.userSize + 1;
         this.user.userId = this.userSize.toString();
         
@@ -263,7 +345,15 @@ updateFilteredBatchNames(){
         this.userService.addUser(userData).subscribe({
           next:(res) => {
             this.userForm.reset();
-            alert("User added successfully");
+            this.submitted = false;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Successful',
+              detail: 'User Added Successfully',
+              life: 3000,
+          });
+            this.user={};
+            
           },
          error:() =>
           {
@@ -295,12 +385,14 @@ updateFilteredBatchNames(){
   deleteUser(user: User) {
     this.confirmationService.confirm({
         
-       // message: 'Are you sure you want to delete ' + user.userFirstName? + " " + user.userMiddleName+ " " + user.lastName +'?',
-        header: 'Confirm',
+       message: 'Are you sure you want to delete the user?', 
+       header: 'Confirm',
         icon: 'pi pi-exclamation-triangle',
         accept: () => {
             this.users = this.users.filter(val => val.userId !== user.userId);
-            //this.user = {};
+            this.userService.deleteUser(user).subscribe(response => {
+              console.log('User is deleted');
+            })
             this.messageService.add({severity:'success', summary: 'Successful', detail: 'User Deleted', life: 3000});
         }
     });

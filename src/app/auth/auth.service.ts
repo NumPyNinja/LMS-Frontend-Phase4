@@ -11,6 +11,7 @@ export class AuthService {
   private loggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public loggedInUserSubject: BehaviorSubject<string> = new BehaviorSubject<string>("");
   loggedInUserId = this.loggedInUserSubject.asObservable();
+  loggedInUserRole:String[]=[];
 
   get isLoggedIn() {
     return this.loggedIn.asObservable();
@@ -50,6 +51,7 @@ export class AuthService {
         this.loggedInUserSubject.next(login.userLoginEmailId);
         localStorage.setItem('token', token);
         this.router.navigate(['/']);
+        this.loggedInUserRole=response.roles;
         //return response;
 
       },
