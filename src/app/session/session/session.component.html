@@ -133,9 +133,9 @@
             <!--<small class="p-invalid"  *ngif="submitted && session.classTopic">Name is required.</small>-->
         </div>
         <div class="p-field">
-            <label for="staffId">Staff Id</label>
-            <p-dropdown [options]="userList" [(ngModel)]="session.classStaffId" placeholder="Select a Staff Id"
-                id="userId" editable="true" optionLabel="userId" [showClear]="true"></p-dropdown>
+            <label for="staffId">Staff Name</label>
+            <p-dropdown [options]="staffIDvaule" [(ngModel)]="session.classStaffName" placeholder="Select a Staff Name"
+                id="userId" editable="true" optionLabel="staffName" [showClear]="true"></p-dropdown>
             <!--<input type="text" id="staffId" pInputText [(ngModel)]="session.classStaffId" required autofocus/>-->
         </div>
         <div class="p-field">

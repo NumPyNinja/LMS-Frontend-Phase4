@@ -10,5 +10,11 @@ export interface Session {
     classNotes?:any;
     classRecordingPath?:any;
     sessionStatus?:any;
-    batchName?:string;
+    classStaffName?:any;
+  batchName?:string;
+}
+export interface Staff{
+    userId?:string;
+    staffName?:string;
+
 }

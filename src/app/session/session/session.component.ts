@@ -1,15 +1,12 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MessageService } from 'primeng/api';
-import { ConfirmationService } from 'primeng/api';
-import { Session } from '../session';
-import { SessionService } from '../session.service';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Batch } from 'src/app/batch/batch';
 import { BatchService } from 'src/app/batch/batch.service';
 import { User } from 'src/app/user/user';
 import { UserService } from 'src/app/user/user.service';
-import { InputNumber } from 'primeng/inputnumber';
-import { Dropdown, DropdownItem } from 'primeng/dropdown';
-import { MatDialog } from '@angular/material/dialog';
+import { Session, Staff } from '../session';
+import { SessionService } from '../session.service';
 
 @Component({
   selector: 'app-session',
@@ -44,7 +41,8 @@ export class SessionComponent implements OnInit {
   public selectedSession: Session;
   public rowID: string;
   dialogRef: any;
-
+  staffList:User[];
+  staffIDvaule:Staff[]=[];
 
   constructor(private dialog: MatDialog, private sessionService: SessionService,
     private userService: UserService,
@@ -55,15 +53,23 @@ export class SessionComponent implements OnInit {
     this.batchService.getBatchList().subscribe(
       batList => { this.batchList = batList; })
     this.userService.getAllUsers().subscribe(
-      user1List => { this.userList = user1List }
-    )
+      user1List => { this.userList = user1List })
+      this.userService.getAllStaff().subscribe(
+        staff1List => { this.staffList = staff1List })
     this.getSessionList();
 
-
-
   }
+//Staff name = FirstName + Last Name Dropdown
+staffIDFunction(){
+    this.staffList.forEach(item => {
+    if(this.staffIDvaule.filter(x => x.userId == item.userId).length == 0) {
+      this.staffIDvaule.push({userId:item.userId,staffName:item.userFirstName+" "+item.userLastName});
+    }
+  });
+}
   openNew() {
     this.session = {};
+    this.staffIDFunction();
     this.submitted = false;
     this.sessionDialogue = true;
 
@@ -77,11 +83,10 @@ export class SessionComponent implements OnInit {
 
     this.submitted = true;
     if (this.session.classTopic.trim()) {
-      const bat: any = this.session.batchName;
-      // this.session.batchId = this.getBatchId(bat.batchName);
-      this.session.batchId=bat.batchId;
-      const user1: any = this.session.classStaffId;
-      this.session.classStaffId = user1.userId;
+
+      const bat: any = this.session.batchId;
+      this.session.batchId = bat.batchId;
+
       //edit class
       if (this.session.csId) {
         this.sessionList[this.findIndexById(this.session.csId)] = this.session;
@@ -91,9 +96,14 @@ export class SessionComponent implements OnInit {
           detail: 'Class Updated',
           life: 3000,
         });
-        this.session.batchId = this.getBatchId(bat);
-        this.session.classStaffId = user1;
-        console.log(this.session);
+
+        this.session.batchId = bat;
+        const user: any = this.session.classStaffName;
+        if(user.userId){
+        this.session.classStaffId = user.userId;
+        }
+        delete this.session.classStaffName;
+
         this.sessionService.editSession(this.session).
           subscribe((res) => {
             console.log("Class is Updated")
@@ -104,10 +114,12 @@ export class SessionComponent implements OnInit {
 
         this.sessionList.push(this.session);
         this.session.batchId = bat.batchId;
-        this.session.classStaffId = user1.userId;
-        console.log(this.session);
-        this.sessionService.addSession(this.session).subscribe((res) => { });
 
+        const user: any = this.session.classStaffName;
+        this.session.classStaffId = user.userId;
+        delete this.session.classStaffName;
+
+        this.sessionService.addSession(this.session).subscribe((res) => { });
         this.messageService.add({
           severity: 'success',
           summary: 'Successful',
@@ -156,7 +168,13 @@ export class SessionComponent implements OnInit {
   editSession(session: Session) {
     
     this.session = { ...session };
-    this.getBatchName(this.session.batchId);
+
+    this.staffIDFunction();
+    if(this.session.classStaffId){
+      this.session.classStaffName=this.findStaffName(this.session.classStaffId);}
+      else
+      this.session.classStaffName="";
+
     this.session.classDate = new Date(this.session.classDate);
     this.sessionDialogue = true;
   }
