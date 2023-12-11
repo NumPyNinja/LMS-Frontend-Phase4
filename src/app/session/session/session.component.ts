@@ -39,8 +39,8 @@ export class SessionComponent implements OnInit {
   csId: string;
   userList: User[] = [];
   userId: string;
-  batchName: string
-  staffName: string
+  batchName: string;
+  staffName: string;
   public selectedSession: Session;
   public rowID: string;
   dialogRef: any;
@@ -77,8 +77,9 @@ export class SessionComponent implements OnInit {
 
     this.submitted = true;
     if (this.session.classTopic.trim()) {
-      const bat: any = this.session.batchId;
-      this.session.batchId = bat.batchId;
+      const bat: any = this.session.batchName;
+      // this.session.batchId = this.getBatchId(bat.batchName);
+      this.session.batchId=bat.batchId;
       const user1: any = this.session.classStaffId;
       this.session.classStaffId = user1.userId;
       //edit class
@@ -90,8 +91,9 @@ export class SessionComponent implements OnInit {
           detail: 'Class Updated',
           life: 3000,
         });
-        this.session.batchId = bat;
+        this.session.batchId = this.getBatchId(bat);
         this.session.classStaffId = user1;
+        console.log(this.session);
         this.sessionService.editSession(this.session).
           subscribe((res) => {
             console.log("Class is Updated")
@@ -103,6 +105,7 @@ export class SessionComponent implements OnInit {
         this.sessionList.push(this.session);
         this.session.batchId = bat.batchId;
         this.session.classStaffId = user1.userId;
+        console.log(this.session);
         this.sessionService.addSession(this.session).subscribe((res) => { });
 
         this.messageService.add({
@@ -125,6 +128,14 @@ export class SessionComponent implements OnInit {
       this.session = {};
     }
   }
+  getBatchId(batchName: string) {
+    for (const batch of this.batchList) {
+          if (batch.batchName === batchName) {
+              this.session.batchId= batch.batchId;
+              return batch.batchId; 
+          }
+        }
+  }
   findIndexById(id: number): number {
     let index = -1;
     if (this.sessionList !== undefined)
@@ -143,9 +154,19 @@ export class SessionComponent implements OnInit {
     })
   }
   editSession(session: Session) {
+    
     this.session = { ...session };
+    this.getBatchName(this.session.batchId);
     this.session.classDate = new Date(this.session.classDate);
     this.sessionDialogue = true;
+  }
+  getBatchName(batchId: any) {
+    for (const batch of this.batchList) {
+      if (batch.batchId === batchId) {
+          this.session.batchName= batch.batchName;
+          return; 
+      }
+    }
   }
 
   getMaxClassId(max: number) {
