@@ -29,6 +29,7 @@ export class AttendanceComponent implements OnInit {
   visibility: boolean = false;
   attendance: Attendance;
   attendanceDialogue: boolean;
+  editAttendanceDialogue: boolean;
   selectedAttendance: Attendance[];
   submitted: boolean;
   batchList: Batch[];
@@ -38,8 +39,8 @@ export class AttendanceComponent implements OnInit {
   selectedStudents: User[];
   //selectedDate: Date;
   users: User[];
-  attendanceDrop: string[]=['Unknown','Present','Absent','Late','Excused'];
-  selectedDrop:string[]=this.attendanceDrop;   
+  attendanceDrop: string[]=['Present','Absent','Late','Excused'];
+  selectedDrop:string[];
 
   constructor(
     private attendanceService: AttendanceService,
@@ -127,60 +128,80 @@ export class AttendanceComponent implements OnInit {
 
   hideDialog() {
     this.attendanceDialogue = false;
+    this.editAttendanceDialogue = false;
     this.submitted = false;
   }
 
   //save an attendance 
   saveAttendance() {
-   
-    this.submitted = true;
-    //edit
+   if(this.editAttendanceDialogue==true){
     
-      if(this.attendance.batchId){
-         this.attendances[this.findIndexById(this.attendance.attId)] = this.attendance;
-
+    let editedAttendance: Attendance = {};
+    editedAttendance.attId=this.attendance.attId;
+    editedAttendance.csId = this.attendance.csId;
+    editedAttendance.studentId = this.attendance.studentId;
+    editedAttendance.attendance = this.attendance.attendance;
+    editedAttendance.creationTime=this.attendance.creationTime;
+    this.attendanceService.updateAttendance(editedAttendance).subscribe((res) => {
+    }, err => {
       this.messageService.add({
-        severity: 'success',
-        summary: 'Successful',
-        detail: 'Attendance Updated',
+        severity: 'failure',
+        summary: 'Failed',
+        detail: 'Attendance creation failed',
         life: 3000,
       });
-      
-      this.attendanceService.updateAttendance(this.attendance).subscribe((res) => {
-        console.log('an attendance is saved')
-      });
-      
+    });
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Successful',
+     
+      life: 3000,
+    });
+    this.getAttendanceList();
+    this.editAttendanceDialogue = false;
+  }
+   else {
+    this.submitted = true;
+    //checking attendance already exist or not
+    for (let index = 0; index < this.selectedStudents.length; index++) {
+      const newStudent = this.selectedStudents[index];
+      for (let i = 0; index < this.selectedClasses.length; index++) {
+        const newClass = this.selectedClasses[i];
+        let attendance = this.attendances.findIndex(att => att.csId === newClass.csId && att.studentId === newStudent.userId);
 
-    } else {
-      let newAttendanceCount: number = 1;
-      this.selectedClasses.forEach((selectedClass) => {
-        this.selectedStudents.forEach((selectedStudent) => {
-          let attendance: Attendance = {};
-          attendance.csId = selectedClass.csId;
-          attendance.studentId = selectedStudent.userId;
-          attendance.attendance = this.selectedDrop.toString();
-          this.attendanceService.addAttendance(this.attendance).subscribe((res) => {
-            newAttendanceCount = newAttendanceCount + 1;
-          }, err => {
+        if(attendance != -1){
+          alert('Cannot add. Attendance already exist');
+        } else {
+            let newAttendanceCount: number = 1;
+            this.selectedClasses.forEach((selectedClass) => {
+              this.selectedStudents.forEach((selectedStudent) => {
+                let attendance: Attendance = {};
+                attendance.csId = selectedClass.csId;
+                attendance.studentId = selectedStudent.userId;
+                attendance.attendance = this.selectedDrop.toString();
+                this.attendanceService.addAttendance(attendance).subscribe((res) => {
+                  newAttendanceCount = newAttendanceCount + 1;
+                }, err => {
+                  this.messageService.add({
+                    severity: 'failure',
+                    summary: 'Failed',
+                    detail: 'Attendance creation failed',
+                    life: 3000,
+                  });
+                });
+              });
+            })
             this.messageService.add({
-              severity: 'failure',
-              summary: 'Failed',
-              detail: 'Attendance creation failed',
+              severity: 'success',
+              summary: 'Successful',
+              detail: newAttendanceCount + ' new attendances created',
               life: 3000,
             });
-          });
-        });
-      })
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Successful',
-        detail: newAttendanceCount + ' new attendances created',
-        life: 3000,
-      });
-      this.getAttendanceList();
-    }
+            this.getAttendanceList();
+          }
+      }}
     this.attendanceDialogue = false;
-  }
+  }}
   //delete
   deleteAttendance(attendance: Attendance) {
     this.confirmationService.confirm({
@@ -205,16 +226,17 @@ export class AttendanceComponent implements OnInit {
 
   editAttendance(attendance: Attendance) {
     this.attendance = { ...attendance };
-    this.attendanceDialogue = true;
-    //data:attendance;
-    this.attendance={};
+    this.editAttendanceDialogue = true;
+    this.attendance.creationTime = new Date(this.attendance.creationTime);
+    this.submitted=false;
+    
   }
 
 
   findIndexById(id: string): number {
     let index = -1;
     for (let i = 0; i < this.attendances.length; i++) {
-      if (this.attendance[i].attendanceId === id) {
+      if (this.attendance[i].attId === id) {
         index = i;
         break;
       }

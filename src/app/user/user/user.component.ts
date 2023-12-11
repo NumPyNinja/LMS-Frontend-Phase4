@@ -5,6 +5,13 @@ import { UserService } from '../user.service';
 import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
 import { forkJoin } from 'rxjs';
+import { ProgramService } from 'src/app/program/program.service';
+import { Program } from 'src/app/program/program';
+import { BatchService } from 'src/app/batch/batch.service';
+import { Batch } from 'src/app/batch/batch';
+import { SelectItem } from 'primeng/api';
+import { UserProgBatch } from '../user-prog-batch';
+
 
 @Component({
   selector: 'app-user',
@@ -23,6 +30,7 @@ export class UserComponent implements OnInit {
   viewUserDialogue:boolean=false;
   role = new FormControl();
   userRoleMaps:string[]=['R01','R02','R03'];
+  userRoleDropdown: SelectItem[];
   roleStatus:string[]=['Active','Inactive'];
   userVisaStatus: string[] = ['Not-Specified', 'NA', 'GC-EAD', 'H4-EAD', 'H4', 'H1B', 
   'Canada-EAD', 'Indian-Citizen', 'US-Citizen', 'Canada-Citizen'];
@@ -35,26 +43,62 @@ export class UserComponent implements OnInit {
   
   constructor(private userService: UserService,private fb: FormBuilder,private messageService: MessageService,
     private confirmationService: ConfirmationService) { }
+
+  assignProgBatchDialogue : boolean;
+  programList: Program[];
+  batchList : Batch[];
+  batchListTemp :Batch[];
+  filteredBatches: Batch[] = [];
+  submittedPB :boolean =false;
  
-  ngOnInit(): void { 
+ constructor(private userService: UserService,
+    private fb: FormBuilder,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private programService: ProgramService,
+    private batchService: BatchService
+    ){ }
+
+  ngOnInit(): void {  
     this.getUserList();
     this.userVisaStatusControl = new FormControl();
     this.userVisaStatusControl.valueChanges.subscribe((val)=>{
       console.log(val);
-       this.visaStatusValue=val;
+      this.visaStatusValue=val;
     });
     this.userRoleStatusControl = new FormControl();
     this.userRoleStatusControl.valueChanges.subscribe((val) => {
       this.roleStatusValue = val;
-       });
-
+    });
+     
+    this.programService.getPrograms().subscribe(list => {
+        this.programList = list;
+        });
+    
+    this.batchService.getBatchList().subscribe(list => {
+        this.batchList = list;
+        this.batchListTemp=this.batchList;
+    });
+    
+    this.userRoleDropdown = this.userRoleMaps.map(role => ({ label: role, value: role }));
   }
+  
+updateFilteredBatchNames(){
+   
+    this.batchList = this.batchListTemp;
+    const progData :any = this.assignProgBatchForm.value.programName;
+    const pid :any=progData.programId;
+    this.batchList = this.batchList.filter(item => item.programId === pid);
+  }
+  
   private selectRow(checkValue: any) {
   
   }
+
   private getUserList() { 
-    this.visibility = true;this.userService.getAllUsers().subscribe(users => {
-      this.users = users; 
+    this.visibility = true;
+    this.userService.getAllUsers().subscribe(users => {
+    this.users = users; 
     this.visibility = false;
    });
    }
@@ -63,14 +107,18 @@ export class UserComponent implements OnInit {
     this.user = { ...user };
     this.viewUserDialogue = true;
   }
+
   hideDialog() {
     this.userDialogue = false;
     this.viewUserDialogue=false;
-   this.submitted=false;
+    this.assignProgBatchDialogue=false;
+    this.submitted=false;
   }
 
-  openAssign(){
-
+  openAssignDialog(){
+    this.submittedPB=false;
+    this.assignProgBatchDialogue=true;
+    this.assignProgBatchForm.reset();
   }
   
   openNew() {
@@ -78,6 +126,7 @@ export class UserComponent implements OnInit {
     this.submitted = false;
     this.userDialogue = true;
   }
+
     userForm = this.fb.group({
       userId: [''],
       userComments: ['', Validators.required],
@@ -103,8 +152,15 @@ export class UserComponent implements OnInit {
         })
       ]),
     });
-
-
+    
+  assignProgBatchForm = this.fb.group({
+    programName: ['', Validators.required],
+    batchName: ['', Validators.required],
+    userId: ['', Validators.required],
+    userStatus:['', Validators.required],
+    roleId:['', Validators.required]
+  });
+ 
   hasUnitNumber = false;
 
   states = [
@@ -170,6 +226,7 @@ export class UserComponent implements OnInit {
   ];
 
 
+
   
   editUser(user: User) {
     
@@ -213,14 +270,17 @@ export class UserComponent implements OnInit {
       }
     ); 
    
+
   }
+
   visaStatusChanged(event: any) {
     this.visaStatusValue = event.value;
-    
   }
+
   userRoleStatusChanged(value: string) {
     this.userRoleStatusControl.setValue(value);
   }
+
   userRoleMapStatusChanged(value: string) {
     
   }
@@ -325,12 +385,14 @@ export class UserComponent implements OnInit {
   deleteUser(user: User) {
     this.confirmationService.confirm({
         
-       // message: 'Are you sure you want to delete ' + user.userFirstName? + " " + user.userMiddleName+ " " + user.lastName +'?',
-        header: 'Confirm',
+       message: 'Are you sure you want to delete the user?', 
+       header: 'Confirm',
         icon: 'pi pi-exclamation-triangle',
         accept: () => {
             this.users = this.users.filter(val => val.userId !== user.userId);
-            //this.user = {};
+            this.userService.deleteUser(user).subscribe(response => {
+              console.log('User is deleted');
+            })
             this.messageService.add({severity:'success', summary: 'Successful', detail: 'User Deleted', life: 3000});
         }
     });
@@ -347,4 +409,61 @@ export class UserComponent implements OnInit {
     return index;
   }
 
+  assignProgramBatch(){
+    this.submittedPB = true;
+    if(this.assignProgBatchForm.valid){
+    
+      const progData :any = this.assignProgBatchForm.value.programName;
+      const pid :any=progData.programId;
+      const batchData :any  = this.assignProgBatchForm.value.batchName;
+      const bId :any = batchData.batchId; 
+      const status = this.assignProgBatchForm.value.userStatus;
+      
+      const userPBData = {
+        programId:pid,
+        roleId:this.assignProgBatchForm.value.roleId,
+        userId:this.assignProgBatchForm.value.userId,
+        userRoleProgramBatches:[
+          {
+              batchId:bId,
+              userRoleProgramBatchStatus:status
+          }
+        ]
+      } 
+
+      this.userService.assignProgBatch(userPBData).subscribe((res) => {
+      this.messageService.add({
+          severity: 'success',
+          summary: 'Successful',
+          detail: 'User  has been successfully assigned to Program/Batch(es)',
+          life: 2000,
+        });
+        this.assignProgBatchDialogue=false;
+      
+      }, (error)=> {
+            this.assignProgBatchDialogue=false;
+            console.error('Other error:', error.status, error.statusText);
+            if(error.status === 200){
+              console.log("true");
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Successful',
+                detail: 'User  has been successfully assigned to Program/Batch(es)',
+                life: 2000,
+              });
+              this.assignProgBatchDialogue=false;
+            }else{
+              this.messageService.add({
+              severity: 'error',
+              summary: 'Failed',
+              detail: error.error.message,
+              life: 2000,
+            });
+          }
+      });
+    } else {
+      console.log("Invalid form");
+    }
+  }
 }
+
