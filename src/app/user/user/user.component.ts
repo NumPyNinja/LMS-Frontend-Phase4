@@ -40,10 +40,6 @@ export class UserComponent implements OnInit {
   roleStatusValue:string;
   userRoleMapsControl:FormControl;
   userRoleMapsValue:string;
-  
-  constructor(private userService: UserService,private fb: FormBuilder,private messageService: MessageService,
-    private confirmationService: ConfirmationService) { }
-
   assignProgBatchDialogue : boolean;
   programList: Program[];
   batchList : Batch[];
