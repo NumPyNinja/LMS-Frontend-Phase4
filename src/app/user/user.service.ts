@@ -44,6 +44,9 @@ export class UserService {
     return this.httpClient.get<User[]>(this.url + "/users/roles/R03")
     
   }
+  updateUser(user: User) {
+    return this.httpClient.put<User>(this.url + "/users/" + user.userId ,user);
+  }
 
   deleteUser(user:User) {
     return this.httpClient.delete<User>(this.url + "/users/" + user.userId);
