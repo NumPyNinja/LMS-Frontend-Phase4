@@ -19,6 +19,7 @@ import { UserProgBatch } from '../user-prog-batch';
   styleUrls: ['./user.component.scss']
 })
 export class UserComponent implements OnInit {
+  
 
   users: User[];
   user:User;
