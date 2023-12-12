@@ -213,8 +213,7 @@ export class AttendanceComponent implements OnInit {
           
         })
         this.ngOnInit();  
-        this.messageService.add({severity:'info', summary:'Confirmed', detail:'You have accepted'});},
-      reject: () => {this.messageService.add({severity:'error', summary:'Rejected', detail:'Could not delete'});this.ngOnInit();},
+        this.messageService.add({severity:'info', summary:'Confirmed', detail:'Selected attendence deleted'});},
       key: "deleteDialog"
     });
   }
@@ -249,17 +248,16 @@ export class AttendanceComponent implements OnInit {
         this.attendances = this.attendances.filter(
             (val) => this.selectedAttendances.includes(val)
         );        
-        this.attendances.forEach((value)=> (
+        this.selectedAttendances.forEach((value)=> (
           this.attendanceService.delete(value).subscribe(response => {   
+            this.selectedAttendances = null;
           })  
-            )) ;
-        this.selectedAttendances = null;
+        )) ;
         this.ngOnInit();  
         this.messageService.add({severity:'info', summary:'Confirmed', detail:'Selected attendences deleted'});},
-        reject: () => {this.messageService.add({severity:'error', summary:'Rejected', detail:'Could not delete'});
-        this.selectedAttendances = null;},
         key: "myDialog"
     });
-
+    
   }
+ 
 }
