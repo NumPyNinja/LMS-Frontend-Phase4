@@ -19,6 +19,7 @@ import { UserProgBatch } from '../user-prog-batch';
   styleUrls: ['./user.component.scss']
 })
 export class UserComponent implements OnInit {
+  
 
   users: User[];
   user:User;
@@ -41,8 +42,7 @@ export class UserComponent implements OnInit {
   userRoleMapsControl:FormControl;
   userRoleMapsValue:string;
   
-  constructor(private userService: UserService,private fb: FormBuilder,private messageService: MessageService,
-    private confirmationService: ConfirmationService) { }
+  
 
   assignProgBatchDialogue : boolean;
   programList: Program[];
