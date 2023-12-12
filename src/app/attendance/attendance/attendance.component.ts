@@ -37,7 +37,6 @@ export class AttendanceComponent implements OnInit {
   sessionList: Session[];
   selectedClasses: Session[];
   selectedStudents: User[];
-  //selectedDate: Date;
   users: User[];
   attendanceDrop: string[]=['Present','Absent','Late','Excused'];
   selectedDrop:string[];
@@ -172,15 +171,13 @@ export class AttendanceComponent implements OnInit {
         if(attendance != -1){
           alert('Cannot add. Attendance already exist');
         } else {
-            let newAttendanceCount: number = 1;
             this.selectedClasses.forEach((selectedClass) => {
               this.selectedStudents.forEach((selectedStudent) => {
                 let attendance: Attendance = {};
                 attendance.csId = selectedClass.csId;
                 attendance.studentId = selectedStudent.userId;
                 attendance.attendance = this.selectedDrop.toString();
-                this.attendanceService.addAttendance(attendance).subscribe((res) => {
-                  newAttendanceCount = newAttendanceCount + 1;
+                this.attendanceService.addAttendance(attendance).subscribe((res) => {;
                 }, err => {
                   this.messageService.add({
                     severity: 'failure',
@@ -191,16 +188,17 @@ export class AttendanceComponent implements OnInit {
                 });
               });
             })
+            this.ngOnInit();
             this.messageService.add({
               severity: 'success',
               summary: 'Successful',
-              detail: newAttendanceCount + ' new attendances created',
+              detail: 'new attendances created',
               life: 3000,
             });
-            this.getAttendanceList();
           }
       }}
-    this.attendanceDialogue = false;
+      this.attendanceDialogue = false;  
+      this.selectedAttendances = null;
   }}
   //delete
   deleteAttendance(attendance: Attendance) {
@@ -214,13 +212,9 @@ export class AttendanceComponent implements OnInit {
         this.attendanceService.delete(attendance).subscribe(response => {
           
         })
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Attendance delete',
-          life: 3000,
-        });
-      },
+        this.ngOnInit();  
+        this.messageService.add({severity:'info', summary:'Confirmed', detail:'Selected attendence deleted'});},
+      key: "deleteDialog"
     });
   }
 
@@ -243,4 +237,27 @@ export class AttendanceComponent implements OnInit {
     }
     return index;
   }
+
+  deleteSelectedAttendances(){
+
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete the selected Attendances?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.attendances = this.attendances.filter(
+            (val) => this.selectedAttendances.includes(val)
+        );        
+        this.selectedAttendances.forEach((value)=> (
+          this.attendanceService.delete(value).subscribe(response => {   
+            this.selectedAttendances = null;
+          })  
+        )) ;
+        this.ngOnInit();  
+        this.messageService.add({severity:'info', summary:'Confirmed', detail:'Selected attendences deleted'});},
+        key: "myDialog"
+    });
+    
+  }
+ 
 }

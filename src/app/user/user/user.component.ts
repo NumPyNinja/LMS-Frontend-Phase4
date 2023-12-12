@@ -41,9 +41,6 @@ export class UserComponent implements OnInit {
   roleStatusValue:string;
   userRoleMapsControl:FormControl;
   userRoleMapsValue:string;
-  
-  
-
   assignProgBatchDialogue : boolean;
   programList: Program[];
   batchList : Batch[];
