@@ -122,6 +122,7 @@ updateFilteredBatchNames(){
     this.user = {};
     this.submitted = false;
     this.userDialogue = true;
+    this.userForm.reset();
   }
 
     userForm = this.fb.group({
@@ -286,7 +287,7 @@ updateFilteredBatchNames(){
     this.submitted = true;
     
     if (this.userForm.valid) {
-      if (this.userForm.value.userId) {
+      if (this.userForm.value.userId) {//Edit User
         const updatedUser = { ...this.userForm.value };
         const userData = {
           userId: this.userForm.value.userId,
@@ -325,11 +326,11 @@ updateFilteredBatchNames(){
         this.userDialogue = false;
        this.user = {};
       }
-       else {
+       else { //may be new User
         this.userSize = this.userSize + 1;
         this.user.userId = this.userSize.toString();
         
-      }
+    //  }
       this.userForm.get('userLogin.loginStatus').setValue('Active');
         const userData = this.userForm.value;
         this.userForm.controls['userVisaStatus'].setValue(this.visaStatusValue);
@@ -366,6 +367,7 @@ updateFilteredBatchNames(){
       
     }
   }
+}
   
   deleteSelectedUsers() {
     this.confirmationService.confirm({
