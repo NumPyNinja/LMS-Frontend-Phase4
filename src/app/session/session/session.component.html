@@ -63,7 +63,7 @@
                         <th style="width: 10rem" pSortableColumn="classStaffName"> Staff Name <p-sortIcon
                                 field="classStaffName"></p-sortIcon></th>
 
-                        <th> Edit Delete</th>
+                        <th> Edit / Delete</th>
                     </tr>
                 </ng-template>
 
@@ -83,8 +83,7 @@
                                     <button pButton pRipple icon="pi pi-pencil"
                                         class="p-button-rounded p-button-success"
                                         (click)="editSession(session)"></button>
-                                </span>
-                                <span>
+                        
                                     <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
                                         (click)="deleteSession(session)"></button>
                                 </span>
