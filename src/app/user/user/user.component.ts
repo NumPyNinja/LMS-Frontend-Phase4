@@ -326,9 +326,10 @@ updateFilteredBatchNames(){
         this.userDialogue = false;
        this.user = {};
       }
-       else { //may be new User
-        this.userSize = this.userSize + 1;
-        this.user.userId = this.userSize.toString();
+    }
+       else {//may be new User
+        //this.userSize = this.userSize + 1;
+        //this.user.userId = this.userSize.toString();
         
     //  }
       this.userForm.get('userLogin.loginStatus').setValue('Active');
@@ -351,11 +352,10 @@ updateFilteredBatchNames(){
               life: 3000,
           });
             this.user={};
-            
           },
-         error:() =>
+         error:(error) =>
           {
-          
+            console.log(error);
             alert("Error adding user details.");
           }
         })
@@ -363,11 +363,10 @@ updateFilteredBatchNames(){
     
       this.userDialogue = false;
       this.user= {};
-
-      
-    }
   }
 }
+
+
   
   deleteSelectedUsers() {
     this.confirmationService.confirm({
