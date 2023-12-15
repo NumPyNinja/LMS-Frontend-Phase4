@@ -84,8 +84,8 @@ staffIDFunction(){
     this.submitted = true;
     if (this.session.classTopic.trim()) {
 
-      const bat: any = this.session.batchId;
-      this.session.batchId = bat.batchId;
+      const bat: any = this.session.batchName;
+      this.session.batchId = this.getBatchId(bat);
 
       //edit class
       if (this.session.csId) {
@@ -97,7 +97,7 @@ staffIDFunction(){
           life: 3000,
         });
 
-        this.session.batchId = bat;
+        this.session.batchId = this.getBatchId(bat);
         const user: any = this.session.classStaffName;
         if(user.userId){
         this.session.classStaffId = user.userId;
@@ -106,9 +106,9 @@ staffIDFunction(){
 
         this.sessionService.editSession(this.session).
           subscribe((res) => {
-            console.log("Class is Updated")
             return res;
           });
+          this.getSessionList();
       } else {
         //add a new class
 
@@ -168,7 +168,7 @@ staffIDFunction(){
   editSession(session: Session) {
     
     this.session = { ...session };
-
+    this.getBatchName(this.session.batchId);
     this.staffIDFunction();
     if(this.session.classStaffId){
       this.session.classStaffName=this.findStaffName(this.session.classStaffId);}
