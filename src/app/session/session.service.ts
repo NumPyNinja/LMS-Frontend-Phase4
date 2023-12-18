@@ -60,7 +60,7 @@ export class SessionService {
     
   }
   deleteSession(session:Session) {
-    return this.httpClient.delete<Session>(this.url + "/deletebyClass/" + session.csId);
+    return this.httpClient.delete<Session>(this.url + "/deleteByClass/" + session.csId);
   }
 
 
