@@ -109,18 +109,20 @@
     styleClass="p-fluid">
     <ng-template pTemplate="content">
         <div class="p-field">
-            <label for="batchName">Name</label>
-            <input type="text" pInputText id="batchName" [(ngModel)]="batch.batchName" required autofocus />
+            <label for="batchName">Name<label [style]="{'color':'red!important'}">*</label></label>
+            <input type="text" pattern="^[a-zA-Z][a-zA-Z0-9 -_]{1}.*" pInputText id="batchName" [(ngModel)]="batch.batchName" required autofocus />
             <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="submitted && !batch.batchName">Batch Name is required.</small>
+            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="patternDesc(batch.batchName,1)" id="text-danger">This field should start with an alphabet and min 2 character.</small>
         </div>
         <div class="p-field">
-            <label for="batchDescription">Description</label>
-            <input type="text" id="batchDescription" pInputText [(ngModel)]="batch.batchDescription" required rows="3"
-                cols="20" />
+            <label for="batchDescription">Description <label [style]="{'color':'red!important'}">*</label></label>
+            <input type="text" id="batchDescription" pattern="^[a-zA-Z][a-zA-Z0-9 ]{1}.*" pInputText [(ngModel)]="batch.batchDescription" required rows="3" cols="20" />
+            <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="submitted && !batch.batchDescription">Batch Description is required.</small>
+            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="patternDesc(batch.batchDescription,2)" id="text-danger">This field should start with an alphabet and min 2 character.</small>
         </div>
 
         <div class="p-field">
-            <label for="programName">Program Name</label>
+            <label for="programName">Program Name <label [style]="{'color':'red!important'}">*</label></label>
             <p-dropdown [options]="programList" [(ngModel)]="batch.programName" placeholder="Select a Program name" id="programName"
                 editable="true" [disabled]="onEdit" optionLabel="programName" [showClear]="true"  required></p-dropdown>
                 <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="submitted && !batch.programName">Program Name is required.</small>
@@ -128,7 +130,7 @@
 
         <div class="radio">
             <div>
-                <lable for="online">Status : </lable>
+                <lable for="online">Status : <lable [style]="{'color':'red!important'}">*</lable></lable>
             </div>
             <div *ngFor="let category of status">
                 <p-radioButton [inputId]="category" name="category" [value]="category" [(ngModel)]="batch.batchStatus" id="batchStatus">
@@ -136,16 +138,13 @@
                 {{category}}
             </div>
         </div>
+        <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !batch.batchStatus" id="text-danger">Status is required.</small>
 
         <div class="p-field">
-            <label for="batchNoOfClasses">Number of Classes</label>
-            <input type="text" id="batchNoOfClasses" pInputText [(ngModel)]="batch.batchNoOfClasses" required rows="3" id="batchNoOfClasses"
-                cols="20" />
+            <label for="batchNoOfClasses">Number of Classes <label [style]="{'color':'red!important'}">*</label></label>
+            <input style="width:100%" type="text" id="batchNoOfClasses" type="number" min="1"  max="2147483647" oninput="validity.valid||(value='')" [(ngModel)]="batch.batchNoOfClasses" required rows="3" cols="20" />
+            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !batch.batchNoOfClasses" id="text-danger">Number of classes is required.</small>
         </div>
-
-
-
-
     </ng-template>
     <ng-template pTemplate="footer">
         <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-rounded p-button-danger"
