@@ -3,6 +3,7 @@ import { UserRoleMaps } from "./user-role-maps";
 import { UserRoleProgramBatch } from "./user-role-program-batch";
 
 export interface User {
+    user?:string;
     userId?:string;
     userFirstName?: string;
     userMiddleName?:string;
@@ -17,6 +18,8 @@ export interface User {
     userVisaStatus?: string;
     userLoginEmail?:string;
     userLogin?: UserLogin;
+    roleId?:string;
+    userRoleStatus?:string;
     userRoleMaps?: UserRoleMaps[]; 
     programName?: string;
     batchName?: string;

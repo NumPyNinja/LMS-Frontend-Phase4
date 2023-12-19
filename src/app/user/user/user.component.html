@@ -151,15 +151,27 @@
 
             <div class="row">
               <div class="col">
-                <mat-form-field class="full-width">
-                  <mat-form-field appearance="fill">
-                    <mat-label>User Role</mat-label>
-                    <mat-select [formControl]="userForm.get('userRoleMaps').controls[0].get('roleId')" (change)="userRoleMapStatusChanged($event.target.value)">
-                      <mat-option *ngFor="let role of userRoleMaps" [value]="role">{{role}}</mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </mat-form-field>
+              <div class="p-field">
+                <label for="userRole">User Role</label>
+                <p-dropdown [options]="userRoleDropdown" formControlName="roleId" name="roleId" id="roleId" 
+                placeholder="Select Role" required></p-dropdown>
+              </div></div>
+              <div class="col">
+              <div class="p-field">
+                <label for="userRoleStatus">User Role Status</label>
+                <p-dropdown [options]="roleStatusDropdown" formControlName="userRoleStatus" name="userRoleStatus" id="userRoleStatus" 
+                placeholder="Select Role Status" required></p-dropdown>
               </div>
+              </div>
+              <div class="col">
+              <div class="p-field">
+                <label for="userVisaStatus">User Visa Status</label>
+                <p-dropdown [options]="userVisaStatusOptions" formControlName="userVisaStatus" name="userVisaStatus" id="userVisaStatus" 
+                placeholder="Select Visa Status" required></p-dropdown>
+              </div>
+              </div>
+
+              <!--
               <div class="col">
                 <mat-form-field class="full-width">
                   <mat-form-field appearance="fill">
@@ -174,12 +186,12 @@
                 <mat-form-field class="full-width">
                   <mat-form-field appearance="fill">
                     <mat-label>Visa Status</mat-label>
-                    <mat-select formControlName="userVisaStatus" (change)="visaStatusChanged($event)">
-                         <mat-option *ngFor="let v1 of userVisaStatus" [value]="v1">{{v1}}</mat-option>
+                    <mat-select [formControl]="userForm.get('userVisaStatusControl')" (change)="visaStatusChanged($event)">
+                         <mat-option *ngFor="let vstatus of userVisaStatus" [value]="vstatus">{{vstatus}}</mat-option>
                     </mat-select>
                   </mat-form-field>
                 </mat-form-field>
-              </div>
+              </div>-->
             </div>
             <div class="row">
             <div class="col">
