@@ -108,33 +108,37 @@
 
        
         <div class="p-field">
-            <label for="batchName">Batch Name</label>
-            
+            <label for="batchName">Batch Name<label [style]="{'color':'red!important'}">*</label></label>
             <p-dropdown [options]="batchList" [(ngModel)]="session.batchName" placeholder="Select a Batch Name" id="batchName"
-                editable="true" optionLabel="batchName" [showClear]="true"></p-dropdown>
+                editable="true" [disabled]="onEdit" optionLabel="batchName" [showClear]="true"></p-dropdown>
+                <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !session.batchName">Batch Name is required.</small>
         </div>
         <div class="p-field">
-            <label for="classNo">No of Classes</label>
-            <input type="text" id="classNo" pInputText [(ngModel)]="session.classNo" required autofocus />
+            <label for="classNo">No of Classes <label [style]="{'color':'red!important'}" for="icon">*</label></label>
+            <input style="width:100%" id="classNo" type="number" min="1" max="2147483647" oninput="validity.valid||(value='')" pInputText [(ngModel)]="session.classNo" required autofocus />
+            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !session.classNo">No. of Classes is required.</small>
         </div>
 
         <div class="p-field">
-
-            <label for="icon">Class Date</label>
-            <p-calendar [(ngModel)]="session.classDate" [showIcon]="true" inputId="icon"
+            <label for="">Class Date <label [style]="{'color':'red!important'}" for="icon">*</label></label>
+            <p-calendar [(ngModel)]="session.classDate" [minDate]="today" appendTo="body" [showIcon]="true" inputId="icon"
                 [style]="{ 'position': 'relative', 'z-index': '10' }"></p-calendar>
+                <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !session.classDate">Class Date is required.</small>
         </div>
 
 
         <div class="p-field">
-            <label for="classTopic">Class Topic</label>
+            <label for="classTopic">Class Topic <label [style]="{'color':'red!important'}" for="icon">*</label></label>
             <input type="text" id="classTopic" pInputText [(ngModel)]="session.classTopic" required autofocus />
-            <!--<small class="p-invalid"  *ngif="submitted && session.classTopic">Name is required.</small>-->
+            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !session.classTopic">Class Topic is required.</small>
+            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="classTopic(session.classTopic)">Class already exists with given Class Topic.</small>
+            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="ClassTopicEdit1(session.classTopic)">Class already exists with given Class Topic.</small>
         </div>
         <div class="p-field">
-            <label for="staffId">Staff Name</label>
+            <label for="staffId">Staff Name <label [style]="{'color':'red!important'}" for="icon">*</label></label>
             <p-dropdown [options]="staffIDvaule" [(ngModel)]="session.classStaffName" placeholder="Select a Staff Name"
                 id="userId" editable="true" optionLabel="staffName" [showClear]="true"></p-dropdown>
+                <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !session.classStaffName">Staff Name is required.</small>
             <!--<input type="text" id="staffId" pInputText [(ngModel)]="session.classStaffId" required autofocus/>-->
         </div>
         <div class="p-field">
