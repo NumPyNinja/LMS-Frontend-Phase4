@@ -69,14 +69,12 @@ export class UserComponent implements OnInit {
     
     this.userVisaStatusControl = new FormControl();
     this.userVisaStatusControl.valueChanges.subscribe((val)=>{
-      console.log(val);
+     
       this.visaStatusValue=val;
-    //  this.userVisaStatus=val;
     });
     this.userRoleStatusControl = new FormControl();
     this.userRoleStatusControl.valueChanges.subscribe((val) => {
-      //this.roleStatusValue = val;
-     // this.userRoleStatus=val;
+      this.roleStatusValue = val;
     });
      
     this.programService.getPrograms().subscribe(list => {
@@ -154,23 +152,20 @@ updateFilteredBatchNames(){
       userTimeZone: ['', Validators.required],
       userVisaStatus: ['', Validators.required],
       roleId : [''],
-      userRoleStatus: ['',],
+      userRoleStatus: [''],
       userLogin: this.fb.group({
-        loginStatus: ['Active', Validators.required],
+        loginStatus: ['Active'],
         password: [''],
         userLoginEmail: ['', [Validators.required, Validators.email]],
       }),
       userRoleMaps: this.fb.array([
         this.fb.group({
-          roleId: ['',Validators.required],
-          userRoleStatus: ['',Validators.required],
+          roleId: [''],
+          userRoleStatus: [''],
         })
       ]),
     });
 
-   
-   
-    
   assignProgBatchForm = this.fb.group({
     programName: ['', Validators.required],
     batchName: ['', Validators.required],
@@ -180,7 +175,7 @@ updateFilteredBatchNames(){
   });
  
   hasUnitNumber = false;
-
+ /*** 
   states = [
     { name: 'Alabama', abbreviation: 'AL' },
     { name: 'Alaska', abbreviation: 'AK' },
@@ -242,20 +237,16 @@ updateFilteredBatchNames(){
     { name: 'Wisconsin', abbreviation: 'WI' },
     { name: 'Wyoming', abbreviation: 'WY' }
   ];
+  **/
 
-
-
-  
-  editUser(user: User) {
-
-    
+editUser(user: User) {
     
     const userEmailAddress:string=user.userLoginEmail;
     this.userForm.patchValue(user);
     this.userForm.get('userLogin.userLoginEmail').patchValue(userEmailAddress);
     this.userDialogue = true;
     this.user={...user};
-    const targetUserId1=user.userId;
+    const targetUserId=user.userId;
     const getAllUsers$ = this.userService.getAllUsers();
     const getUsers$ = this.userService.getUsers();
     getAllUsers$.subscribe(
@@ -267,25 +258,17 @@ updateFilteredBatchNames(){
       userRoleMap1 => {
         console.log('userRoleMap1:', userRoleMap1);
         const userMapWithRoles :any=userRoleMap1;
-        const testUser=userMapWithRoles.find(userMap => userMap.user?.userId == targetUserId1);
+        const testUser=userMapWithRoles.find(userMap => userMap.user?.userId == targetUserId);
         console.log("testUser="+testUser);
         const userRoleStatus1 = testUser.userRoleStatus;
             const userRoleId1 = testUser.role.roleId;
             this.userForm.get('userRoleStatus').setValue(userRoleStatus1);
-          
             this.userForm.get('roleId').setValue(userRoleId1);
-           
-
-      },
-      
-     
-      error => console.error('Error fetching userRoleMap1', error)
+        },
+        error => console.error('Error fetching userRoleMap1', error)
     );
 
-   
-    
-
-    const targetUserId=user.userId;
+   //const targetUserId=user.userId;
     
 
 /**
@@ -320,7 +303,6 @@ updateFilteredBatchNames(){
   }
 
   visaStatusChanged(event: any) {
-    alert("on change");
     console.log("event=="+event);
     //this.visaStatusValue = event.value;
     this.userVisaStatus=event.value;
@@ -337,7 +319,7 @@ updateFilteredBatchNames(){
   onSubmit() {
     this.submitted = true;
     
-    //if (this.userForm.valid) {
+    if (this.userForm.valid) {
       if (this.userForm.value.userId) {//Edit User
         const updatedUser = { ...this.userForm.value };
         
@@ -372,10 +354,11 @@ updateFilteredBatchNames(){
         },
         (error) => {
           console.error('Error updating user', error);
+          console.log(error.message);
           this.messageService.add({
             severity: 'error',
             summary: 'Failed',
-            detail: error.message,
+            detail: error.error.message,
             life: 3000,
             
           });
@@ -424,25 +407,21 @@ updateFilteredBatchNames(){
           },
          error:(error) =>
           {
-            console.log("error=="+error);
+            console.log("error=="+error.message);
             this.messageService.add({
               severity: 'error',
               summary: 'Failed',
-              detail: error.message,
+              detail: error.error.message,
               life: 2000,
               
             });
            // alert("Error adding user details.");
           }
         })
-
-    
       this.userDialogue = false;
       this.user= {};
-
-      
     }
-  //}
+  }
 }
     
   deleteSelectedUsers() {
