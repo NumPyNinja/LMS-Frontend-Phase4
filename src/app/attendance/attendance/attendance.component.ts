@@ -40,6 +40,7 @@ export class AttendanceComponent implements OnInit {
   users: User[];
   attendanceDrop: string[]=['Present','Absent','Late','Excused'];
   selectedDrop:string[];
+  selectedDate: Date;
 
   constructor(
     private attendanceService: AttendanceService,
@@ -140,23 +141,23 @@ export class AttendanceComponent implements OnInit {
     editedAttendance.csId = this.attendance.csId;
     editedAttendance.studentId = this.attendance.studentId;
     editedAttendance.attendance = this.attendance.attendance;
-    editedAttendance.creationTime=this.attendance.creationTime;
+    editedAttendance.attendanceDate=this.attendance.attendanceDate;
     this.attendanceService.updateAttendance(editedAttendance).subscribe((res) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Successful',
+        detail: 'attendances updated',
+        life: 3000,
+      });
     }, err => {
       this.messageService.add({
         severity: 'failure',
         summary: 'Failed',
-        detail: 'Attendance creation failed',
+        detail: 'Attendance updation failed',
         life: 3000,
       });
     });
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Successful',
-     
-      life: 3000,
-    });
-    this.getAttendanceList();
+    this.ngOnInit();
     this.editAttendanceDialogue = false;
   }
    else {
@@ -177,7 +178,14 @@ export class AttendanceComponent implements OnInit {
                 attendance.csId = selectedClass.csId;
                 attendance.studentId = selectedStudent.userId;
                 attendance.attendance = this.selectedDrop.toString();
-                this.attendanceService.addAttendance(attendance).subscribe((res) => {;
+                attendance.attendanceDate = this.selectedDate;
+                this.attendanceService.addAttendance(attendance).subscribe((res) => {          
+                  this.messageService.add({
+                    severity: 'success',
+                    summary: 'Successful',
+                    detail: 'new attendances created',
+                    life: 3000,
+                  });
                 }, err => {
                   this.messageService.add({
                     severity: 'failure',
@@ -189,33 +197,36 @@ export class AttendanceComponent implements OnInit {
               });
             })
             this.ngOnInit();
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Successful',
-              detail: 'new attendances created',
-              life: 3000,
-            });
+            this.attendanceDialogue = false;  
+            this.selectedStudents = null;
+            this.selectedClasses = null;
+            this.selectedDate = null;
+            this.selectedDrop = null;
           }
-      }}
-      this.attendanceDialogue = false;  
+      }}    
       this.selectedAttendances = null;
   }}
   //delete
   deleteAttendance(attendance: Attendance) {
+    
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete ' + attendance.attId + '?',
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
+       
         this.attendances = this.attendances.filter((val) => val.attId !== attendance.attId);
 
-        this.attendanceService.delete(attendance).subscribe(response => {
-          
-        })
-        this.ngOnInit();  
-        this.messageService.add({severity:'info', summary:'Confirmed', detail:'Selected attendence deleted'});},
+        this.attendanceService.delete(attendance).subscribe(response => {         
+              
+        this.messageService.add({severity:'info', summary:'Confirmed', detail:'Selected attendence deleted'});
+      }) 
+        this.ngOnInit(); 
+      },
+      reject: () => {this.getAttendanceList()},
       key: "deleteDialog"
     });
+     
   }
 
   editAttendance(attendance: Attendance) {
@@ -250,14 +261,17 @@ export class AttendanceComponent implements OnInit {
         );        
         this.selectedAttendances.forEach((value)=> (
           this.attendanceService.delete(value).subscribe(response => {   
-            this.selectedAttendances = null;
+            
           })  
-        )) ;
+        )) ;      
         this.ngOnInit();  
+        this.selectedAttendances = null;
         this.messageService.add({severity:'info', summary:'Confirmed', detail:'Selected attendences deleted'});},
-        key: "myDialog"
+      reject: () => {
+        this.selectedAttendances = null;
+      },
+      key: "myDialog"
     });
-    
   }
  
 }

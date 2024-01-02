@@ -10,4 +10,5 @@ export interface Attendance {
     creationTime?: Date;
     batchId?: string;
     batchName?: string;
+    attendanceDate?: Date;
 }
