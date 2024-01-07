@@ -107,7 +107,7 @@ updateFilteredBatchNames(){
 
   private getUserList() { 
     this.visibility = true;
-    this.userService.getAllUsers().subscribe(users => {
+    this.userService.getAllActiveUsers().subscribe(users => {
     this.users = users; 
     this.visibility = false;
    });
