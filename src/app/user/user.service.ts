@@ -30,6 +30,9 @@ export class UserService {
     return this.httpClient.get<User[]>(this.url + "/users");
   }
 
+  getAllActiveUsers(): Observable<User[]> {
+    return this.httpClient.get<User[]>(this.url + "/users/activeUsers");
+  }
   addUser(userData: any) {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.httpClient.post<any>(this.url + '/users/roleStatus', userData, { headers });
