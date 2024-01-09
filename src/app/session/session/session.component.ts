@@ -218,7 +218,11 @@ staffIDFunction(){
         this.sessionList = this.sessionList.filter(
           (val) => !this.selectedSessions.includes(val)
         );
+        this.selectedSessions.forEach((value)=> (
+        this.sessionService.deleteSession(value).subscribe(res => {
         this.selectedSessions = null;
+})
+        )) ;
         this.messageService.add({
           severity: 'success',
           summary: 'Successful',
@@ -265,6 +269,7 @@ staffIDFunction(){
   }
   //Class Topic check whether this class topic already in class r not 
 classTopic(classtopic: string){
+ if(classtopic)
       if(this.sessionList.find(y => y.classTopic == classtopic)&&!this.checkEdit){
         this.checkClassTopic=true;
         return true;
@@ -275,7 +280,7 @@ classTopic(classtopic: string){
       }
     }
   ClassTopicEdit1(classtopic: string)
-  {
+  { if(classtopic)
     if((this.sessionList.find(y => y.classTopic == classtopic))&&this.checkEdit&&(classtopic!=this.classTopicEdit)){
       this.checkClassTopic1=true;
       return true;

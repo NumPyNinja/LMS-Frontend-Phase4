@@ -7,6 +7,7 @@
             </div><br>
             <div class="box">
                 <div>
+<p-confirmDialog  rejectButtonStyleClass="p-button-text" key="myDialog" ></p-confirmDialog>
                     <button pButton pRipple icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedClass()"
                         [disabled]="!selectedSessions || ! selectedSessions.length"></button>
                     <!--add click event for deleting all class-->
@@ -130,9 +131,9 @@
         <div class="p-field">
             <label for="classTopic">Class Topic <label [style]="{'color':'red!important'}" for="icon">*</label></label>
             <input type="text" id="classTopic" pInputText [(ngModel)]="session.classTopic" required autofocus />
-            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !session.classTopic">Class Topic is required.</small>
-            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="classTopic(session.classTopic)">Class already exists with given Class Topic.</small>
-            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="ClassTopicEdit1(session.classTopic)">Class already exists with given Class Topic.</small>
+           <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !session.classTopic">Class Topic is required.</small>
+            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="classTopic(session.classTopic)">Class Topic is already exists.</small>
+            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="ClassTopicEdit1(session.classTopic)">Class Topic is already exists.</small>
         </div>
         <div class="p-field">
             <label for="staffId">Staff Name <label [style]="{'color':'red!important'}" for="icon">*</label></label>
@@ -177,6 +178,10 @@
         <mat-card-content>
             <div class="row">
                 <div class="col">
+<mat-card-title>Class Topic</mat-card-title>
+                    <mat-card-subtitle>{{selectedSession.classTopic}}</mat-card-subtitle>
+                </div>
+                <div class="col">
                     <mat-card-title>No of Classes</mat-card-title>
                     <mat-card-subtitle>{{selectedSession.classNo}}</mat-card-subtitle>
                 </div>
@@ -185,10 +190,7 @@
                     <mat-card-subtitle>{{selectedSession.classDate| date:'shortDate'}}</mat-card-subtitle>
                 </div>
             </div>
-            <div class="col">
-                <mat-card-title>Class Topic</mat-card-title>
-                <mat-card-subtitle>{{selectedSession.classTopic}}</mat-card-subtitle>
-            </div>
+            
             <div class="row">
                 <div class="col">
                     <mat-card-title>Class Description</mat-card-title>
