@@ -43,6 +43,12 @@ export class SessionComponent implements OnInit {
   dialogRef: any;
   staffList:User[];
   staffIDvaule:Staff[]=[];
+  today = new Date();
+  checkClassTopic:boolean=false;
+  checkEdit:boolean=false;
+  classTopicEdit:string;
+  checkClassTopic1:boolean=false;
+  onEdit : boolean = false;
 
   constructor(private dialog: MatDialog, private sessionService: SessionService,
     private userService: UserService,
@@ -54,10 +60,10 @@ export class SessionComponent implements OnInit {
       batList => { this.batchList = batList; })
     this.userService.getAllUsers().subscribe(
       user1List => { this.userList = user1List })
-      this.userService.getAllStaff().subscribe(
-        staff1List => { this.staffList = staff1List })
-    this.getSessionList();
-
+    this.userService.getAllStaff().subscribe(
+      staff1List => { this.staffList = staff1List })
+      this.getSessionList();
+      
   }
 //Staff name = FirstName + Last Name Dropdown
 staffIDFunction(){
@@ -70,6 +76,8 @@ staffIDFunction(){
   openNew() {
     this.session = {};
     this.staffIDFunction();
+    this.checkEdit=false;
+    this.onEdit=false;
     this.submitted = false;
     this.sessionDialogue = true;
 
@@ -80,8 +88,8 @@ staffIDFunction(){
   }
 
   addSession() {
-
     this.submitted = true;
+  if(this.session.batchName && this.session.classDate && this.session.classNo && this.session.classStaffName && !this.checkClassTopic && !this.checkClassTopic1) {
     if (this.session.classTopic.trim()) {
 
       const bat: any = this.session.batchName;
@@ -108,10 +116,9 @@ staffIDFunction(){
           subscribe((res) => {
             return res;
           });
-          this.getSessionList();
+         this.getSessionList();
       } else {
         //add a new class
-
         this.sessionList.push(this.session);
         this.session.batchId = bat.batchId;
 
@@ -127,7 +134,7 @@ staffIDFunction(){
           life: 3000,
         });
         this.getSessionList();
-      } (error) => {
+    } (error) => {
         this.messageService.add({
           severity: 'error',
           summary: 'Failed',
@@ -139,12 +146,14 @@ staffIDFunction(){
       this.sessionDialogue = false;
       this.session = {};
     }
+    this.getSessionList();
+  }
   }
   getBatchId(batchName: string) {
     for (const batch of this.batchList) {
           if (batch.batchName === batchName) {
               this.session.batchId= batch.batchId;
-              return batch.batchId; 
+              return batch.batchId;
           }
         }
   }
@@ -166,8 +175,10 @@ staffIDFunction(){
     })
   }
   editSession(session: Session) {
-    
+    this.checkEdit=true;
+    this.onEdit=true;
     this.session = { ...session };
+    this.classTopicEdit=this.session.classTopic;
     this.getBatchName(this.session.batchId);
     this.staffIDFunction();
     if(this.session.classStaffId){
@@ -182,7 +193,7 @@ staffIDFunction(){
     for (const batch of this.batchList) {
       if (batch.batchId === batchId) {
           this.session.batchName= batch.batchName;
-          return; 
+          return;
       }
     }
   }
@@ -207,7 +218,11 @@ staffIDFunction(){
         this.sessionList = this.sessionList.filter(
           (val) => !this.selectedSessions.includes(val)
         );
+        this.selectedSessions.forEach((value)=> (
+        this.sessionService.deleteSession(value).subscribe(res => {
         this.selectedSessions = null;
+})
+        )) ;
         this.messageService.add({
           severity: 'success',
           summary: 'Successful',
@@ -216,8 +231,6 @@ staffIDFunction(){
         });
       },
     });
-
-
   }
   deleteSession(session: Session) {
     this.confirmationService.confirm({
@@ -252,6 +265,31 @@ staffIDFunction(){
       userdet = this.userList.find(y => y.userId == staffId);
       nameUser = userdet.userFirstName + '  ' + userdet.userLastName;
       return nameUser;
+    }
+  }
+ //Class Topic check whether this class topic already in class r not 
+classTopic(classtopic: string,user:any){
+ if(classtopic)
+  var batchID = user.batchId;
+      if(this.sessionList.find(y => y.classTopic == classtopic && y.batchId==batchID)&&!this.checkEdit){
+        this.checkClassTopic=true;
+        return true;
+      }
+      else{
+        this.checkClassTopic=false;
+        return false;
+      }
+    }
+  ClassTopicEdit1(classtopic: string,batchName:any)
+  { if(classtopic)
+   var batchID=this.getBatchId(batchName);
+    if((this.sessionList.find(y => y.classTopic == classtopic&& y.batchId==batchID))&&this.checkEdit&&(classtopic!=this.classTopicEdit)){
+      this.checkClassTopic1=true;
+      return true;
+    }
+    else{
+      this.checkClassTopic1=false;
+      return false;
     }
   }
 
