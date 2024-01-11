@@ -267,10 +267,11 @@ staffIDFunction(){
       return nameUser;
     }
   }
-  //Class Topic check whether this class topic already in class r not 
-classTopic(classtopic: string){
+ //Class Topic check whether this class topic already in class r not 
+classTopic(classtopic: string,user:any){
  if(classtopic)
-      if(this.sessionList.find(y => y.classTopic == classtopic)&&!this.checkEdit){
+  var batchID = user.batchId;
+      if(this.sessionList.find(y => y.classTopic == classtopic && y.batchId==batchID)&&!this.checkEdit){
         this.checkClassTopic=true;
         return true;
       }
@@ -279,9 +280,10 @@ classTopic(classtopic: string){
         return false;
       }
     }
-  ClassTopicEdit1(classtopic: string)
+  ClassTopicEdit1(classtopic: string,batchName:any)
   { if(classtopic)
-    if((this.sessionList.find(y => y.classTopic == classtopic))&&this.checkEdit&&(classtopic!=this.classTopicEdit)){
+   var batchID=this.getBatchId(batchName);
+    if((this.sessionList.find(y => y.classTopic == classtopic&& y.batchId==batchID))&&this.checkEdit&&(classtopic!=this.classTopicEdit)){
       this.checkClassTopic1=true;
       return true;
     }

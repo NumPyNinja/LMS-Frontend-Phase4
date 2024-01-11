@@ -56,7 +56,7 @@
                                 field="classTopic">
                             </p-sortIcon>
                         </th>
-                        <th style="width: 14rem" pSortableColumn="classDescription">Class Details <p-sortIcon
+                        <th style="width: 14rem" pSortableColumn="classDescription">Class Description <p-sortIcon
                             field="classDescription"></p-sortIcon>
                         </th>
                         <th style="width: 10rem" pSortableColumn="classDate"> Class Date <p-sortIcon
@@ -132,8 +132,8 @@
             <label for="classTopic">Class Topic <label [style]="{'color':'red!important'}" for="icon">*</label></label>
             <input type="text" id="classTopic" pInputText [(ngModel)]="session.classTopic" required autofocus />
            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !session.classTopic">Class Topic is required.</small>
-            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="classTopic(session.classTopic)">Class Topic is already exists.</small>
-            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="ClassTopicEdit1(session.classTopic)">Class Topic is already exists.</small>
+            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="classTopic(session.classTopic,session.batchName)">Class Topic is already exists.</small>
+            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="ClassTopicEdit1(session.classTopic,session.batchName)">Class Topic is already exists.</small>
         </div>
         <div class="p-field">
             <label for="staffId">Staff Name <label [style]="{'color':'red!important'}" for="icon">*</label></label>
@@ -189,8 +189,7 @@
                     <mat-card-title>Class Date</mat-card-title>
                     <mat-card-subtitle>{{selectedSession.classDate| date:'shortDate'}}</mat-card-subtitle>
                 </div>
-            </div>
-            
+            </div>    
             <div class="row">
                 <div class="col">
                     <mat-card-title>Class Description</mat-card-title>
