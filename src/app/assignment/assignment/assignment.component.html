@@ -246,8 +246,7 @@
                         </th>
                     </tr>
                 </ng-template>
-         
-
+               
                 <ng-template pTemplate="body" let-assignmentsubmit>	
                     <tr >
 						 <td>
@@ -258,10 +257,9 @@
                         <td>   
                           <div class="radio" *ngFor="let check of assignsub">
                            <p-radioButton [inputId]="check" name="check" [value]="check" [style]="{'display':'inline!important'}" id="assignsubmit" [(ngModel)]="assignmentsubmit.check">
-                            </p-radioButton> {{check}} </div>                
+                            </p-radioButton> {{check}} </div>
                         </td>
-                  
-						 <td> {{assignmentsubmit.dueDate|date:'shortDate'}} </td>
+					     <td> {{assignmentsubmit.dueDate|date:'shortDate'}} </td>
                         <td> <input id="grade" type="path" pInputText [(ngModel)]="assignmentsubmit.grade" [showIcon]="true"
                         inputId="icon" placeholder="Grade" style="width:30"></td>
                         <td>
@@ -276,14 +274,16 @@
                                 </span>
                             </div>
                         </td>
-                        
                     </tr>
                 </ng-template>
-               
-
+                <ng-template pTemplate="emptymessage" let-columns>
+                    <tr>
+                      <td [attr.colspan]="7">
+                         No Record Found.
+                      </td>
+                    </tr>
+                  </ng-template>
             </p-table>
-    
-
     </mat-card-content>
 
 </p-dialog>
