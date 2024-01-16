@@ -1,16 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import {User} from '../user';
-import { UserService } from '../user.service';
-import { ConfirmationService } from 'primeng/api';
-import { MessageService } from 'primeng/api';
-import { forkJoin } from 'rxjs';
-import { ProgramService } from 'src/app/program/program.service';
-import { Program } from 'src/app/program/program';
-import { BatchService } from 'src/app/batch/batch.service';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { ConfirmationService, MessageService, SelectItem } from 'primeng/api';
 import { Batch } from 'src/app/batch/batch';
-import { SelectItem } from 'primeng/api';
-import { UserProgBatch } from '../user-prog-batch';
+import { BatchService } from 'src/app/batch/batch.service';
+import { Program } from 'src/app/program/program';
+import { ProgramService } from 'src/app/program/program.service';
+import { User } from '../user';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-user',
@@ -48,7 +44,11 @@ export class UserComponent implements OnInit {
   batchListTemp :Batch[];
   filteredBatches: Batch[] = [];
   submittedPB :boolean =false;
-  userObject :boolean;
+ userList:User[];
+ userRoleEdit:boolean=false;
+ progData1:any;
+ userID:any;
+ userObject :boolean;
  
  constructor(private userService: UserService,
     private fb: FormBuilder,
@@ -85,7 +85,9 @@ export class UserComponent implements OnInit {
         this.batchList = list;
         this.batchListTemp=this.batchList;
     });
-    
+    this.userService.getAllUsers().subscribe(list=>{
+      this.userList=list;
+    });
     this.userRoleDropdown = this.userRoleMaps.map(role => ({ label: role, value: role }));
     this.userVisaStatusOptions=this.userVisaStatus.map(vstatus => ({ label: vstatus, value: vstatus }));
     this.roleStatusDropdown = this.roleStatus.map(rStatus => ({ label: rStatus, value: rStatus }));
@@ -126,6 +128,7 @@ updateFilteredBatchNames(){
 
   openAssignDialog(){
     this.submittedPB=false;
+this.userRoleEdit=false;
     this.assignProgBatchDialogue=true;
     this.assignProgBatchForm.reset();
   }
@@ -475,9 +478,9 @@ editUser(user: User) {
       
       const userPBData = {
         programId:pid,
+        userId:this.userID,
         roleId:this.assignProgBatchForm.value.roleId,
-        userId:this.assignProgBatchForm.value.userId,
-        userRoleProgramBatches:[
+                userRoleProgramBatches:[
           {
               batchId:bId,
               userRoleProgramBatchStatus:status
@@ -530,5 +533,26 @@ editUser(user: User) {
       console.log("Invalid form");
     }
   }
+//Role ID  Assign in role id field based on UserEmailID in Assign program/Branch
+  updateFilteredRoleID() {
+    this.progData1 =this.assignProgBatchForm.value.userId;  
+      this.userID = this.progData1.userId;
+      const getUsers$ = this.userService.getUsers();
+      getUsers$.subscribe(
+        userRoleMap1 => console.log('userRoleMap1:', userRoleMap1),
+        error => console.error('Error fetching userRoleMap1', error)
+      );
+      getUsers$.subscribe(
+        userRoleMap1 => {
+          console.log('userRoleMap1:', userRoleMap1);
+          const userMapWithRoles :any=userRoleMap1;
+          const testUser=userMapWithRoles.find(userMap => userMap.user?.userId == this.userID);
+              const userRoleId = testUser.role.roleId;
+              this.assignProgBatchForm.value.roleId=userRoleId;
+              this.userRoleEdit=true;
+      
+          });
+      }
+      
 }
 
