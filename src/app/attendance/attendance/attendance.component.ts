@@ -130,6 +130,10 @@ export class AttendanceComponent implements OnInit {
     this.attendanceDialogue = false;
     this.editAttendanceDialogue = false;
     this.submitted = false;
+    this.selectedStudents = null;
+    this.selectedClasses = null;
+    this.selectedDate = null;
+    this.selectedDrop = null; 
   }
 
   //save an attendance 
