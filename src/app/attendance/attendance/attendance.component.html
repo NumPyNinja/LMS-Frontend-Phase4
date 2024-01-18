@@ -131,7 +131,7 @@
             <div class="p-field p-col-12 p-md-4">
                 <label for="attendanceDate">Attendance Date</label>
                 <p-calendar id="attendanceDate" [(ngModel)]="selectedDate" [showIcon]="true" inputId="icon" id="calendarDueDate"
-                    dateFormat="yy-mm-dd" [style]="{ 'position': 'relative', 'z-index': '80'}"></p-calendar>
+                    dateFormat="yy-mm-dd" [maxDate]="maxDate" [style]="{ 'position': 'relative', 'z-index': '80'}"></p-calendar>
                     <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !selectedDate" id="text-danger">Attendance Date is required.</small>
             </div>
             
