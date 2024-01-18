@@ -112,23 +112,27 @@
                 <label for="studentId">Student Name</label>
                 <p-multiSelect id="studentId" [options]="users" [(ngModel)]="selectedStudents"
                     defaultLabel="Select students" optionLabel="userFirstName" display="chip"></p-multiSelect>
+                    <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !selectedStudents" id="text-danger">Student Name is required.</small>
             </div>
 
             <div class="p-field">
                 <label for="class">Class Name</label>
                 <p-multiSelect id="classNameId" [options]="sessionList" [(ngModel)]="selectedClasses"
                     defaultLabel="Select Class Name" optionLabel="classTopic" display="chip"></p-multiSelect>
+                    <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !selectedClasses" id="text-danger">Class Name is required.</small>
             </div>
             <div class="p-field">
                 <label for="Attendance">Attendance</label>
                 <p-dropdown [options]="attendanceDrop" id="Attendance" [(ngModel)]="selectedDrop" 
                     placeholder="Select Attendance" display="'chip" >
                 </p-dropdown>    
+                <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !selectedDrop" id="text-danger">Attendance is required.</small>
             </div>
             <div class="p-field p-col-12 p-md-4">
                 <label for="attendanceDate">Attendance Date</label>
                 <p-calendar id="attendanceDate" [(ngModel)]="selectedDate" [showIcon]="true" inputId="icon" id="calendarDueDate"
                     dateFormat="yy-mm-dd" [style]="{ 'position': 'relative', 'z-index': '80'}"></p-calendar>
+                    <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !selectedDate" id="text-danger">Attendance Date is required.</small>
             </div>
             
             <div></div>
@@ -164,12 +168,14 @@
                 <label for="Attendance">Attendance</label>
                 <p-dropdown [options]="attendanceDrop" [(ngModel)]="attendance.attendance" id="attendance"
                     editable="true" [showClear]="true"></p-dropdown>
+                    <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="!attendance.attendance" id="text-danger">Attendance is required.</small>
             </div>
 
             <div class="p-field p-col-12 p-md-4">
                 <label for="attendanceDate">Attendance Date</label>
                 <p-calendar id="attendanceDate" [(ngModel)]="attendance.attendanceDate" [showIcon]="true" inputId="icon" id="calendarDueDate"
-                    dateFormat="yy-mm-dd" [style]="{ 'position': 'relative', 'z-index': '80'}"></p-calendar>
+                    dateFormat="yy-mm-dd" [maxDate]="maxDate" [style]="{ 'position': 'relative', 'z-index': '80'}"></p-calendar>
+                    <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="!attendance.attendanceDate" id="text-danger">Attendance Date is required.</small>
             </div>
 
         </div>

@@ -41,6 +41,7 @@ export class AttendanceComponent implements OnInit {
   attendanceDrop: string[]=['Present','Absent','Late','Excused'];
   selectedDrop:string[];
   selectedDate: Date;
+  maxDate:Date;
 
   constructor(
     private attendanceService: AttendanceService,
@@ -67,6 +68,8 @@ export class AttendanceComponent implements OnInit {
       this.sessionList=res;
       this.getAttendanceList();
     })
+
+    this.maxDate=new Date();
         
   }
 
@@ -277,5 +280,6 @@ export class AttendanceComponent implements OnInit {
       key: "myDialog"
     });
   }
+
  
 }
