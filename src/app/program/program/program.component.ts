@@ -32,6 +32,8 @@ export class ProgramComponent implements OnInit {
 
   programSize: number;
 
+  nameExisted: boolean = false;
+
   visibility: boolean = false;
 
   status: string[] = ['Active', 'Inactive'];
@@ -105,45 +107,47 @@ export class ProgramComponent implements OnInit {
   }
   saveProgram() {
     this.submitted = true;
-    if (this.program.programName.trim()) {
-      if (this.program.programId) {
-        this.programs[this.findIndexById(this.program.programId)] = this.program;
-
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Program Updated',
-          life: 3000,
-        });
-
-        this.programService.editProgram(this.program).subscribe((res) => {
-          console.log('a program is updated')
-        });
-      } else {
-        this.programSize = this.programSize + 1;
-        this.program.programId = this.programSize.toString();
-        this.programService.addProgram(this.program).subscribe((res) => {
+    if (this.program.programName && this.program.programDescription && this.program.programStatus) {
+      if (this.program.programName.trim()) {
+        if (this.program.programId) {
+          this.programs[this.findIndexById(this.program.programId)] = this.program;
 
           this.messageService.add({
             severity: 'success',
             summary: 'Successful',
-            detail: 'Program Created Successfully',
+            detail: 'Program Updated',
             life: 3000,
           });
-          this.getProgramList();
-        }, (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Failed',
-            detail: error,
-            life: 3000,
-          });
-        });
 
+          this.programService.editProgram(this.program).subscribe((res) => {
+            console.log('a program is updated')
+          });
+        } else {
+          this.programSize = this.programSize + 1;
+          this.program.programId = this.programSize.toString();
+          this.programService.addProgram(this.program).subscribe((res) => {
+
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Successful',
+              detail: 'Program Created Successfully',
+              life: 3000,
+            });
+            this.getProgramList();
+          }, (error) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Failed',
+              detail: error,
+              life: 3000,
+            });
+          });
+
+        }
+        this.programs = [...this.programs];
+        this.programDialogue = false;
+        this.program = {};
       }
-      this.programs = [...this.programs];
-      this.programDialogue = false;
-      this.program = {};
     }
   }
 
@@ -188,6 +192,19 @@ export class ProgramComponent implements OnInit {
     })
     return arr;
 
+  }
+
+  //Validation for "user name already exist or not"
+
+  chkNameExisted(PName: string){
+    if(this.programs.find(name => name.programName == PName)){
+      this.nameExisted = true;
+      return true;
+    }
+    else{
+      this.nameExisted = false;
+      return false;
+    }
   }
 
 }

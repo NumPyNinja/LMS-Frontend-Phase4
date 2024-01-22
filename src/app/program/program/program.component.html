@@ -89,19 +89,21 @@
     styleClass="p-fluid">
     <ng-template pTemplate="content">
         <div class="p-field">
-            <label for="programName">Name</label>
+            <label for="programName">Name<span [style]="{'color':'red!important'}">*</span></label>
             <input type="text" pInputText id="programName" [(ngModel)]="program.programName" required autofocus />
-            <small class="p-invalid" *ngIf="submitted && !program.programName">Name is required.</small>
+            <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="submitted && !program.programName">Program name is required.</small>
+            <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="chkNameExisted(program.programName)">Program name is already exist.</small>
         </div>
         <div class="p-field">
-            <label for="programDescription">Description</label>
+            <label for="programDescription">Description<span [style]="{'color':'red!important'}">*</span></label>
             <input type="text" id="programDescription" pInputText [(ngModel)]="program.programDescription" required
                 rows="3" cols="20" />
+            <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="submitted && !program.programDescription">Description is required.</small>
         </div>
 
         <div class="radio">
             <div>
-                <lable for="online">Status</lable>
+                <lable for="online">Status<span [style]="{'color':'red!important'}">*</span></lable>
             </div>
             <div *ngFor="let category of status">
                 <p-radioButton [inputId]="category" name="category" [value]="category" id="category"
@@ -110,6 +112,7 @@
                 {{category}}
             </div>
         </div>
+        <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="submitted && !program.programStatus">Status is required.</small>
     </ng-template>
     <ng-template pTemplate="footer">
         <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-rounded p-button-danger"
