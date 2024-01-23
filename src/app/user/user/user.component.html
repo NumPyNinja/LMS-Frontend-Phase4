@@ -63,10 +63,10 @@
             <td>
               <p-tableCheckbox [value]="user"></p-tableCheckbox>
             </td>
-            <td>{{user.userId}}</td>
-            <td>{{user.userFirstName}} {{user.userLastName}}</td>
-            <td style="word-wrap: break-word;">{{user.userLocation}}</td>
-            <td>{{user.userPhoneNumber}}</td>
+            <td (click)="onRowClicked(mytemplateUser,user)">{{user.userId}}</td>
+            <td (click)="onRowClicked(mytemplateUser,user)">{{user.userFirstName}} {{user.userLastName}}</td>
+            <td (click)="onRowClicked(mytemplateUser,user)" style="word-wrap: break-word;">{{user.userLocation}}</td>
+            <td (click)="onRowClicked(mytemplateUser,user)">{{user.userPhoneNumber}}</td>
             <td>
               <div class="action">
                 <span>
@@ -310,3 +310,61 @@
   </p-dialog>
   <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
 </div>
+<ng-template #mytemplateUser>
+    <mat-card class="user-card">
+        <mat-card-content>
+            <div class="row">
+                <div class="col">
+<mat-card-title>User Id</mat-card-title>
+                    <mat-card-subtitle>{{selectedUser.userId}}</mat-card-subtitle>
+                </div>
+                <div class="col">
+                    <mat-card-title>User Name</mat-card-title>
+                    <mat-card-subtitle>{{selectedUser.userFirstName}} {{selectedUser.userLastName}}</mat-card-subtitle>
+                </div>
+                
+            </div>    
+            <div class="row">
+                <div class="col">
+                    <mat-card-title>User Location </mat-card-title>
+                    <mat-card-subtitle>{{selectedUser.userLocation}}</mat-card-subtitle>
+                </div>
+                <div class="col">
+                    <mat-card-title>User Phonenumber</mat-card-title>
+                    <mat-card-subtitle>{{selectedUser.userPhoneNumber}}</mat-card-subtitle>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col">
+                    <mat-card-title>User Email</mat-card-title>
+                    <mat-card-subtitle>{{selectedUser1.userLoginEmail}}</mat-card-subtitle>
+                </div>
+                <div class="col">
+                  <mat-card-title>User LinkedIn </mat-card-title>
+                  <mat-card-subtitle>{{selectedUser.userLinkedinUrl}}</mat-card-subtitle>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                  <mat-card-title>User Under Graduate</mat-card-title>
+                  <mat-card-subtitle>{{selectedUser1.userEduUg}}</mat-card-subtitle>
+              </div>
+              <div class="col">
+                <mat-card-title>User Post Graduate</mat-card-title>
+                <mat-card-subtitle>{{selectedUser1.userEduPg}}</mat-card-subtitle>
+            </div>
+          </div>
+            <div class="row">
+                <div class="col">
+                    <mat-card-title>User Visa Status</mat-card-title>
+                    <mat-card-subtitle>{{selectedUser1.userVisaStatus}}</mat-card-subtitle>
+                </div>
+            </div>
+        </mat-card-content>
+        <mat-dialog-actions>
+            <button mat-button mat-dialog-close (click)="onCloseDialog()">Close</button>
+        </mat-dialog-actions>
+    </mat-card>
+
+</ng-template>
