@@ -179,3 +179,38 @@ input {
 .viewtableData{
   font-weight: normal;
 } 
+// mat-card-title {
+//   max-width: 100%;
+//   font-size: medium;
+//   text-align: left;
+// }
+
+// mat-card-subtitle {
+//   max-width: 100%;
+//   font-style: bold;
+//   text-align: right;
+// }
+// .user-card {
+//   width: 400px; /* Adjust the width as needed */
+//   margin: 20px; /* Add margin for spacing */
+// }
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px; /* Add margin between rows */
+}
+
+.col {
+  flex: 1;
+  margin-right: 10px; /* Add margin between columns */
+}
+
+mat-card-title {
+  font-weight: bold;
+}
+
+mat-card-subtitle {
+  color: #555; /* Adjust the color as needed */
+}

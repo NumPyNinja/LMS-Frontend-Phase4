@@ -7,6 +7,7 @@ import { Program } from 'src/app/program/program';
 import { ProgramService } from 'src/app/program/program.service';
 import { User } from '../user';
 import { UserService } from '../user.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-user',
@@ -49,13 +50,21 @@ export class UserComponent implements OnInit {
  progData1:any;
  userID:any;
  userObject :boolean;
+  rowID: any;
+  selectedUser: any;
+  dialogRef: any;
+  selectedEmail: any;
+  user1: User[];
+  selectedUser1: User;
+  user2: any;
  
  constructor(private userService: UserService,
     private fb: FormBuilder,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private programService: ProgramService,
-    private batchService: BatchService
+    private batchService: BatchService,
+    private dialog: MatDialog
     ){ }
 
   ngOnInit(): void {  
@@ -465,7 +474,26 @@ editUser(user: User) {
     }
     return index;
   }
+  onRowClicked(templateRef,row){
+    this.rowID = row['userId'];
+    this.selectedUser= this.users.find((user) => user.userId.toString() === this.rowID);
+    console.log(this.selectedUser);
+    this.userService.getAllUsers().subscribe(user1 => {
+      this.user1=user1;
+      console.log(user1);
+      this.selectedUser1= this.user1.find((user) => user.userId.toString() === this.selectedUser.userId.toString());
+      
+});
 
+    this.dialogRef = this.dialog.open(templateRef, {
+      height: '550px',
+      width: '700px',
+    });
+
+  }
+  onCloseDialog() {
+    this.dialogRef.close();
+  }
   assignProgramBatch(){
     this.submittedPB = true;
     if(this.assignProgBatchForm.valid){
