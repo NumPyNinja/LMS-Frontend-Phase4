@@ -197,7 +197,7 @@ export class ProgramComponent implements OnInit {
   //Validation for "user name already exist or not"
 
   chkNameExisted(PName: string){
-    if(this.programs.find(name => name.programName == PName)){
+    if(this.programs.find(name => name.programName == PName)&&!this.editProgram){
       this.nameExisted = true;
       return true;
     }
