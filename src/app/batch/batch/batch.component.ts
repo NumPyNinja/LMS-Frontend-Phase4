@@ -32,6 +32,8 @@ export class BatchComponent implements OnInit {
   status: string[] = ['ACTIVE', 'INACTIVE'];
   programList: Program[];
   onEdit : boolean = false;
+  pattBatchName:boolean=false;
+  pattBatchDes:boolean=false;
   constructor(
     private batchService: BatchService,
     private programService: ProgramService,
@@ -65,7 +67,7 @@ export class BatchComponent implements OnInit {
 
   saveBatch(): void {
     this.submitted = true;
-    if(this.batch.batchName){
+    if(this.batch.batchName && this.batch.programName && this.batch.batchDescription && this.batch.batchNoOfClasses && this.batch.batchStatus && !this.pattBatchName && !this.pattBatchDes) {
       if (this.batch.batchName.trim()) { //edit batch
 
       //const pro: any = this.batch.programName;
@@ -185,5 +187,23 @@ export class BatchComponent implements OnInit {
       },
     });
   }
+  //pattern validation for batch Name and batch description
+patternDesc(patt :string, field:number)
+{
+	 const pattern=/^[a-zA-Z][a-zA-Z0-9 ]{1}.*/;
+     if(!pattern.test(patt)&&field==1){
+     this.pattBatchName=true;
+     return  this.pattBatchName;
+	 }
+   else if(!pattern.test(patt)&&field==2){
+    this.pattBatchDes=true;
+    return this.pattBatchDes;
+  } 
+  else{
+   
+   this.pattBatchDes=false;
+   this.pattBatchName=false;
+   return false;}
+}
 
 }
