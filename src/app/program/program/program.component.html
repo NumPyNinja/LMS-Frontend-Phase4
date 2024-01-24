@@ -90,15 +90,17 @@
     <ng-template pTemplate="content">
         <div class="p-field">
             <label for="programName">Name<span [style]="{'color':'red!important'}">*</span></label>
-            <input type="text" pInputText id="programName" [(ngModel)]="program.programName" required autofocus />
+            <input type="text" pattern="^[a-zA-Z][a-zA-Z0-9 ]{1,25}$" pInputText id="programName" [(ngModel)]="program.programName"  required autofocus />
             <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="submitted && !program.programName">Program name is required.</small>
-            <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="chkNameExisted(program.programName)">Program name is already exist.</small>
+            <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="editMode && chkNameExisted(program.programName)">Program name is already exist.</small>
+            <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="patternName()">This field should start with an alphabet, no special char and min 2 char.</small>
         </div>
         <div class="p-field">
             <label for="programDescription">Description<span [style]="{'color':'red!important'}">*</span></label>
-            <input type="text" id="programDescription" pInputText [(ngModel)]="program.programDescription" required
+            <input type="text" pattern="^[a-zA-Z][a-zA-Z0-9 -_]{1,25}.*" id="programDescription" pInputText [(ngModel)]="program.programDescription" required
                 rows="3" cols="20" />
             <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="submitted && !program.programDescription">Description is required.</small>
+            <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="patternDesc()">This field should start with an alphabet and min 2 char.</small>
         </div>
 
         <div class="radio">

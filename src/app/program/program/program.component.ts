@@ -34,9 +34,13 @@ export class ProgramComponent implements OnInit {
 
   nameExisted: boolean = false;
 
+  editMode: boolean =true;
+
   visibility: boolean = false;
 
   status: string[] = ['Active', 'Inactive'];
+  pattername: boolean=false;
+  patternDes: boolean=false;
 
 
   constructor(
@@ -54,7 +58,32 @@ export class ProgramComponent implements OnInit {
     this.program = {};
     this.submitted = false;
     this.programDialogue = true;
+    this.editMode = true  
   }
+
+   //pattern validation for  Name
+patternDesc()
+{
+	 const pattern=/^[a-zA-Z][a-zA-Z0-9 -_]{1,25}.*/;
+     if(!pattern.test(this.program.programDescription)){
+		  this.patternDes=true;
+		 return true;
+	 } 
+	 else{
+	  this.patternDes=false;
+	    return false;}
+}
+  patternName()
+{
+	 const pattern=/^[a-zA-Z][a-zA-Z0-9 ]{1,25}$/;
+     if(!pattern.test(this.program.programName)){
+		 this.pattername=true;
+		 return true;
+	 }
+	 else{
+	    this.pattername=false;
+	    return false;}
+}
 
   deleteSelectedPrograms() {
     this.confirmationService.confirm({
@@ -77,6 +106,7 @@ export class ProgramComponent implements OnInit {
   }
 
   editProgram(program: Program) {
+    this.editMode = false;
     this.program = { ...program };
     console.log('Edit Program Test' + this.program)
     this.programDialogue = true;
@@ -107,7 +137,7 @@ export class ProgramComponent implements OnInit {
   }
   saveProgram() {
     this.submitted = true;
-    if (this.program.programName && this.program.programDescription && this.program.programStatus) {
+    if (this.program.programName && this.program.programDescription && this.program.programStatus && !this.pattername && !this.patternDes && !this.nameExisted) {
       if (this.program.programName.trim()) {
         if (this.program.programId) {
           this.programs[this.findIndexById(this.program.programId)] = this.program;
@@ -197,7 +227,7 @@ export class ProgramComponent implements OnInit {
   //Validation for "user name already exist or not"
 
   chkNameExisted(PName: string){
-    if(this.programs.find(name => name.programName == PName)&&!this.editProgram){
+    if(this.programs.find(name => name.programName == PName)){
       this.nameExisted = true;
       return true;
     }
