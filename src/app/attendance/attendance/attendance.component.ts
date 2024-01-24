@@ -41,7 +41,8 @@ export class AttendanceComponent implements OnInit {
   attendanceDrop: string[]=['Present','Absent','Late','Excused'];
   selectedDrop:string[];
   selectedDate: Date;
-  maxDate:Date;
+  maxDate : Date;  
+  minDate = new Date();
 
   constructor(
     private attendanceService: AttendanceService,
@@ -50,7 +51,6 @@ export class AttendanceComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private sessionService:SessionService,
     private userService: UserService) {
-    
   }
 
   ngOnInit(): void {
@@ -69,8 +69,9 @@ export class AttendanceComponent implements OnInit {
       this.getAttendanceList();
     })
 
-    this.maxDate=new Date();
-        
+    this.maxDate = new Date();
+    this.minDate.setDate(this.maxDate.getDate() - 6); 
+  
   }
 
   private getAttendanceList() {
