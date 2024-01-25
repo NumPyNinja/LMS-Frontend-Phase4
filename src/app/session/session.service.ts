@@ -27,7 +27,8 @@ export class SessionService {
       classDescription:session.classDescription,
       classComments:session.classComments,
       classNotes:session.classNotes,
-      classRecordingPath:session.classRecordingPath
+      classRecordingPath:session.classRecordingPath,
+      classStatus:session.classStatus
 
     };
     return this.httpClient.put<Session>(this.url + "/updateClass/" + session.csId, payload);
@@ -43,7 +44,8 @@ export class SessionService {
       classDescription:session.classDescription,
       classComments:session.classComments,
       classNotes:session.classNotes,
-      classRecordingPath:session.classRecordingPath
+      classRecordingPath:session.classRecordingPath,
+      classStatus:session.classStatus
 
     };
     return this.httpClient.post<Session>(this.url + "/CreateClassSchedule",payload)
