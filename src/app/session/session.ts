@@ -12,6 +12,7 @@ export interface Session {
     sessionStatus?:any;
     classStaffName?:any;
   batchName?:string;
+  classStatus?:any;
 }
 export interface Staff{
     userId?:string;

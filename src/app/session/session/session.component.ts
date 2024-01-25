@@ -49,6 +49,7 @@ export class SessionComponent implements OnInit {
   classTopicEdit:string;
   checkClassTopic1:boolean=false;
   onEdit : boolean = false;
+  status: string[] = ['Active', 'Inactive'];
 
   constructor(private dialog: MatDialog, private sessionService: SessionService,
     private userService: UserService,
