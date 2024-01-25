@@ -59,6 +59,8 @@
                         <th style="width: 14rem" pSortableColumn="classDescription">Class Description <p-sortIcon
                             field="classDescription"></p-sortIcon>
                         </th>
+                        <th style="width: 10rem" pSortableColumn="classStatus"> Status <p-sortIcon
+                            field="classStatus"></p-sortIcon></th> 
                         <th style="width: 10rem" pSortableColumn="classDate"> Class Date <p-sortIcon
                                 field="classDate"></p-sortIcon></th>
                         <th style="width: 10rem" pSortableColumn="classStaffName"> Staff Name <p-sortIcon
@@ -74,6 +76,7 @@
                         <td (click)="onRowClicked(mytemplateSession,session)">{{findBatchName(session.batchId)}}</td>
                         <td (click)="onRowClicked(mytemplateSession,session)">{{session.classTopic}}</td>
                         <td (click)="onRowClicked(mytemplateSession,session)">{{session.classDescription}}</td>
+                        <td (click)="onRowClicked(mytemplateSession,session)">{{session.classStatus}}</td>
                         <td (click)="onRowClicked(mytemplateSession,session)">{{session.classDate | date:'shortDate'}}
                         </td>
                         <td (click)="onRowClicked(mytemplateSession,session)">{{findStaffName(session.classStaffId)}}
@@ -147,6 +150,19 @@
             <input type="text" id="classDescription" pInputText [(ngModel)]="session.classDescription" required
                 autofocus rows="3" cols="20" />
         </div>
+        <div class="radio">
+            <div>
+                <lable for="online">Status</lable>
+                <span [style]="{'color':'red!important'}" for="icon">*</span>
+            </div>
+            <div *ngFor="let category of status">
+                <p-radioButton [inputId]="category" name="category" [value]="category" id="category"
+                    [(ngModel)]="session.classStatus">
+                </p-radioButton>
+                {{category}}
+            </div>
+        </div>
+        <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !session.classStatus">Status is required.</small>
         <div class="p-field">
             <label for="classComments">Comments</label>
             <input type="text" id="classComments" pInputText [(ngModel)]="session.classComments" required autofocus />
@@ -194,6 +210,13 @@
                 <div class="col">
                     <mat-card-title>Class Description</mat-card-title>
                     <mat-card-subtitle>{{selectedSession.classDescription}}</mat-card-subtitle>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <mat-card-title>Status</mat-card-title>
+                        <mat-card-subtitle>{{selectedSession.classStatus}}</mat-card-subtitle>
+                    </div>
+    
                 </div>
                 <div class="col">
                     <mat-card-title>Class Comments</mat-card-title>

@@ -49,6 +49,7 @@ export class SessionComponent implements OnInit {
   classTopicEdit:string;
   checkClassTopic1:boolean=false;
   onEdit : boolean = false;
+  status: string[] = ['Active', 'Inactive'];
 
   constructor(private dialog: MatDialog, private sessionService: SessionService,
     private userService: UserService,
@@ -89,7 +90,7 @@ staffIDFunction(){
 
   addSession() {
     this.submitted = true;
-  if(this.session.batchName && this.session.classDate && this.session.classNo && this.session.classStaffName && !this.checkClassTopic && !this.checkClassTopic1) {
+  if(this.session.batchName && this.session.classDate && this.session.classNo && this.session.classStaffName && this.session.classStatus && !this.checkClassTopic && !this.checkClassTopic1) {
     if (this.session.classTopic.trim()) {
 
       const bat: any = this.session.batchName;
