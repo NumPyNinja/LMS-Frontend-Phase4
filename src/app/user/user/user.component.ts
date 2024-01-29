@@ -7,6 +7,8 @@ import { Program } from 'src/app/program/program';
 import { ProgramService } from 'src/app/program/program.service';
 import { User } from '../user';
 import { UserService } from '../user.service';
+import { MatDialog } from '@angular/material/dialog';
+import { UserRoleProgramBatch } from '../user-role-program-batch';
 
 @Component({
   selector: 'app-user',
@@ -14,104 +16,119 @@ import { UserService } from '../user.service';
   styleUrls: ['./user.component.scss']
 })
 export class UserComponent implements OnInit {
-  
+
   users: User[];
   usersWithRolesList: User[];
-  user:User;
+  user: User;
   visibility: boolean = false;
   userSize: number;
   selectedUsers: User[];
   submitted: boolean;
-  userDialogue : boolean = false;
-  viewUserDialogue:boolean=false;
+  userDialogue: boolean = false;
+  viewUserDialogue: boolean = false;
   role = new FormControl();
-  userRoleMaps:string[]=['R01','R02','R03'];
+  userRoleMaps: string[] = ['R01', 'R02', 'R03'];
   userRoleDropdown: SelectItem[];
-  roleStatus:string[]=['Active','Inactive'];
+  roleStatus: string[] = ['Active', 'Inactive'];
   roleStatusDropdown: SelectItem[]; //Jo
-  userVisaStatus: string[] = ['Not-Specified', 'NA', 'GC-EAD', 'H4-EAD', 'H4', 'H1B', 
-  'Canada-EAD', 'Indian-Citizen', 'US-Citizen', 'Canada-Citizen'];
+  userVisaStatus: string[] = ['Not-Specified', 'NA', 'GC-EAD', 'H4-EAD', 'H4', 'H1B',
+    'Canada-EAD', 'Indian-Citizen', 'US-Citizen', 'Canada-Citizen'];
   userVisaStatusOptions: SelectItem[]; //Jo
   userVisaStatusControl: FormControl;
   visaStatusValue: string;
   userRoleStatusControl: FormControl;
-  roleStatusValue:string;
-  userRoleMapsControl:FormControl;
-  userRoleMapsValue:string;
-  assignProgBatchDialogue : boolean;
+  roleStatusValue: string;
+  userRoleMapsControl: FormControl;
+  userRoleMapsValue: string;
+  assignProgBatchDialogue: boolean;
   programList: Program[];
-  batchList : Batch[];
-  batchListTemp :Batch[];
+  batchList: Batch[];
+  batchListTemp: Batch[];
   filteredBatches: Batch[] = [];
-  submittedPB :boolean =false;
- userList:User[];
- userRoleEdit:boolean=false;
- progData1:any;
- userID:any;
- userObject :boolean;
- 
- constructor(private userService: UserService,
+  submittedPB: boolean = false;
+  userList: User[];
+  userRoleEdit: boolean = false;
+  progData1: any;
+  userID: any;
+  userObject: boolean;
+  rowID: any;
+  selectedUser: any;
+  dialogRef: any;
+  selectedEmail: any;
+  user1: User[];
+  selectedUser1: User;
+  userRoleProgramBatchList: UserRoleProgramBatch[];
+  selectedUser2: any;
+  notFoundMessage: string;
+
+  constructor(private userService: UserService,
     private fb: FormBuilder,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private programService: ProgramService,
-    private batchService: BatchService
-    ){ }
+    private batchService: BatchService,
+    private dialog: MatDialog
+  ) { }
 
-  ngOnInit(): void {  
+  ngOnInit(): void {
     this.getUserList();
     this.userService.getUsers().subscribe(res => {
-    this.usersWithRolesList = res;
+      this.usersWithRolesList = res;
     },
-    (error) => {
-      console.log(error);
-    });
-    
+      (error) => {
+        console.log(error);
+      });
+
     this.userVisaStatusControl = new FormControl();
-    this.userVisaStatusControl.valueChanges.subscribe((val)=>{
-     
-      this.visaStatusValue=val;
+    this.userVisaStatusControl.valueChanges.subscribe((val) => {
+
+      this.visaStatusValue = val;
     });
     this.userRoleStatusControl = new FormControl();
     this.userRoleStatusControl.valueChanges.subscribe((val) => {
       this.roleStatusValue = val;
     });
-     
+
     this.programService.getPrograms().subscribe(list => {
-        this.programList = list;
-        });
-    
+      this.programList = list;
+    });
+
     this.batchService.getBatchList().subscribe(list => {
-        this.batchList = list;
-        this.batchListTemp=this.batchList;
+      this.batchList = list;
+      this.batchListTemp = this.batchList;
     });
-    this.userService.getAllUsers().subscribe(list=>{
-      this.userList=list;
+    this.userService.getAllUsers().subscribe(list => {
+      this.userList = list;
     });
+
+    this.userService.getAllUserRoleProgramBatch().subscribe(list => {
+      this.userRoleProgramBatchList = list;
+      console.log("Check data" + JSON.stringify(this.userRoleProgramBatchList));
+    })
     this.userRoleDropdown = this.userRoleMaps.map(role => ({ label: role, value: role }));
-    this.userVisaStatusOptions=this.userVisaStatus.map(vstatus => ({ label: vstatus, value: vstatus }));
+    this.userVisaStatusOptions = this.userVisaStatus.map(vstatus => ({ label: vstatus, value: vstatus }));
     this.roleStatusDropdown = this.roleStatus.map(rStatus => ({ label: rStatus, value: rStatus }));
   }
-  
-updateFilteredBatchNames(){
-   
+
+  updateFilteredBatchNames() {
+
     this.batchList = this.batchListTemp;
-    const progData :any = this.assignProgBatchForm.value.programName;
-    const pid :any=progData.programId;
+    const progData: any = this.assignProgBatchForm.value.programName;
+    const pid: any = progData.programId;
     this.batchList = this.batchList.filter(item => item.programId === pid);
   }
-  
+
   private selectRow(checkValue: any) {
-  
+
   }
 
-  private getUserList() { 
+  private getUserList() {
     this.visibility = true;
     this.userService.getAllActiveUsers().subscribe(users => {
-    this.users = users; 
-    this.visibility = false;
-   });
-   }
+      this.users = users;
+      this.visibility = false;
+    });
+  }
 
   viewUser(user: User) {
     this.user = { ...user };
@@ -119,196 +136,196 @@ updateFilteredBatchNames(){
   }
 
   hideDialog() {
-    this.user={};
+    this.user = {};
     this.userDialogue = false;
-   // this.viewUserDialogue=false;
-    this.assignProgBatchDialogue=false;
-    this.submitted=false;
+    // this.viewUserDialogue=false;
+    this.assignProgBatchDialogue = false;
+    this.submitted = false;
   }
 
-  openAssignDialog(){
-    this.submittedPB=false;
-this.userRoleEdit=false;
-    this.assignProgBatchDialogue=true;
+  openAssignDialog() {
+    this.submittedPB = false;
+    this.userRoleEdit = false;
+    this.assignProgBatchDialogue = true;
     this.assignProgBatchForm.reset();
   }
-  
+
   openNew() {
     this.user = {};
     this.submitted = false;
     this.userDialogue = true;
-    
-   this.userForm.reset();
+
+    this.userForm.reset();
   }
 
-    userForm = this.fb.group({
-      userId: [''],
-      userComments: ['', Validators.required],
-      userEduPg: ['', Validators.required],
-      userEduUg: ['', Validators.required],
-      userFirstName: ['', Validators.required],
-      userLastName: ['', Validators.required],
-      userLinkedinUrl: ['', Validators.required],
-      userLocation: ['', Validators.required],
-      userMiddleName: ['',Validators.required],
-      userPhoneNumber: ['', Validators.required],
-      userTimeZone: ['', Validators.required],
-      userVisaStatus: ['', Validators.required],
-      roleId : [''],
-      userRoleStatus: [''],
-      userLogin: this.fb.group({
-        loginStatus: ['Active'],
-        password: [''],
-        userLoginEmail: ['', [Validators.required, Validators.email]],
-      }),
-      userRoleMaps: this.fb.array([
-        this.fb.group({
-          roleId: [''],
-          userRoleStatus: [''],
-        })
-      ]),
-    });
+  userForm = this.fb.group({
+    userId: [''],
+    userComments: ['', Validators.required],
+    userEduPg: ['', Validators.required],
+    userEduUg: ['', Validators.required],
+    userFirstName: ['', Validators.required],
+    userLastName: ['', Validators.required],
+    userLinkedinUrl: ['', Validators.required],
+    userLocation: ['', Validators.required],
+    userMiddleName: ['', Validators.required],
+    userPhoneNumber: ['', Validators.required],
+    userTimeZone: ['', Validators.required],
+    userVisaStatus: ['', Validators.required],
+    roleId: [''],
+    userRoleStatus: [''],
+    userLogin: this.fb.group({
+      loginStatus: ['Active'],
+      password: [''],
+      userLoginEmail: ['', [Validators.required, Validators.email]],
+    }),
+    userRoleMaps: this.fb.array([
+      this.fb.group({
+        roleId: [''],
+        userRoleStatus: [''],
+      })
+    ]),
+  });
 
   assignProgBatchForm = this.fb.group({
     programName: ['', Validators.required],
     batchName: ['', Validators.required],
     userId: ['', Validators.required],
-    userStatus:['', Validators.required],
-    roleId:['', Validators.required]
+    userStatus: ['', Validators.required],
+    roleId: ['', Validators.required]
   });
- 
-  hasUnitNumber = false;
- /*** 
-  states = [
-    { name: 'Alabama', abbreviation: 'AL' },
-    { name: 'Alaska', abbreviation: 'AK' },
-    { name: 'American Samoa', abbreviation: 'AS' },
-    { name: 'Arizona', abbreviation: 'AZ' },
-    { name: 'Arkansas', abbreviation: 'AR' },
-    { name: 'California', abbreviation: 'CA' },
-    { name: 'Colorado', abbreviation: 'CO' },
-    { name: 'Connecticut', abbreviation: 'CT' },
-    { name: 'Delaware', abbreviation: 'DE' },
-    { name: 'District Of Columbia', abbreviation: 'DC' },
-    { name: 'Federated States Of Micronesia', abbreviation: 'FM' },
-    { name: 'Florida', abbreviation: 'FL' },
-    { name: 'Georgia', abbreviation: 'GA' },
-    { name: 'Guam', abbreviation: 'GU' },
-    { name: 'Hawaii', abbreviation: 'HI' },
-    { name: 'Idaho', abbreviation: 'ID' },
-    { name: 'Illinois', abbreviation: 'IL' },
-    { name: 'Indiana', abbreviation: 'IN' },
-    { name: 'Iowa', abbreviation: 'IA' },
-    { name: 'Kansas', abbreviation: 'KS' },
-    { name: 'Kentucky', abbreviation: 'KY' },
-    { name: 'Louisiana', abbreviation: 'LA' },
-    { name: 'Maine', abbreviation: 'ME' },
-    { name: 'Marshall Islands', abbreviation: 'MH' },
-    { name: 'Maryland', abbreviation: 'MD' },
-    { name: 'Massachusetts', abbreviation: 'MA' },
-    { name: 'Michigan', abbreviation: 'MI' },
-    { name: 'Minnesota', abbreviation: 'MN' },
-    { name: 'Mississippi', abbreviation: 'MS' },
-    { name: 'Missouri', abbreviation: 'MO' },
-    { name: 'Montana', abbreviation: 'MT' },
-    { name: 'Nebraska', abbreviation: 'NE' },
-    { name: 'Nevada', abbreviation: 'NV' },
-    { name: 'New Hampshire', abbreviation: 'NH' },
-    { name: 'New Jersey', abbreviation: 'NJ' },
-    { name: 'New Mexico', abbreviation: 'NM' },
-    { name: 'New York', abbreviation: 'NY' },
-    { name: 'North Carolina', abbreviation: 'NC' },
-    { name: 'North Dakota', abbreviation: 'ND' },
-    { name: 'Northern Mariana Islands', abbreviation: 'MP' },
-    { name: 'Ohio', abbreviation: 'OH' },
-    { name: 'Oklahoma', abbreviation: 'OK' },
-    { name: 'Oregon', abbreviation: 'OR' },
-    { name: 'Palau', abbreviation: 'PW' },
-    { name: 'Pennsylvania', abbreviation: 'PA' },
-    { name: 'Puerto Rico', abbreviation: 'PR' },
-    { name: 'Rhode Island', abbreviation: 'RI' },
-    { name: 'South Carolina', abbreviation: 'SC' },
-    { name: 'South Dakota', abbreviation: 'SD' },
-    { name: 'Tennessee', abbreviation: 'TN' },
-    { name: 'Texas', abbreviation: 'TX' },
-    { name: 'Utah', abbreviation: 'UT' },
-    { name: 'Vermont', abbreviation: 'VT' },
-    { name: 'Virgin Islands', abbreviation: 'VI' },
-    { name: 'Virginia', abbreviation: 'VA' },
-    { name: 'Washington', abbreviation: 'WA' },
-    { name: 'West Virginia', abbreviation: 'WV' },
-    { name: 'Wisconsin', abbreviation: 'WI' },
-    { name: 'Wyoming', abbreviation: 'WY' }
-  ];
-  **/
 
-editUser(user: User) {
-    
-    const userEmailAddress:string=user.userLoginEmail;
+  hasUnitNumber = false;
+  /*** 
+   states = [
+     { name: 'Alabama', abbreviation: 'AL' },
+     { name: 'Alaska', abbreviation: 'AK' },
+     { name: 'American Samoa', abbreviation: 'AS' },
+     { name: 'Arizona', abbreviation: 'AZ' },
+     { name: 'Arkansas', abbreviation: 'AR' },
+     { name: 'California', abbreviation: 'CA' },
+     { name: 'Colorado', abbreviation: 'CO' },
+     { name: 'Connecticut', abbreviation: 'CT' },
+     { name: 'Delaware', abbreviation: 'DE' },
+     { name: 'District Of Columbia', abbreviation: 'DC' },
+     { name: 'Federated States Of Micronesia', abbreviation: 'FM' },
+     { name: 'Florida', abbreviation: 'FL' },
+     { name: 'Georgia', abbreviation: 'GA' },
+     { name: 'Guam', abbreviation: 'GU' },
+     { name: 'Hawaii', abbreviation: 'HI' },
+     { name: 'Idaho', abbreviation: 'ID' },
+     { name: 'Illinois', abbreviation: 'IL' },
+     { name: 'Indiana', abbreviation: 'IN' },
+     { name: 'Iowa', abbreviation: 'IA' },
+     { name: 'Kansas', abbreviation: 'KS' },
+     { name: 'Kentucky', abbreviation: 'KY' },
+     { name: 'Louisiana', abbreviation: 'LA' },
+     { name: 'Maine', abbreviation: 'ME' },
+     { name: 'Marshall Islands', abbreviation: 'MH' },
+     { name: 'Maryland', abbreviation: 'MD' },
+     { name: 'Massachusetts', abbreviation: 'MA' },
+     { name: 'Michigan', abbreviation: 'MI' },
+     { name: 'Minnesota', abbreviation: 'MN' },
+     { name: 'Mississippi', abbreviation: 'MS' },
+     { name: 'Missouri', abbreviation: 'MO' },
+     { name: 'Montana', abbreviation: 'MT' },
+     { name: 'Nebraska', abbreviation: 'NE' },
+     { name: 'Nevada', abbreviation: 'NV' },
+     { name: 'New Hampshire', abbreviation: 'NH' },
+     { name: 'New Jersey', abbreviation: 'NJ' },
+     { name: 'New Mexico', abbreviation: 'NM' },
+     { name: 'New York', abbreviation: 'NY' },
+     { name: 'North Carolina', abbreviation: 'NC' },
+     { name: 'North Dakota', abbreviation: 'ND' },
+     { name: 'Northern Mariana Islands', abbreviation: 'MP' },
+     { name: 'Ohio', abbreviation: 'OH' },
+     { name: 'Oklahoma', abbreviation: 'OK' },
+     { name: 'Oregon', abbreviation: 'OR' },
+     { name: 'Palau', abbreviation: 'PW' },
+     { name: 'Pennsylvania', abbreviation: 'PA' },
+     { name: 'Puerto Rico', abbreviation: 'PR' },
+     { name: 'Rhode Island', abbreviation: 'RI' },
+     { name: 'South Carolina', abbreviation: 'SC' },
+     { name: 'South Dakota', abbreviation: 'SD' },
+     { name: 'Tennessee', abbreviation: 'TN' },
+     { name: 'Texas', abbreviation: 'TX' },
+     { name: 'Utah', abbreviation: 'UT' },
+     { name: 'Vermont', abbreviation: 'VT' },
+     { name: 'Virgin Islands', abbreviation: 'VI' },
+     { name: 'Virginia', abbreviation: 'VA' },
+     { name: 'Washington', abbreviation: 'WA' },
+     { name: 'West Virginia', abbreviation: 'WV' },
+     { name: 'Wisconsin', abbreviation: 'WI' },
+     { name: 'Wyoming', abbreviation: 'WY' }
+   ];
+   **/
+
+  editUser(user: User) {
+
+    const userEmailAddress: string = user.userLoginEmail;
     this.userForm.patchValue(user);
     this.userForm.get('userLogin.userLoginEmail').patchValue(userEmailAddress);
     this.userDialogue = true;
-    this.user={...user};
-    const targetUserId=user.userId;
+    this.user = { ...user };
+    const targetUserId = user.userId;
     const getAllUsers$ = this.userService.getAllUsers();
     const getUsers$ = this.userService.getUsers();
     getAllUsers$.subscribe(
       allUsers => console.log('allUsers:', allUsers),
       error => console.error('Error fetching allUsers', error)
     );
-    
+
     getUsers$.subscribe(
       userRoleMap1 => {
         console.log('userRoleMap1:', userRoleMap1);
-        const userMapWithRoles :any=userRoleMap1;
-        const testUser=userMapWithRoles.find(userMap => userMap.user?.userId == targetUserId);
-        console.log("testUser="+testUser);
+        const userMapWithRoles: any = userRoleMap1;
+        const testUser = userMapWithRoles.find(userMap => userMap.user?.userId == targetUserId);
+        console.log("testUser=" + testUser);
         const userRoleStatus1 = testUser.userRoleStatus;
-            const userRoleId1 = testUser.role.roleId;
-            this.userForm.get('userRoleStatus').setValue(userRoleStatus1);
-            this.userForm.get('roleId').setValue(userRoleId1);
-        },
-        error => console.error('Error fetching userRoleMap1', error)
+        const userRoleId1 = testUser.role.roleId;
+        this.userForm.get('userRoleStatus').setValue(userRoleStatus1);
+        this.userForm.get('roleId').setValue(userRoleId1);
+      },
+      error => console.error('Error fetching userRoleMap1', error)
     );
 
-   //const targetUserId=user.userId;
+    //const targetUserId=user.userId;
+
+
+    /**
+        forkJoin([getAllUsers$, getUsers$]).subscribe(
+          ([allUsers, userRoleMap1]) => {
+            this.users = allUsers;
+            allUsers.forEach(allUser => {
+              const correspondingUser = userRoleMap1.find(userMap => userMap.user?.userId == targetUserId);
+              if (correspondingUser) {
+                const userRoleStatus = correspondingUser.userRoleStatus;
+                const userRoleId = correspondingUser.role.roleId;
+                //this.userForm.get('userRoleMaps').get('0.userRoleStatus').setValue(userRoleStatus);
+                //this.userForm.get('userRoleMaps').get('0.roleId').setValue(userRoleId);
+               this.userForm.get('userRoleStatus').setValue(userRoleStatus);
+              
+               this.userForm.get('roleId').setValue(userRoleId);
+              this.user = { ...user, userId: user.userId };
     
-
-/**
-    forkJoin([getAllUsers$, getUsers$]).subscribe(
-      ([allUsers, userRoleMap1]) => {
-        this.users = allUsers;
-        allUsers.forEach(allUser => {
-          const correspondingUser = userRoleMap1.find(userMap => userMap.user?.userId == targetUserId);
-          if (correspondingUser) {
-            const userRoleStatus = correspondingUser.userRoleStatus;
-            const userRoleId = correspondingUser.role.roleId;
-            //this.userForm.get('userRoleMaps').get('0.userRoleStatus').setValue(userRoleStatus);
-            //this.userForm.get('userRoleMaps').get('0.roleId').setValue(userRoleId);
-           this.userForm.get('userRoleStatus').setValue(userRoleStatus);
-          
-           this.userForm.get('roleId').setValue(userRoleId);
-          this.user = { ...user, userId: user.userId };
-
+              }
+            });
+             
+            this.visibility = false;
+            
+          },
+          error => {
+            console.error('Error fetching data', error);
+            this.visibility = false;
           }
-        });
-         
-        this.visibility = false;
-        
-      },
-      error => {
-        console.error('Error fetching data', error);
-        this.visibility = false;
-      }
-    ); 
-    */
+        ); 
+        */
 
   }
 
   visaStatusChanged(event: any) {
-    console.log("event=="+event);
+    console.log("event==" + event);
     //this.visaStatusValue = event.value;
-    this.userVisaStatus=event.value;
+    this.userVisaStatus = event.value;
   }
 
   userRoleStatusChanged(value: string) {
@@ -316,16 +333,16 @@ editUser(user: User) {
   }
 
   userRoleMapStatusChanged(value: string) {
-    
+
   }
   //Code for adding new user
   onSubmit() {
     this.submitted = true;
-    
+
     if (this.userForm.valid) {
       if (this.userForm.value.userId) {//Edit User
         const updatedUser = { ...this.userForm.value };
-        
+
         const userData = {
           userId: this.userForm.value.userId,
           userComments: this.userForm.value.userComments,
@@ -343,60 +360,60 @@ editUser(user: User) {
         //this.users[this.findIndexById(this.userForm.value.userId)] = this.userForm.value.userId;
         const index = this.findIndexById(this.userForm.value.userId);
         this.users[index] = { ...this.userForm.value };
-         this.userService.updateUser(userData).subscribe((res) => {
+        this.userService.updateUser(userData).subscribe((res) => {
           console.log('User updated successfully');
           this.messageService.add({
             severity: 'success',
             summary: 'Successful',
             detail: 'User Updated Successfully',
             life: 3000,
-            
+
           });
           this.getUserList();
           this.userDialogue = false;
         },
-        (error) => {
-          console.error('Error updating user', error);
-          console.log(error.message);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Failed',
-            detail: error.error.message,
-            life: 3000,
-            
-          });
-          //alert('Error updating user details.');
-        }
+          (error) => {
+            console.error('Error updating user', error);
+            console.log(error.message);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Failed',
+              detail: error.error.message,
+              life: 3000,
+
+            });
+            //alert('Error updating user details.');
+          }
         );
         this.userDialogue = false;
-       this.user = {};
+        this.user = {};
       }
-       else { //may be new User
-       // this.userSize = this.userSize + 1;
+      else { //may be new User
+        // this.userSize = this.userSize + 1;
         //this.user.userId = this.userSize.toString();
-        
-    //  }
-      this.userForm.get('userLogin.loginStatus').setValue('Active');
-    
-      const role=this.userForm.value.roleId;
-      const testRoleStatus =this.userForm.value.userRoleStatus;
-      this.userForm.get('userRoleMaps').get('0.roleId').setValue(role);
-      this.userForm.get('userRoleMaps').get('0.userRoleStatus').setValue(testRoleStatus);
+
+        //  }
+        this.userForm.get('userLogin.loginStatus').setValue('Active');
+
+        const role = this.userForm.value.roleId;
+        const testRoleStatus = this.userForm.value.userRoleStatus;
+        this.userForm.get('userRoleMaps').get('0.roleId').setValue(role);
+        this.userForm.get('userRoleMaps').get('0.userRoleStatus').setValue(testRoleStatus);
         const userData = this.userForm.value;
         this.userForm.controls['userVisaStatus'].setValue(this.visaStatusValue);
-       // const role=this.roleStatusValue;
-      //  this.userForm.get('userRoleMaps').get('0.userRoleStatus').setValue(role);
+        // const role=this.roleStatusValue;
+        //  this.userForm.get('userRoleMaps').get('0.userRoleStatus').setValue(role);
         if (this.userForm.value && this.userForm.value.userPhoneNumber) {
           this.userForm.value.userPhoneNumber = parseInt(this.userForm.value.userPhoneNumber, 11);
         }
-        
+
         delete userData.roleId;
         delete userData.userRoleStatus;
         delete userData.userId;
-        
+
 
         this.userService.addUser(userData).subscribe({
-          next:(res) => {
+          next: (res) => {
             this.userForm.reset();
             this.submitted = false;
             this.messageService.add({
@@ -404,56 +421,55 @@ editUser(user: User) {
               summary: 'Successful',
               detail: 'User Added Successfully',
               life: 3000,
-          });
+            });
             this.getUserList();
-            this.user={};
+            this.user = {};
           },
-         error:(error) =>
-          {
-            console.log("error=="+error.message);
+          error: (error) => {
+            console.log("error==" + error.message);
             this.messageService.add({
               severity: 'error',
               summary: 'Failed',
               detail: error.error.message,
               life: 2000,
-              
+
             });
-           // alert("Error adding user details.");
+            // alert("Error adding user details.");
           }
         })
-      this.userDialogue = false;
-      this.user= {};
+        this.userDialogue = false;
+        this.user = {};
+      }
     }
   }
-}
-    
+
   deleteSelectedUsers() {
     this.confirmationService.confirm({
-        message: 'Are you sure you want to delete the selected Users?',
-        header: 'Confirm',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => {
-            this.users = this.users.filter(val => !this.selectedUsers.includes(val));
-            this.selectedUsers = null;
-            this.messageService.add({severity:'success', summary: 'Successful', detail: 'Users Deleted', life: 3000});
-        }
+      message: 'Are you sure you want to delete the selected Users?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.users = this.users.filter(val => !this.selectedUsers.includes(val));
+        this.selectedUsers = null;
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Users Deleted', life: 3000 });
+      }
     });
-}
+  }
   deleteUser(user: User) {
     this.confirmationService.confirm({
-        
-       message: 'Are you sure you want to delete the user?', 
-       header: 'Confirm',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => {
-            this.users = this.users.filter(val => val.userId !== user.userId);
-            this.userService.deleteUser(user).subscribe(response => {
-              console.log('User is deleted');
-            })
-            this.messageService.add({severity:'success', summary: 'Successful', detail: 'User Deleted', life: 3000});
-        }
+
+      message: 'Are you sure you want to delete the user?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.users = this.users.filter(val => val.userId !== user.userId);
+        this.userService.deleteUser(user).subscribe(response => {
+          console.log('User is deleted');
+        })
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'User Deleted', life: 3000 });
+      }
     });
-}
+  }
 
   findIndexById(id: string): number {
     let index = -1;
@@ -465,94 +481,120 @@ editUser(user: User) {
     }
     return index;
   }
+  onRowClicked(templateRef, row) {
+    this.rowID = row['userId'];
+    this.selectedUser = this.users.find((user) => user.userId.toString() === this.rowID);
+    console.log(this.selectedUser);
+    this.selectedUser1 = this.userList.find((user) => user.userId.toString() === this.selectedUser.userId.toString());
+    this.selectedUser2 = this.userRoleProgramBatchList.find((userRole) => userRole.userId.toString() === this.rowID.toString());
+    if (!this.selectedUser2) {
+      this.notFoundMessage = 'Batch Not Assigned';
+    } else {
+      this.notFoundMessage = '';
+    }
 
-  assignProgramBatch(){
+
+    this.dialogRef = this.dialog.open(templateRef, {
+      height: '550px',
+      width: '700px',
+    });
+
+  }
+  getBatchName(batchId: any) {
+
+    const batchInfo = this.batchList.find(item => item.batchId === batchId);
+    return batchInfo ? batchInfo.batchName : null;
+
+  }
+  onCloseDialog() {
+    this.dialogRef.close();
+  }
+  assignProgramBatch() {
     this.submittedPB = true;
-    if(this.assignProgBatchForm.valid){
-    
-      const progData :any = this.assignProgBatchForm.value.programName;
-      const pid :any=progData.programId;
-      const batchData :any  = this.assignProgBatchForm.value.batchName;
-      const bId :any = batchData.batchId; 
+    if (this.assignProgBatchForm.valid) {
+
+      const progData: any = this.assignProgBatchForm.value.programName;
+      const pid: any = progData.programId;
+      const batchData: any = this.assignProgBatchForm.value.batchName;
+      const bId: any = batchData.batchId;
       const status = this.assignProgBatchForm.value.userStatus;
-      
+
       const userPBData = {
-        programId:pid,
-        userId:this.userID,
-        roleId:this.assignProgBatchForm.value.roleId,
-                userRoleProgramBatches:[
+        programId: pid,
+        userId: this.userID,
+        roleId: this.assignProgBatchForm.value.roleId,
+        userRoleProgramBatches: [
           {
-              batchId:bId,
-              userRoleProgramBatchStatus:status
+            batchId: bId,
+            userRoleProgramBatchStatus: status
           }
         ]
-      } 
+      }
 
       this.userService.assignProgBatch(userPBData).subscribe((res) => {
-      this.messageService.add({
+        this.messageService.add({
           severity: 'success',
           summary: 'Successful',
           detail: 'User  has been successfully assigned to Program/Batch(es)',
           life: 2000,
         });
-        this.assignProgBatchDialogue=false;
-      
-      }, (error)=> {
+        this.assignProgBatchDialogue = false;
+
+      }, (error) => {
+        this.assignProgBatchDialogue = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Failed',
+          detail: error.error.message,
+          life: 2000,
+        });
+      });
+
+      /**
+          this.assignProgBatchDialogue=false;
+          console.error('Other error:', error.status, error.statusText);
+          if(error.status === 200){
+            console.log("true");
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Successful',
+              detail: 'User  has been successfully assigned to Program/Batch(es)',
+              life: 2000,
+            });
             this.assignProgBatchDialogue=false;
+          }else{
             this.messageService.add({
             severity: 'error',
             summary: 'Failed',
             detail: error.error.message,
             life: 2000,
-        });
-      });
-
-        /**
-            this.assignProgBatchDialogue=false;
-            console.error('Other error:', error.status, error.statusText);
-            if(error.status === 200){
-              console.log("true");
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Successful',
-                detail: 'User  has been successfully assigned to Program/Batch(es)',
-                life: 2000,
-              });
-              this.assignProgBatchDialogue=false;
-            }else{
-              this.messageService.add({
-              severity: 'error',
-              summary: 'Failed',
-              detail: error.error.message,
-              life: 2000,
-            });
-          }
-           */
-     // });
+          });
+        }
+         */
+      // });
     } else {
       console.log("Invalid form");
     }
   }
-//Role ID  Assign in role id field based on UserEmailID in Assign program/Branch
+  //Role ID  Assign in role id field based on UserEmailID in Assign program/Branch
   updateFilteredRoleID() {
-    this.progData1 =this.assignProgBatchForm.value.userId;  
-      this.userID = this.progData1.userId;
-      const getUsers$ = this.userService.getUsers();
-      getUsers$.subscribe(
-        userRoleMap1 => console.log('userRoleMap1:', userRoleMap1),
-        error => console.error('Error fetching userRoleMap1', error)
-      );
-      getUsers$.subscribe(
-        userRoleMap1 => {
-          console.log('userRoleMap1:', userRoleMap1);
-          const userMapWithRoles :any=userRoleMap1;
-          const testUser=userMapWithRoles.find(userMap => userMap.user?.userId == this.userID);
-              const userRoleId = testUser.role.roleId;
-              this.assignProgBatchForm.value.roleId=userRoleId;
-              this.userRoleEdit=true;
-      
-          });
-      }
-      
-}
+    this.progData1 = this.assignProgBatchForm.value.userId;
+    this.userID = this.progData1.userId;
+    const getUsers$ = this.userService.getUsers();
+    getUsers$.subscribe(
+      userRoleMap1 => console.log('userRoleMap1:', userRoleMap1),
+      error => console.error('Error fetching userRoleMap1', error)
+    );
+    getUsers$.subscribe(
+      userRoleMap1 => {
+        console.log('userRoleMap1:', userRoleMap1);
+        const userMapWithRoles: any = userRoleMap1;
+        const testUser = userMapWithRoles.find(userMap => userMap.user?.userId == this.userID);
+        const userRoleId = testUser.role.roleId;
+        this.assignProgBatchForm.value.roleId = userRoleId;
+        this.userRoleEdit = true;
 
+      });
+  }
+
+}

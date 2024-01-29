@@ -7,16 +7,17 @@ import { map, take } from 'rxjs/operators';
 import { User } from './user';
 //import { UserProgBatch } from './user-prog-batch';
 import { STRING_TYPE, Text } from '@angular/compiler';
+import { UserRoleProgramBatch } from './user-role-program-batch';
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  
+
   url: string = '/api';//'https://lms-admin-rest-service.herokuapp.com/programs';
   users: any;
   //staffList: User[];
-   //result: User[]
-   staffUList: Observable<User[]>
+  //result: User[]
+  staffUList: Observable<User[]>
 
   constructor(private httpClient: HttpClient) { }
 
@@ -26,12 +27,15 @@ export class UserService {
   }
 
   getAllUsers(): Observable<User[]> {
-    //return this.httpClient.get<any>('assets/Users.json')
     return this.httpClient.get<User[]>(this.url + "/users");
   }
 
   getAllActiveUsers(): Observable<User[]> {
     return this.httpClient.get<User[]>(this.url + "/users/activeUsers");
+  }
+
+  getAllUserRoleProgramBatch(): Observable<UserRoleProgramBatch[]> {
+    return this.httpClient.get<UserRoleProgramBatch[]>(this.url + "/userRoleProgramBatchMap")
   }
   addUser(userData: any) {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
@@ -41,27 +45,27 @@ export class UserService {
 
   getAllStaff(): Observable<User[]> {
     return this.httpClient.get<User[]>(this.url + "/users/roles/R02")
-    
+
   }
   getAllStudents(): Observable<User[]> {
     return this.httpClient.get<User[]>(this.url + "/users/roles/R03")
-    
+
   }
   updateUser(user: User) {
-    return this.httpClient.put<User>(this.url + "/users/" + user.userId ,user);
+    return this.httpClient.put<User>(this.url + "/users/" + user.userId, user);
   }
 
-  deleteUser(user:User) {
+  deleteUser(user: User) {
     return this.httpClient.delete<User>(this.url + "/users/" + user.userId);
   }
-  
-  assignProgBatch(pbData:any): Observable<any>{
-    return this.httpClient.put<any>(this.url + "/users/roleProgramBatchStatus/" + pbData.userId, pbData );
+
+  assignProgBatch(pbData: any): Observable<any> {
+    return this.httpClient.put<any>(this.url + "/users/roleProgramBatchStatus/" + pbData.userId, pbData);
   }
-/*** ignore the below extra method  
-assignProgBatchTemp(pbData:any): Observable<UserProgBatch>{
-    return this.httpClient.put<UserProgBatch>(this.url + "/users/roleProgramBatchStatus/" + pbData.userId, pbData );
-  }
-  **/    
+  /*** ignore the below extra method  
+  assignProgBatchTemp(pbData:any): Observable<UserProgBatch>{
+      return this.httpClient.put<UserProgBatch>(this.url + "/users/roleProgramBatchStatus/" + pbData.userId, pbData );
+    }
+    **/
 }
 
