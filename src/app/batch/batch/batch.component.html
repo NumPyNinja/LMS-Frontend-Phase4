@@ -124,7 +124,7 @@
 
         <div class="p-field">
             <label for="programName">Program Name <label [style]="{'color':'red!important'}">*</label></label>
-            <p-dropdown [options]="programList" [(ngModel)]="batch.programName" placeholder="Select a Program name" id="programName"
+            <p-dropdown [options]="activeProgramList" [(ngModel)]="batch.programName" placeholder="Select a Program name" id="programName"
                 editable="true" [disabled]="onEdit" optionLabel="programName" [showClear]="true"  required></p-dropdown>
                 <small class="p-invalid" [style]="{'color':'red!important'}" *ngIf="submitted && !batch.programName">Program Name is required.</small>
         </div>
