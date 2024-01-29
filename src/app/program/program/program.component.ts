@@ -208,7 +208,7 @@ patternDesc()
     this.visibility = true;
     this.programService.getPrograms().subscribe((res) => {
       res = this.upperCaseProgramStatus(res);
-      this.programs = res;
+      this.programs = res.filter(item=>item.programStatus.toLowerCase()==="active");
       this.programSize = this.getMaxProgramId(0);
       this.visibility = false;
     });
