@@ -45,7 +45,7 @@ export class BatchComponent implements OnInit {
 
   ngOnInit() {
     this.batchService.getBatchList().subscribe(res => {
-      this.batchList = res;
+      this.batchList = res.filter(item=>item.batchStatus.toLowerCase()==="active");
       this.programSize = this.batchList.length;
     });
     this.programService.getPrograms().subscribe(list => {
