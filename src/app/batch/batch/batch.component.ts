@@ -31,6 +31,7 @@ export class BatchComponent implements OnInit {
   programName: string;
   status: string[] = ['ACTIVE', 'INACTIVE'];
   programList: Program[];
+  activeProgramList : Program[];
   onEdit : boolean = false;
   pattBatchName:boolean=false;
   pattBatchDes:boolean=false;
@@ -50,10 +51,10 @@ export class BatchComponent implements OnInit {
     });
     this.programService.getPrograms().subscribe(list => {
       this.programList = list;
+      this.activeProgramList = this.programList.filter(program => program.programStatus === 'Active');
     });
-
-
   }
+  
   openNew() {
     this.onEdit=false;
     this.batch = {};
