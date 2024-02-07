@@ -1,16 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import {User} from '../user';
-import { UserService } from '../user.service';
-import { ConfirmationService } from 'primeng/api';
-import { MessageService } from 'primeng/api';
-import { forkJoin } from 'rxjs';
-import { ProgramService } from 'src/app/program/program.service';
-import { Program } from 'src/app/program/program';
-import { BatchService } from 'src/app/batch/batch.service';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { ConfirmationService, MessageService, SelectItem } from 'primeng/api';
 import { Batch } from 'src/app/batch/batch';
-import { SelectItem } from 'primeng/api';
-import { UserProgBatch } from '../user-prog-batch';
+import { BatchService } from 'src/app/batch/batch.service';
+import { Program } from 'src/app/program/program';
+import { ProgramService } from 'src/app/program/program.service';
+import { Staff, User, userEmailUser } from '../user';
+import { UserService } from '../user.service';
+
 
 @Component({
   selector: 'app-user',
@@ -18,7 +15,7 @@ import { UserProgBatch } from '../user-prog-batch';
   styleUrls: ['./user.component.scss']
 })
 export class UserComponent implements OnInit {
-  
+    
   users: User[];
   usersWithRolesList: User[];
   user:User;
@@ -42,14 +39,22 @@ export class UserComponent implements OnInit {
   roleStatusValue:string;
   userRoleMapsControl:FormControl;
   userRoleMapsValue:string;
-  assignProgBatchDialogue : boolean;
-  programList: Program[];
-  batchList : Batch[];
-  batchListTemp :Batch[];
-  filteredBatches: Batch[] = [];
-  submittedPB :boolean =false;
-  userObject :boolean;
- 
+  assignProgBatchDialogue : boolean;assignStaffDialogue:boolean;
+  programList: Program[];programListTemp: Program[];
+  batchList : Batch[];batchListTemp :Batch[];StaffBatch:Batch[]=[];
+  progBatchList:User[];progBatchListTemp:User[]=[];
+ submittedPB :boolean =false;
+ userList:User[];userListTemp:User[]=[];
+ userID:any;
+ staffList:User[];staffListTemp:Staff[]=[];
+ userEmailUserList:userEmailUser[]=[];
+ userMapWithRolesList:any;userMapWithRolesListT:any;
+ userAllList:any;userAllListT:any;
+ hiddenPB:boolean=false;hiddenPBDB:boolean=false;
+ changePB:boolean=false;hiddenPBActive:boolean=false;hiddenPBLimit:boolean=false;StaffLimit:boolean=false;
+ roleId:string="";pid:string="";bid:string="";bstatus:string="";
+ assignProgBatchSSForm: any; StudentVisible:boolean=false;StaffVisible:boolean=false;
+ selectedBatchName: User[];
  constructor(private userService: UserService,
     private fb: FormBuilder,
     private messageService: MessageService,
@@ -79,26 +84,148 @@ export class UserComponent implements OnInit {
      
     this.programService.getPrograms().subscribe(list => {
         this.programList = list;
+        this.programListTemp=this.programList;
         });
-    
     this.batchService.getBatchList().subscribe(list => {
         this.batchList = list;
         this.batchListTemp=this.batchList;
     });
-    
+    this.userService.getAllUsers().subscribe(list=>{
+      this.userList=list;
+      this.userListTemp=this.userList;
+    });
+    const getUsers$ = this.userService.getUsers();
+    getUsers$.subscribe(userRoleMap1 => {
+        this.userMapWithRolesList=userRoleMap1;
+        this.userMapWithRolesListT=this.userMapWithRolesList;
+      });
     this.userRoleDropdown = this.userRoleMaps.map(role => ({ label: role, value: role }));
     this.userVisaStatusOptions=this.userVisaStatus.map(vstatus => ({ label: vstatus, value: vstatus }));
     this.roleStatusDropdown = this.roleStatus.map(rStatus => ({ label: rStatus, value: rStatus }));
   }
   
-updateFilteredBatchNames(){
-   
-    this.batchList = this.batchListTemp;
-    const progData :any = this.assignProgBatchForm.value.programName;
-    const pid :any=progData.programId;
-    this.batchList = this.batchList.filter(item => item.programId === pid);
+
+  //Staff name = FirstName + Last Name Dropdown
+staffIDFunction(){
+  this.staffList.forEach(item => {
+    if(this.staffListTemp.filter(x => x.userId == item.userId).length==0) {
+      this.staffListTemp.push({userId:item.userId,staffName:item.userFirstName+" "+item.userLastName});
+    }
+  });
+} 
+//Based on the  Role  email are  Display
+updateFilteredUserRoleID(){
+ this.selectedBatchName = [];
+  if(this.assignStaffDialogue){
+    this.roleId='R02';
+    this.assignStaffForm.get('roleId').setValue(this.roleId);
+    this.updateUserBasedEmailId(); 
+   }
+  if(this.assignProgBatchDialogue){
+    this.roleId='R03'; 
+    this.assignProgBatchForm.get('roleId').setValue(this.roleId);
+    this.updateUserBasedEmailId();  
   }
-  
+}   
+
+ updateUserBasedEmailId(){
+  this.userEmailUserList=[];
+  this.programList = this.programListTemp;
+  this.programList = this.programList.filter(item => item.programStatus=='Active');
+  this.userMapWithRolesList=this.userMapWithRolesListT;
+  this.userMapWithRolesList = this.userMapWithRolesList.filter(item => item.role.roleId === this.roleId);
+  if(this.userMapWithRolesList.length!=0)
+  this.userList.forEach(item => {
+    if(this.userMapWithRolesList.some(Y =>Y.user.userId === item.userId))
+      this.userEmailUserList.push({userId:item.userId,userFullName:item.userLoginEmail});
+  });
+  }
+ 
+  StaffProgramBatch(){
+    let user:any;let skillN="";
+    this.assignStaffForm.get('batchName').setValue("");
+    this.assignStaffForm.get('programName').setValue("");
+    this.assignStaffForm.get('userStatus').setValue("");
+    this.bid="";this.pid="";this.bstatus="";
+    user=this.assignStaffForm.value.userId;
+    this.userService.getById(user.userId).subscribe(list=>{
+      this.progBatchList=list;
+      this.progBatchListTemp=this.progBatchList;
+    });
+    this.userService.getUserInfoById(user.userId).subscribe(list=>{
+         this.userAllList=list;
+        this.userAllListT=this.userAllList;
+        for(let i=0;this.userAllList.skills.length>i;i++)
+        skillN +=this.userAllList.skills[i].skillName + " ";
+        this.assignStaffForm.get('skillName').setValue(skillN);
+      });
+
+    }
+
+  StudentProgramBatch(){
+    this.assignProgBatchForm.get('batchName').setValue("");
+    this.assignProgBatchForm.get('programName').setValue("");
+    this.assignProgBatchForm.get('userStatus').setValue("");
+  const user=this.assignProgBatchForm.value.userId;
+  let pid1="";let bid1="";let bstatus1="";
+  this.userService.getUserInfoById(user.userId).subscribe(list=>{
+    this.userAllList=list;
+   this.userAllListT=this.userAllList;
+   if(!this.assignProgBatchForm.value.programName){
+    this.hiddenPBDB=true;this.hiddenPBActive=false;
+    this.hiddenPB=false; this.changePB=false;}
+        if (this.userAllList.length != 0 ) {
+          if(this.userAllList.programBatches.length!=0){
+          for(let i=0;this.userAllList.programBatches.length>i;i++){
+            for(let j=0;this.userAllList.programBatches[i].batches.length>j;j++){ 
+           pid1=this.userAllList.programBatches[i].programName;
+           this.pid=this.userAllList.programBatches[i].programId;
+           bid1=this.userAllList.programBatches[i].batches[j].batchName;
+           this.bid=this.userAllList.programBatches[i].batches[j].batchId;
+           bstatus1=this.userAllList.programBatches[i].batches[j].userBatchStatus;
+          } 
+          if(bstatus1=="Active")
+          break;
+      }  
+   
+    }
+      this.hiddenPB=true;this.hiddenPBDB=false; this.changePB=true;
+      this.assignProgBatchForm.get('programName').setValue(pid1);
+      this.assignProgBatchForm.get('batchName').setValue(bid1);
+      this.assignProgBatchForm.get('userStatus').setValue(bstatus1);
+    }});
+     
+    
+  }
+ChangeProBat(){
+  if(this.assignProgBatchForm.value.userStatus=='Inactive' && this.userAllList.programBatches.length <3){
+  this.hiddenPBDB=true;
+  this.hiddenPB=false;
+  this.hiddenPBActive=false;this.hiddenPBLimit=false;
+  this.assignProgBatchForm.get('userStatus').setValue("");}
+  else if(!(this.userAllList.programBatches.length <3 )){
+  this.hiddenPBLimit=true;this.hiddenPBActive=false;}
+  else
+  this.hiddenPBActive=true;
+}
+updateFilteredBatchNames(){
+   let progData:any;
+   this.selectedBatchName = [];
+    this.batchList = this.batchListTemp;
+    this.progBatchList=this.progBatchListTemp;
+    if(this.assignStaffDialogue)
+    progData = this.assignStaffForm.value.programName;
+   else
+    progData = this.assignProgBatchForm.value.programName;
+    const pid :any=progData.programId;
+    this.batchList = this.batchList.filter(item => item.programId === pid && item.batchStatus=='ACTIVE');
+    if(this.assignStaffDialogue){
+      this.progBatchList.forEach(item => {
+       this.batchList=this.batchList.filter(y=> y.batchId != item.batchId)
+    });
+ 
+  }
+}
   private selectRow(checkValue: any) {
   
   }
@@ -121,20 +248,32 @@ updateFilteredBatchNames(){
     this.userDialogue = false;
    // this.viewUserDialogue=false;
     this.assignProgBatchDialogue=false;
+    this.assignStaffDialogue=false;
     this.submitted=false;
   }
 
   openAssignDialog(){
     this.submittedPB=false;
-    this.assignProgBatchDialogue=true;
-    this.assignProgBatchForm.reset();
+    this.hiddenPB=true;this.hiddenPBDB=false;this.changePB=false;this.hiddenPBActive=false;this.hiddenPBLimit=false;
+    this.assignProgBatchDialogue=true; 
+     this.assignProgBatchForm.reset();
+     this.updateFilteredUserRoleID();
+
+  }
+  openAssignStaff()
+  {
+     this.submittedPB=false;
+     this.assignStaffDialogue=true;
+     this.StaffLimit=false;
+     this.assignStaffForm.reset();
+     this.updateFilteredUserRoleID();
+     
   }
   
   openNew() {
     this.user = {};
     this.submitted = false;
-    this.userDialogue = true;
-    
+    this.userDialogue = true;  
    this.userForm.reset();
   }
 
@@ -162,6 +301,7 @@ updateFilteredBatchNames(){
         this.fb.group({
           roleId: [''],
           userRoleStatus: [''],
+          
         })
       ]),
     });
@@ -173,7 +313,14 @@ updateFilteredBatchNames(){
     userStatus:['', Validators.required],
     roleId:['', Validators.required]
   });
- 
+  assignStaffForm = this.fb.group({
+    programName: ['', Validators.required],
+    batchName: ['', Validators.required],
+    userId: ['', Validators.required],
+    userStatus:['', Validators.required],
+    roleId:['', Validators.required],
+    skillName : ['']
+  });
   hasUnitNumber = false;
  /*** 
   states = [
@@ -374,7 +521,6 @@ editUser(user: User) {
         
     //  }
       this.userForm.get('userLogin.loginStatus').setValue('Active');
-    
       const role=this.userForm.value.roleId;
       const testRoleStatus =this.userForm.value.userRoleStatus;
       this.userForm.get('userRoleMaps').get('0.roleId').setValue(role);
@@ -382,16 +528,13 @@ editUser(user: User) {
         const userData = this.userForm.value;
         this.userForm.controls['userVisaStatus'].setValue(this.visaStatusValue);
        // const role=this.roleStatusValue;
-      //  this.userForm.get('userRoleMaps').get('0.userRoleStatus').setValue(role);
+       //  this.userForm.get('userRoleMaps').get('0.userRoleStatus').setValue(role);
         if (this.userForm.value && this.userForm.value.userPhoneNumber) {
           this.userForm.value.userPhoneNumber = parseInt(this.userForm.value.userPhoneNumber, 11);
-        }
-        
+        }  
         delete userData.roleId;
         delete userData.userRoleStatus;
         delete userData.userId;
-        
-
         this.userService.addUser(userData).subscribe({
           next:(res) => {
             this.userForm.reset();
@@ -463,33 +606,32 @@ editUser(user: User) {
     return index;
   }
 
-  assignProgramBatch(){
+assignProgramBatch(){
     this.submittedPB = true;
-    if(this.assignProgBatchForm.valid){
-    
+    if(this.assignProgBatchForm.valid && !this.hiddenPBLimit){  
       const progData :any = this.assignProgBatchForm.value.programName;
-      const pid :any=progData.programId;
       const batchData :any  = this.assignProgBatchForm.value.batchName;
-      const bId :any = batchData.batchId; 
       const status = this.assignProgBatchForm.value.userStatus;
-      
+      if(this.hiddenPBDB){
+        this.pid=progData.programId;
+        this.bid=batchData.batchId;}     
       const userPBData = {
-        programId:pid,
-        roleId:this.assignProgBatchForm.value.roleId,
-        userId:this.assignProgBatchForm.value.userId,
+        programId:this.pid,
+        roleId:this.roleId,
+        userId:this.assignProgBatchForm.value.userId.userId,
         userRoleProgramBatches:[
           {
-              batchId:bId,
+              batchId:this.bid,
               userRoleProgramBatchStatus:status
           }
         ]
       } 
-
+    
       this.userService.assignProgBatch(userPBData).subscribe((res) => {
       this.messageService.add({
           severity: 'success',
           summary: 'Successful',
-          detail: 'User  has been successfully assigned to Program/Batch(es)',
+          detail: 'User  has been successfully assigned/Updated to Program/Batch(es)',
           life: 2000,
         });
         this.assignProgBatchDialogue=false;
@@ -503,8 +645,59 @@ editUser(user: User) {
             life: 2000,
         });
       });
+    }
+    else {
+      console.log("Invalid form");
+    }
+  }
+  assignStaff(){
+    this.submittedPB = true;
+    if(this.progBatchList.length<=10)
+      this.StaffLimit=true;
+    if(this.assignStaffForm.valid && this.progBatchList.length>=10){  
+      this.selectedBatchName.forEach((selectedBatchName) => {
+      const progData :any = this.assignStaffForm.value.programName;
+      const status = this.assignStaffForm.value.userStatus;  
+      const userPBData = {
+        programId:progData.programId,
+        roleId:this.roleId,
+        userId:this.assignStaffForm.value.userId.userId,
+        userRoleProgramBatches:[
+          {
+              batchId:selectedBatchName.batchId,
+              userRoleProgramBatchStatus:status
+          }
+        ]
+      } 
 
-        /**
+      this.userService.assignProgBatch(userPBData).subscribe((res) => {
+      this.messageService.add({
+          severity: 'success',
+          summary: 'Successful',
+          detail: 'User  has been successfully assigned/Updated to Program/Batch(es)',
+          life: 2000,
+        });
+     this.assignStaffDialogue=false;
+      
+      }, (error)=> {
+         this.assignStaffDialogue=false;
+            this.messageService.add({
+            severity: 'error',
+            summary: 'Failed',
+            detail: error.error.message,
+            life: 2000,
+        });
+      });
+ 
+  });
+
+  }
+  else {
+    console.log("Invalid form");
+  }
+  
+  }
+    /**
             this.assignProgBatchDialogue=false;
             console.error('Other error:', error.status, error.statusText);
             if(error.status === 200){
@@ -524,11 +717,10 @@ editUser(user: User) {
               life: 2000,
             });
           }
-           */
+         */
      // });
-    } else {
-      console.log("Invalid form");
-    }
-  }
+
+  
+  
 }
 

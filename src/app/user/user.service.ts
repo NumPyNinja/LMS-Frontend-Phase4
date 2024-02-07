@@ -1,12 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, observable, of } from 'rxjs';
-import { tap, filter } from 'rxjs/operators';
-import { map, take } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 import { User } from './user';
 //import { UserProgBatch } from './user-prog-batch';
-import { STRING_TYPE, Text } from '@angular/compiler';
 @Injectable({
   providedIn: 'root'
 })
@@ -60,5 +57,14 @@ assignProgBatchTemp(pbData:any): Observable<UserProgBatch>{
     return this.httpClient.put<UserProgBatch>(this.url + "/users/roleProgramBatchStatus/" + pbData.userId, pbData );
   }
   **/    
-}
+getUserInfoById(Id:string): Observable<any>{
+    return this.httpClient.get<any>(this.url + "/users/" + Id);
+  }
+  getAllUserSkills(): Observable<any>{
+    return this.httpClient.get<any>(this.url + "/userSkill" );
+  }
+  getById(Id:string): Observable<any>{
+    return this.httpClient.get<any>(this.url + "/userRoleProgramBatchMap/" + Id);
+  }
 
+}

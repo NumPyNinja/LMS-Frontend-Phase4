@@ -1,5 +1,5 @@
 export interface Program {
-    programId?:string;
+    programId?:any;
     programName?:string;
     programDescription?:string;
     programStatus?:string;

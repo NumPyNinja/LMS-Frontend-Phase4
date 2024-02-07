@@ -3,7 +3,7 @@ export interface UserProgBatch {
     userId? : string;
     userRole ? : string;
     userStatus ? : string;
-    programId ? : number;
+    programId ? : any;
     userRoleProgramBatches ? : UserRoleProgramBatch[];
 
 }

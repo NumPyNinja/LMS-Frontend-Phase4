@@ -24,8 +24,12 @@
             class="p-button-rounded p-button-success" (click)="openNew()"></button>
         </div>
         <div>
-          <button pButton pRipple id="Assign" label="Assign Program/Batch" icon="pi pi-plus"
+     <button pButton pRipple id="Assign" label="Assign Student" icon="pi pi-plus"
             class="p-button-rounded p-button-success" (click)="openAssignDialog()"></button>
+        </div>
+        <div>
+          <button pButton pRipple id="Assign" label="Assign Staff" icon="pi pi-plus"
+            class="p-button-rounded p-button-success" (click)="openAssignStaff()"></button>
         </div>
       </div>
     </mat-card-title>
@@ -246,67 +250,142 @@
       </form>
     </ng-template>
   </p-dialog>
-  
-  <p-dialog [(visible)]="assignProgBatchDialogue" [style]="{width: '500px'}" header="Assign User" [modal]="true"
+ 
+  <p-dialog [(visible)]="assignStaffDialogue" [style]="{width: '500px'}" header="Assign User" [modal]="true"
     styleClass="p-fluid">
     <ng-template pTemplate="content">
-      <form [formGroup]="assignProgBatchForm">
-       <div class="p-field">
-          <label for="programName">Program Name</label>
-          <p-dropdown [options]="programList" formControlName="programName" id="programName" required placeholder="Select a Program name " 
-                 optionLabel="programName" (onChange)="updateFilteredBatchNames()"></p-dropdown>
-              <div *ngIf="submittedPB && assignProgBatchForm.get('programName').hasError('required')" style="color:red">
-                  Program Name is required
-              </div>
+      <form [formGroup]="assignStaffForm">
+     
+    <!--   Staff -->
+    <span *ngIf="StaffLimit" style="color:red">
+      Exists the Limits 10, so you can't to add the program/batch.
+    </span>
+      <div class="p-field">
+        <label for="userRoleStatus">User Role</label>
+        <input type="text" readonly pInputText id="roleId" formControlName="roleId" name="roleId" required/>
+      </div>  
+      <div class="p-field">
+        <label for="userRole">Staff Email Id</label>
+        <p-dropdown [options]="userEmailUserList" formControlName="userId" name="userId" id="userId" 
+        optionLabel="userFullName" (onChange)="StaffProgramBatch()" placeholder="Select Email Id" required></p-dropdown>
+          <div *ngIf="submittedPB && assignStaffForm.get('userId').hasError('required')" style="color:red">
+             Email Id is required.
+          </div>
+      </div>
+      <div class="p-field">
+        <label for="skillName">Skill</label>
+        <input type="text" pInputText id="skillName" formControlName="skillName" name="skillName"  required/>
+       </div>    
+     <div class="p-field">
+        <label for="programName">Program Name</label> 
+        <p-dropdown  appendTo="body" [options]="programList" formControlName="programName" id="programName" required placeholder="Select a Program name " 
+             optionLabel="programName" (onChange)="updateFilteredBatchNames()"></p-dropdown>
+          <div *ngIf="submittedPB && assignStaffForm.get('programName').hasError('required')" style="color:red">
+              Program Name is required.
+          </div>
+      </div>
+      <div class="p-field">
+        <label for="batchName">Batch Name</label>
+        <p-multiSelect id="batchName" [options]="batchList" formControlName="batchName" [(ngModel)]="selectedBatchName"
+        required placeholder="Select Batch Name" appendTo="body" optionLabel="batchName" display="chip"></p-multiSelect>
+            <div *ngIf="submittedPB && assignStaffForm.get('batchName').hasError('required')" style="color:red">
+              Batch Name is required.
+          </div>
+     </div>
+      <div class="radio">
+          <div>
+              <label for="online">Status : </label>
+          </div>
+          <div *ngFor="let category of roleStatus">
+            <p-radioButton [inputId]="category" name="userStatus" [value]="category" formControlName="userStatus" id="userStatus" required>
+            </p-radioButton>
+              {{category}}
+          </div>
+      </div>
+      <div *ngIf="submittedPB && assignStaffForm.get('userStatus').hasError('required')" style="color: red;">
+        Status is required.
+      </div>
+  </form>
+</ng-template>
+<ng-template pTemplate="footer">
+    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-rounded p-button-danger"
+          (click)="hideDialog()"></button>
+      <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-rounded p-button-success"
+          (click)="assignStaff()"></button>
+         
+</ng-template>   
+</p-dialog>
+
+<p-dialog [(visible)]="assignProgBatchDialogue" [style]="{width: '500px'}" header="Assign Student" [modal]="true"
+  styleClass="p-fluid">
+  <ng-template pTemplate="content">
+    <form [formGroup]="assignProgBatchForm" appendTo="body">
+         <!---student-->
+      <span *ngIf="hiddenPBLimit" style="color:red">
+        Exists the Limits, so can't to change the program/batch.
+      </span>
+        <div *ngIf="hiddenPBActive" style="color:red">
+          Please deactivate User from existing program/batch and then activate for another program/batch.
         </div>
 
-        <div class="p-field">
-          <label for="batchName">Batch Number</label>
-          <p-dropdown [options]="batchList" formControlName="batchName" id="batchName" placeholder="Select Batch"
-              optionLabel="batchName" required></p-dropdown>
-              <div *ngIf="submittedPB && assignProgBatchForm.get('batchName').hasError('required')" style="color:red">
-                Batch Name is required
-              </div>
+      <div class="p-field">
+        <label for="userRoleStatus">User Role</label>
+        <input type="text" readonly pInputText id="roleId" formControlName="roleId" name="roleId" required/>
+         <div *ngIf="submittedPB && assignProgBatchForm.get('roleId').hasError('required')" style="color:red">
+          User Email Id is required.
         </div>
+      </div>
+      <div class="p-field">
+        <label for="userRole">Student Email Id</label>
+        <p-dropdown [options]="userEmailUserList" [filter]="true" filterBy="userFullName" [showClear]="true" formControlName="userId" name="userId" id="userId" 
+        optionLabel="userFullName" (onChange)="StudentProgramBatch()" placeholder="Select Email ID" required></p-dropdown>
+          <div *ngIf="submittedPB && assignProgBatchForm.get('userId').hasError('required')" style="color:red">
+            User Email Id is required.
+          </div>
+      </div>
+     <div class="p-field">
+        <label for="programName">Program Name</label>
+        <input type="text" *ngIf="hiddenPB" readonly="!hiddenPB"pInputText id="programName" formControlName="programName" name="programName"  required/>
+        <p-dropdown  appendTo="body" *ngIf="hiddenPBDB"[options]="programList" formControlName="programName" id="programName" required placeholder="Select a Program name " 
+            optionLabel="programName" (onChange)="updateFilteredBatchNames()"></p-dropdown>
+            <div *ngIf="submittedPB && assignProgBatchForm.get('programName').hasError('required')" style="color:red">
+                Program Name is required.
+            </div>
+      </div>
+      <div class="p-field">
+        <label for="batchName">Batch Name</label>
+        <input type="text"*ngIf="hiddenPB" readonly="!hiddenPB" pInputText id="batchName" formControlName="batchName" name="batchName"  required/>
+        <p-dropdown appendTo="body"  *ngIf="hiddenPBDB"[options]="batchList" formControlName="batchName" id="batchName" placeholder="Select Batch"
+            optionLabel="batchName" required></p-dropdown>
+            <div *ngIf="submittedPB && assignProgBatchForm.get('batchName').hasError('required')" style="color:red">
+              Batch Name is required.
+          </div>
+     </div>
+    <div class="radio">
+          <div>
+              <label for="online">Status : </label>
+          </div>
+          <div *ngFor="let category of roleStatus">
+            <p-radioButton [inputId]="category" name="userStatus" [value]="category" formControlName="userStatus" id="userStatus" required>
+            </p-radioButton>
+              {{category}}
+          </div>
+      </div>
+      <div *ngIf="submittedPB && assignProgBatchForm.get('userStatus').hasError('required')" style="color: red;">
+        Status is required.
+      </div>
+  </form>
+</ng-template>
+<ng-template pTemplate="footer">
+    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-rounded p-button-danger"
+          (click)="hideDialog()"></button>
+      <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-rounded p-button-success"
+          (click)="assignProgramBatch()"></button>
+          
+      <button pButton pRipple label="Change Program/Batch" *ngIf="changePB && !hiddenPBDB" class="p-button-rounded p-button-success" 
+            (click)="ChangeProBat()"></button>
+</ng-template>     
+</p-dialog>
 
-        <div class="p-field">
-          <label for="userRole">User Role</label>
-          <p-dropdown [options]="userRoleDropdown" formControlName="roleId" name="roleId" id="roleId" 
-          placeholder="Select Role" required></p-dropdown>
-            <div *ngIf="submittedPB && assignProgBatchForm.get('roleId').hasError('required')" style="color:red">
-              Role id is required
-            </div>
-        </div>
-        
-        <div class="p-field">
-          <label for="userId">User Id</label>
-          <input type="text" pInputText  id="userId" formControlName="userId" name="userId"  required/>
-            <div *ngIf="submittedPB && assignProgBatchForm.get('userId').hasError('required')" style="color: red;">
-             User id is required
-            </div>
-       </div>
- 
-        <div class="radio">
-            <div>
-                <label for="online">Status : </label>
-            </div>
-            <div *ngFor="let category of roleStatus">
-              <p-radioButton [inputId]="category" name="userStatus" [value]="category" formControlName="userStatus" id="userStatus" required>
-              </p-radioButton>
-                {{category}}
-            </div>
-        </div>
-        <div *ngIf="submittedPB && assignProgBatchForm.get('userStatus').hasError('required')" style="color: red;">
-          Status is required
-        </div>
-      </form>
-    </ng-template>
-    <ng-template pTemplate="footer">
-        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-rounded p-button-danger"
-              (click)="hideDialog()"></button>
-          <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-rounded p-button-success"
-              (click)="assignProgramBatch()"></button>
-    </ng-template>   
-  </p-dialog>
   <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
 </div>
