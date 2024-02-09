@@ -1,4 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
   url:'https://lms-backend-service.herokuapp.com/lms'
 };
