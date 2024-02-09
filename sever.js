@@ -2,6 +2,7 @@
 // Install express server 
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const app = express();
 
 const morgan = require("morgan");
@@ -19,7 +20,7 @@ app.use('/api', createProxyMiddleware({
         [`^/api`]: '',
     },
  }));
-
+app.use(cors());
 // Serve only the static files form the dist directory
 app.use(express.static(__dirname + '/dist/lms-frontend-phase2'));
 app.get('/*', function(req, res) {
