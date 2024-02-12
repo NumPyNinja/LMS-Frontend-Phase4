@@ -16,4 +16,5 @@ export class ClassService {
     return this.httpClient.get<Class[]>(this.url + "/allClasses");
   }
 
+
 }

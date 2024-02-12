@@ -1,0 +1,11 @@
+<mat-toolbar color="primary" *ngIf="isLoggedIn$ | async as isLoggedIn">
+    <span>
+      LMS - Learning Management System
+    </span>
+    <span class="fill-remaining-space"></span>
+    
+    <button id="dashboard" mat-button a routerLink="/staffdashboard">Staff Dashboard</button>
+
+    <button id="logout" mat-button (click)="onLogout()" *ngIf="isLoggedIn">Logout</button>
+  </mat-toolbar>
+

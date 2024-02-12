@@ -10,7 +10,7 @@ import { User } from 'src/app/user/user';
 export class AdmindataComponent implements OnInit {
   userId: string = "";
   users:User[]=[];
-  userRoles:String[]=[];
+  userRoles:string="";
  
   constructor(private authService: AuthService) { }
 
@@ -18,8 +18,8 @@ export class AdmindataComponent implements OnInit {
     this.authService.loggedInUserId.subscribe((res) => {
       this.userId = res;
     });
-    this.userRoles=this.authService.loggedInUserRole; 
-    this.userRoles = this.authService.loggedInUserRole.map((str) => str.slice(5));
+   
+  this.authService.loggedInUserRole.subscribe((data:any) =>   this.userRoles =  data[0].slice(5));
 
   }
    

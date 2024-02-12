@@ -1,0 +1,25 @@
+<h3 style="text-align: left;">Staff Data</h3>
+<mat-table class="table-container mat-elevation-z8" [dataSource]="dataSource">
+  <ng-container matColumnDef="BatchName">
+    <mat-header-cell *matHeaderCellDef>BatchName</mat-header-cell>
+    <mat-cell *matCellDef="let classData">{{classData.userId}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="ClassTopic">
+    <mat-header-cell *matHeaderCellDef>Class Topic</mat-header-cell>
+    <mat-cell class="description-cell" *matCellDef="let staff">{{classData.userFirstName}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="ClassDate">
+    <mat-header-cell *matHeaderCellDef>Class Date</mat-header-cell>
+    <mat-cell class="duration-cell" *matCellDef="let staff">{{classData.userLastName}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="classNotes">
+    <mat-header-cell *matHeaderCellDef>Class Notes</mat-header-cell>
+    <mat-cell class="duration-cell" *matCellDef="let staff">{{sclassDatataff.userPhoneNumber}}</mat-cell>
+  </ng-container>
+  
+</mat-table>
+<!--<mat-paginator [length]="5" [pageSize]="5" [pageSizeOptions]="[5, 10, 25]">
+  </mat-paginator>-->
+<mat-paginator #paginator [pageSizeOptions]="[5, 10, 15]" showFirstLastButtons [hidePageSize]="true"></mat-paginator>
+
+  

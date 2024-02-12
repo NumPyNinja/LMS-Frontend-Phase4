@@ -63,6 +63,9 @@ export class SessionService {
     return this.httpClient.delete<Session>(this.url + "/deleteByClass/" + session.csId);
   }
 
+  getSessionListForStaffId(staffId : string): Observable<Session[]> {
+    return this.httpClient.get<Session[]>(this.url + "/classesByStaff/" + staffId);
+  }
 
   
 }

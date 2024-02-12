@@ -48,6 +48,10 @@ import { WidgetdataComponent } from './dashboard/widgetdata/widgetdata.component
 import { MatDialogModule } from '@angular/material/dialog';
 import { ChartsModule } from 'ng2-charts';
 import { DoughnutchartComponent } from './dashboard/doughnutchart/doughnutchart.component';
+import { StaffheaderComponent } from './staffheader/staffheader.component';
+import { StudentheaderComponent } from './studentheader/studentheader.component';
+import { StaffdashboardComponent } from './staffdashboard/staffdashboard/staffdashboard.component';
+import { ClassesforstaffComponent } from './staffdashboard/classesforstaff/classesforstaff.component';
 
 
 
@@ -75,7 +79,11 @@ import { DoughnutchartComponent } from './dashboard/doughnutchart/doughnutchart.
     StaffdataComponent,
     AdmindataComponent,
     WidgetdataComponent,
-    DoughnutchartComponent
+    DoughnutchartComponent,
+    StaffheaderComponent,
+    StudentheaderComponent,
+    StaffdashboardComponent,
+    ClassesforstaffComponent
   ],
 
   imports: [

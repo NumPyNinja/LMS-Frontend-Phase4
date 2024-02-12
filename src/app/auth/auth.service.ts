@@ -11,11 +11,20 @@ export class AuthService {
   private loggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public loggedInUserSubject: BehaviorSubject<string> = new BehaviorSubject<string>("");
   loggedInUserId = this.loggedInUserSubject.asObservable();
-  loggedInUserRole:String[]=[];
+  public loggedInUserSubjectRole: BehaviorSubject<string> = new BehaviorSubject<string>("");
+  
 
-  get isLoggedIn() {
+  
+
+get isLoggedIn() {
     return this.loggedIn.asObservable();
   }
+
+get loggedInUserRole(){
+ return this.loggedInUserSubjectRole.asObservable();
+}
+
+ 
 
   constructor(
     private router: Router,
@@ -48,10 +57,12 @@ export class AuthService {
     .pipe(map(response => {
         const token = response.token;
         this.loggedIn.next(true);
+        debugger
         this.loggedInUserSubject.next(login.userLoginEmailId);
         localStorage.setItem('token', token);
         this.router.navigate(['/']);
-        this.loggedInUserRole=response.roles;
+        this.loggedInUserSubjectRole.next(response.roles);
+        
         //return response;
 
       },

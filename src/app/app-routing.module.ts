@@ -14,6 +14,7 @@ import { SessionComponent } from './session/session/session.component';
 import { StudentComponent } from './student/student.component';
 import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
 import { ProgramComponent } from './program/program/program.component';
+import { StaffdashboardComponent } from './staffdashboard/staffdashboard/staffdashboard.component';
 
 
 const routes: Routes = [
@@ -30,6 +31,7 @@ const routes: Routes = [
   { path: 'session', component: SessionComponent,canActivate:[AuthGuard]},
   { path: 'forgot-password', component:ForgotPasswordComponent},
   {path: 'reset-password' , component:ResetPasswordComponent},
+  {path: 'staffdashboard' , component:StaffdashboardComponent},
 
   { path: '**', redirectTo: '' },
 ];

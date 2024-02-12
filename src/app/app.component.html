@@ -1,2 +1,25 @@
-<app-header></app-header>
+
+<div *ngIf="userRole === 'ROLE_ADMIN'" >
+    <app-header></app-header>
+    </div>
+
+    <div *ngIf="userRole === 'ROLE_STAFF'" >
+<app-staffheader></app-staffheader>
+    </div>
+
+    <div *ngIf="userRole === 'ROLE_USER'" >
+        <app-studentheader></app-studentheader>
+            </div>  
+
+
+            <!-- <div [ngSwitch]="loggedInUserRole">
+                <app-header *ngSwitchCase="'ROLE_ADMIN'"></app-header>
+                <app-staffheader *ngSwitchCase="'ROLE_STAFF'"></app-staffheader>
+                <app-studentheader *ngSwitchCase="'ROLE_USER'"></app-studentheader>
+                
+              </div> -->
+              <!-- <div>
+                <app-header></app-header>
+                </div> -->
+            
 <router-outlet></router-outlet>
