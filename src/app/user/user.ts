@@ -25,9 +25,19 @@ export interface User {
     batchName?: string;
     userStatus?: boolean;
     programId?:number;
-    batchid ?:number;
+    batchId ?:number;
     userRole ? : string;
     userid ?:string;
-    userRoleProgramBatches ? : UserRoleProgramBatch[];    
+    userRoleProgramBatches ? : UserRoleProgramBatch[];   
+    userRoleProgramBatchStatus?:any; 
+}
+export interface Staff{
+    userId?:string;
+    staffName?:string;
+}
+export interface userEmailUser{
+    userId?:any;
+    userFullName?:string;
+    roleId?:string;
 }
 
