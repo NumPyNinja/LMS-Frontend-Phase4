@@ -253,7 +253,7 @@ staffIDFunction(){
     });
   }
 
-  findBatchName(batchId: string) {
+  findBatchName(batchId: number) {
     if (this.batchList.length != 0) {
       return this.batchList.filter(x => x.batchId == batchId)[0].batchName;
     }

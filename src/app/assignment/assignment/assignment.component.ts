@@ -343,7 +343,7 @@ patternName()
     this.assigmentDialogue = true;
   }
 
-  getBatchName(batchId : string){
+  getBatchName(batchId : number){
     for (const batch of this.batchList) {
       if (batch.batchId === batchId) {
           this.assignment.batchName= batch.batchName;

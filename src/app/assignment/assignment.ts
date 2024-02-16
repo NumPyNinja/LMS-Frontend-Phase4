@@ -11,7 +11,7 @@ export interface Assignment {
     pathAttachment4?: string;
     pathAttachment5?: string;
     createdBy?: string;
-    batchId?: string;
+    batchId?: number;
     graderId?: any;
     programId?: number;
     programName?: string;

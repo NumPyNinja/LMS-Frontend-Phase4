@@ -65,6 +65,8 @@ export class SessionService {
     return this.httpClient.delete<Session>(this.url + "/deleteByClass/" + session.csId);
   }
 
-
-  
+  getSessionsByBatch(batchId: number): Observable<Session[]> {
+    console.log("batch"+batchId);
+    return this.httpClient.get<Session[]>(this.url + "/classesbyBatch/"+ batchId); 
+  }
 }

@@ -119,7 +119,7 @@ export class BatchComponent implements OnInit {
   }
   }
 
-  findIndexById(id: string): number {
+  findIndexById(id: number): number {
     let index = -1;
     for (let i = 0; i < this.batchList.length; i++) {
       if (this.batchList[i].batchId === id) {
