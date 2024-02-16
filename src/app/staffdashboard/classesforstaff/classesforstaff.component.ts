@@ -8,6 +8,7 @@ import { ClassService } from 'src/app/class/class.service';
 import { Class } from 'src/app/class/class';
 import { SessionService } from 'src/app/session/session.service';
 import { Session } from 'src/app/session/session';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-classesforstaff',
@@ -17,37 +18,43 @@ import { Session } from 'src/app/session/session';
 export class ClassesforstaffComponent implements OnInit {
 
   displayedColumns: string[] = [
-    'BatchName',
-    'ClassTopic',
-    'ClassDate',
-    'classNotes',
+    
+    'classTopic',
+    'batchName',
+    'classNo',
+    'classDate'
+
   ];
 
   classData: Session[];
   public rowID: string;
   dialogRef: any;
-  public selectedStaff: User;
-
+  public selectedClass: Session;
+  datePipe: DatePipe = new DatePipe('en-US');
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  dataSource = new MatTableDataSource<User>();
+  dataSource = new MatTableDataSource<Session>();
 
   constructor(private dialog: MatDialog, private sessionService: SessionService) {
     
     this.sessionService.getSessionListForStaffId('U02').subscribe(us => {
       this.classData = us;
-      var result = [];
+     
+      this.dataSource.data  = us;
       console.log("this.classData");
-      console.log(this.classData);
+      console.log(this.dataSource.data );
 
 
     })
+   
   }
 
-  findBatchName(batchId: string) {
-    //if (this.batchList.length != 0) {
-      //return this.batchList.filter(x => x.batchId == batchId)[0].batchName;
-    //}
+  getFormattedDate(){
+    
+    var date = new Date();
+    var transformDate = this.datePipe.transform(date, 'yyyy-MM-dd');
+    return transformDate;
+
   }
 
  
