@@ -1,15 +1,20 @@
+
 <mat-toolbar color="primary" *ngIf="isLoggedIn$ | async as isLoggedIn">
   <span>
     LMS - Learning Management System
   </span>
   <span class="fill-remaining-space"></span>
-  
   <button id="dashboard" mat-button a routerLink="/dashboard">Home</button>
   <button id="student" mat-button a routerLink="/student">Student</button>
   <button id="program" mat-button a routerLink="/program">Program</button>
   <button id="batch" mat-button a routerLink="/batch">Batch</button>
   <button id="session" mat-button a routerLink="/session">Class</button>
-  <button id="user" mat-button a routerLink="/user">User</button>
+  <button mat-button [matMenuTriggerFor]="menu" (click)="User()" >User</button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item  (click)="NewUser()">Add New User</button>
+    <button mat-menu-item (click)="AssignStaff()">Assign Staff</button>
+    <button mat-menu-item (click)="AssignStudent()">Assign Student</button>
+  </mat-menu>
   <button id="assignment" mat-button a routerLink="/assignment">Assignment</button>
   <button id="attendance" mat-button a routerLink="/attendance">Attendance</button>
   <button id="logout" mat-button (click)="onLogout()" *ngIf="isLoggedIn">Logout</button>
