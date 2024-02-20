@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ConfirmationService, MessageService, SelectItem } from 'primeng/api';
 import { Batch } from 'src/app/batch/batch';
 import { BatchService } from 'src/app/batch/batch.service';
@@ -8,13 +9,13 @@ import { Program } from 'src/app/program/program';
 import { ProgramService } from 'src/app/program/program.service';
 import { Staff, User, userEmailUser } from '../user';
 import { UserService } from '../user.service';
-
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss']
 })
-export class UserComponent implements OnInit {
+export class UserComponent implements OnInit{
+
   
   users: User[];
   usersWithRolesList: User[];
@@ -66,16 +67,18 @@ export class UserComponent implements OnInit {
  roleId:string="";pid:string="";bid:string="";bstatus:string="";
  assignProgBatchSSForm: any; StudentVisible:boolean=false;StaffVisible:boolean=false;
  selectedBatchName: User[];
-  
+ hidden:boolean=false;
+ newUser1:string;assignStaff1:string;assignStudent1:string;
  constructor(private userService: UserService,
     private fb: FormBuilder,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private programService: ProgramService,
     private batchService: BatchService,
-    private dialog: MatDialog
-    ){ }
+    private dialog: MatDialog,
+    private router: Router
 
+    ){ }
   ngOnInit(): void {  
     this.getUserList();
     this.userService.getUsers().subscribe(res => {
@@ -84,7 +87,8 @@ export class UserComponent implements OnInit {
     (error) => {
       console.log(error);
     });
-    
+
+
     this.userVisaStatusControl = new FormControl();
     this.userVisaStatusControl.valueChanges.subscribe((val)=>{
      
@@ -96,8 +100,8 @@ export class UserComponent implements OnInit {
     });
      
     this.programService.getPrograms().subscribe(list => {
-        this.programList = list;
-this.programListTemp=this.programList;
+    this.programList = list;
+    this.programListTemp=this.programList;
         });
     
     this.batchService.getBatchList().subscribe(list => {
@@ -106,19 +110,43 @@ this.programListTemp=this.programList;
     });
     this.userService.getAllUsers().subscribe(list=>{
       this.userList=list;
-this.userListTemp=this.userList;
+      this.userListTemp=this.userList;
     });
     const getUsers$ = this.userService.getUsers();
     getUsers$.subscribe(userRoleMap1 => {
         this.userMapWithRolesList=userRoleMap1;
         this.userMapWithRolesListT=this.userMapWithRolesList;
-    });
+    }); 
     this.userRoleDropdown = this.userRoleMaps.map(role => ({ label: role, value: role }));
     this.userVisaStatusOptions=this.userVisaStatus.map(vstatus => ({ label: vstatus, value: vstatus }));
-    this.roleStatusDropdown = this.roleStatus.map(rStatus => ({ label: rStatus, value: rStatus }));
+    this.roleStatusDropdown = this.roleStatus.map(rStatus => ({ label: rStatus, value: rStatus })); 
+   
   }
-  
+//Tool Bar Menu Assign student/Staff,New User
+ngDoCheck() {
+  this.newUser1=sessionStorage.getItem('NewUser1');
+  this.assignStaff1=sessionStorage.getItem('AssignStaff1');
+  this.assignStudent1=sessionStorage.getItem('AssignStudent1');
+ if( this.newUser1=='true' || this.assignStaff1=='true' || this.assignStudent1=='true'){
+ if(this.newUser1=='true'){
+ sessionStorage.removeItem("NewUser1");
+ sessionStorage.removeItem("AssignStaff1");
+ sessionStorage.removeItem("AssignStudent1");
+  this.openNew();}
 
+else if(this.assignStaff1=='true'){
+sessionStorage.removeItem("NewUser1");
+sessionStorage.removeItem("AssignStaff1");
+sessionStorage.removeItem("AssignStudent1");
+    this.openAssignStaff();}
+else if(this.assignStudent1=='true'){
+sessionStorage.removeItem("NewUser1");
+sessionStorage.removeItem("AssignStaff1");
+sessionStorage.removeItem("AssignStudent1");
+   this.openAssignDialog();}
+}
+
+}
   //Staff name = FirstName + Last Name Dropdown
 staffIDFunction(){
   this.staffList.forEach(item => {
@@ -129,10 +157,11 @@ staffIDFunction(){
 } 
 //Based on the  Role  email are  Display
 updateFilteredUserRoleID(){
- this.selectedBatchName = [];
+
   if(this.assignStaffDialogue){
     this.roleId='R02';
     this.assignStaffForm.get('roleId').setValue(this.roleId);
+    this.selectedBatchName = [];
     this.updateUserBasedEmailId(); 
    }
   if(this.assignProgBatchDialogue){
@@ -238,9 +267,8 @@ updateFilteredBatchNames(){
     this.batchList = this.batchList.filter(item => item.programId === pid && item.batchStatus=='ACTIVE');
     if(this.assignStaffDialogue && this.progBatchList.length>0){
       this.progBatchList.forEach(item => {
-       this.batchList=this.batchList.filter(y=> y.batchId != item.batchId)
+      this.batchList=this.batchList.filter(y=> y.batchId != item.batchId)
     });
- 
   }
 }
   private selectRow(checkValue: any) {
@@ -253,7 +281,7 @@ updateFilteredBatchNames(){
     this.users = users; 
     this.visibility = false;
    });
-   }
+  }
 
   viewUser(user: User) {
     this.user = { ...user };
@@ -265,7 +293,7 @@ updateFilteredBatchNames(){
     this.userDialogue = false;
    // this.viewUserDialogue=false;
     this.assignProgBatchDialogue=false;
-this.assignStaffDialogue=false;
+    this.assignStaffDialogue=false;
     this.submitted=false;
   }
 
@@ -274,8 +302,7 @@ this.assignStaffDialogue=false;
     this.hiddenPB=true;this.hiddenPBDB=false;this.changePB=false;this.hiddenPBActive=false;this.hiddenPBLimit=false;
     this.assignProgBatchDialogue=true;
     this.assignProgBatchForm.reset();
-this.updateFilteredUserRoleID();
-
+    this.updateFilteredUserRoleID();
   }
   openAssignStaff()
   {
@@ -284,15 +311,13 @@ this.updateFilteredUserRoleID();
      this.StaffLimit=false;
      this.assignStaffForm.reset();
      this.updateFilteredUserRoleID();
-     
   }
   
   openNew() {
     this.user = {};
     this.submitted = false;
     this.userDialogue = true;
-    
-   this.userForm.reset();
+    this.userForm.reset();
   }
 
     userForm = this.fb.group({
@@ -339,6 +364,7 @@ this.updateFilteredUserRoleID();
     skillName : ['']
   });
   hasUnitNumber = false;
+
  /*** 
   states = [
     { name: 'Alabama', abbreviation: 'AL' },
@@ -602,7 +628,7 @@ editUser(user: User) {
 }
   deleteUser(user: User) {
     this.confirmationService.confirm({
-        
+    
        message: 'Are you sure you want to delete the user?', 
        header: 'Confirm',
         icon: 'pi pi-exclamation-triangle',
@@ -759,8 +785,7 @@ editUser(user: User) {
           }
            */
      // });
-    
-  
+
       
 }
 

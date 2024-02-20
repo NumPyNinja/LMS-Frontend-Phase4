@@ -1,24 +1,38 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from './../auth/auth.service';
-import { Component, OnInit } from '@angular/core';
-
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
  })
 export class HeaderComponent implements OnInit {
-
   isLoggedIn$: Observable<boolean>;
-
-  constructor(private authService: AuthService) { }
-
-  ngOnInit() {
+  constructor(private authService: AuthService,
+    private router: Router) { }
+  ngOnInit() { 
     this.isLoggedIn$ = this.authService.isLoggedIn;
   }
-
+  User(){
+    sessionStorage.setItem('NewUser1', 'false');
+    sessionStorage.setItem('AssignStaff1', 'false');
+    sessionStorage.setItem('AssignStudent1', 'false');
+    this.router.navigate(['/user']);  
+  }
+  NewUser() {
+    sessionStorage.setItem('NewUser1', 'true');
+  }
+  AssignStaff(){
+    sessionStorage.setItem('AssignStaff1', 'true');
+  }
+  AssignStudent(){
+    sessionStorage.setItem('AssignStudent1', 'true');
+    }
   onLogout() {
     this.authService.logout();
   }
 
 }
+
+
