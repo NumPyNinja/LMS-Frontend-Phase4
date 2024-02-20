@@ -33,9 +33,9 @@ export class AttendanceComponent implements OnInit {
   selectedAttendance: Attendance[];
   submitted: boolean;
   batchList: Batch[];
-  selectedBatches: string;
+  selectedBatch: Batch;
   sessionList: Session[];
-  selectedClasses: Session[];
+  selectedClass: Session;
   selectedStudents: User[];
   users: User[];
   attendanceDrop: string[]=['Present','Absent','Late','Excused'];
@@ -43,6 +43,7 @@ export class AttendanceComponent implements OnInit {
   selectedDate: Date;
   maxDate : Date;  
   minDate = new Date();
+  students: User[];
 
   constructor(
     private attendanceService: AttendanceService,
@@ -135,7 +136,8 @@ export class AttendanceComponent implements OnInit {
     this.editAttendanceDialogue = false;
     this.submitted = false;
     this.selectedStudents = null;
-    this.selectedClasses = null;
+    this.selectedBatch = null;
+    this.selectedClass = null;
     this.selectedDate = null;
     this.selectedDrop = null; 
   }
@@ -172,18 +174,17 @@ export class AttendanceComponent implements OnInit {
     this.submitted = true;
     //checking attendance already exist or not
     for (let index = 0; index < this.selectedStudents.length; index++) {
-      const newStudent = this.selectedStudents[index];
-      for (let i = 0; index < this.selectedClasses.length; index++) {
-        const newClass = this.selectedClasses[i];
-        let attendance = this.attendances.findIndex(att => att.csId === newClass.csId && att.studentId === newStudent.userId);
+      const newStudent = this.selectedStudents[index];      
+        const newClass = this.selectedClass;
+        const newAttendenceDate = this.selectedDate;
+        let attendance = this.attendances.findIndex(att => att.csId === newClass.csId && att.studentId === newStudent.userId &&  att.attendanceDate === newAttendenceDate);     
 
         if(attendance != -1){
           alert('Cannot add. Attendance already exist');
-        } else {
-            this.selectedClasses.forEach((selectedClass) => {
+        } else {            
               this.selectedStudents.forEach((selectedStudent) => {
                 let attendance: Attendance = {};
-                attendance.csId = selectedClass.csId;
+                attendance.csId = this.selectedClass.csId;
                 attendance.studentId = selectedStudent.userId;
                 attendance.attendance = this.selectedDrop.toString();
                 attendance.attendanceDate = this.selectedDate;
@@ -202,18 +203,21 @@ export class AttendanceComponent implements OnInit {
                     life: 3000,
                   });
                 });
-              });
-            })
+              });  
+              
+        
             this.ngOnInit();
             this.attendanceDialogue = false;  
             this.selectedStudents = null;
-            this.selectedClasses = null;
+            this.selectedBatch = null;
+            this.selectedClass = null;
             this.selectedDate = null;
             this.selectedDrop = null;
           }
       }}    
       this.selectedAttendances = null;
-  }}
+      
+  }
   //delete
   deleteAttendance(attendance: Attendance) {
     
@@ -281,6 +285,12 @@ export class AttendanceComponent implements OnInit {
       key: "myDialog"
     });
   }
-
- 
+  //get users list based on the batch id
+  getUserAndClassList(){
+    const batchid = this.selectedBatch.batchId;
+    this.userService.getAllUsersByBatch(batchid).subscribe((data)=>{
+         this.students = data});
+    this.sessionService.getSessionsByBatch(batchid).subscribe((data)=>{
+         this.sessionList = data});
+  } 
 }

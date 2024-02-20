@@ -44,6 +44,10 @@ export class UserService {
     return this.httpClient.get<User[]>(this.url + "/users/roles/R03")
     
   }
+  getAllUsersByBatch(batchId : number): Observable<User[]> {
+    return this.httpClient.get<User[]>(this.url + "/users/programBatch/" + batchId)
+    
+  }
   updateUser(user: User) {
     return this.httpClient.put<User>(this.url + "/users/" + user.userId ,user);
   }
