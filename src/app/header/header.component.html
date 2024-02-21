@@ -9,13 +9,16 @@
   <button id="program" mat-button a routerLink="/program">Program</button>
   <button id="batch" mat-button a routerLink="/batch">Batch</button>
   <button id="session" mat-button a routerLink="/session">Class</button>
-  <button mat-button [matMenuTriggerFor]="menu" (click)="User()" >User</button>
-  <mat-menu #menu="matMenu">
+  <button mat-button [matMenuTriggerFor]="menuUser" a routerLink="/user" >User</button>
+  <mat-menu #menuUser="matMenu">
     <button mat-menu-item  (click)="NewUser()">Add New User</button>
     <button mat-menu-item (click)="AssignStaff()">Assign Staff</button>
     <button mat-menu-item (click)="AssignStudent()">Assign Student</button>
   </mat-menu>
-  <button id="assignment" mat-button a routerLink="/assignment">Assignment</button>
+  <button id="assignment" [matMenuTriggerFor]="menuAssign" a routerLink="/assignment" mat-button>Assignment</button>
+  <mat-menu #menuAssign="matMenu">
+    <button mat-menu-item  (click)="AddAssign()">Add New Assignment</button>
+  </mat-menu>
   <button id="attendance" mat-button a routerLink="/attendance">Attendance</button>
   <button id="logout" mat-button (click)="onLogout()" *ngIf="isLoggedIn">Logout</button>
 </mat-toolbar>
