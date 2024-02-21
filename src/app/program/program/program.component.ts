@@ -3,6 +3,7 @@ import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 import { Program } from '../program';
 import { ProgramService } from '../program.service';
+import {Router} from '@angular/router'
 
 @Component({
   selector: 'app-program',
@@ -42,11 +43,14 @@ export class ProgramComponent implements OnInit {
   pattername: boolean=false;
   patternDes: boolean=false;
 
+  newProgram:string;
+
 
   constructor(
     private programService: ProgramService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -54,6 +58,14 @@ export class ProgramComponent implements OnInit {
     this.getProgramList();
   }
 
+  doCheck(){
+    this.newProgram = sessionStorage.getItem('NewProgram');
+    if(this.newProgram=='true'){
+      sessionStorage.removeItem('NewProgram');
+      this.openNew();
+    }
+  }
+  
   openNew() {
     this.program = {};
     this.submitted = false;

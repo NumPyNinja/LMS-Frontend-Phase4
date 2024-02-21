@@ -6,7 +6,10 @@
   
   <button id="dashboard" mat-button a routerLink="/dashboard">Home</button>
   <button id="student" mat-button a routerLink="/student">Student</button>
-  <button id="program" mat-button a routerLink="/program">Program</button>
+  <button id="program" mat-button a [matMenuTriggerFor]="menu" (click)="Program()">Program</button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="NewProgram()">Add New Program</button>
+  </mat-menu>
   <button id="batch" mat-button a routerLink="/batch">Batch</button>
   <button id="session" mat-button a routerLink="/session">Class</button>
   <button id="user" mat-button a routerLink="/user">User</button>
