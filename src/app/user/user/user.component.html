@@ -1,11 +1,13 @@
 <p-toast></p-toast>
-
+ 
 <div class="signin-content">
   <mat-card class="container">
     <mat-card-title>
       <div class="box">
         Manage User<br>
       </div><br>
+    
+    
       <div class="box">
         <div>
           <button pButton pRipple icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedUsers()"
@@ -27,7 +29,7 @@
           <button pButton pRipple id="Assign" label="Assign Student" icon="pi pi-plus"
             class="p-button-rounded p-button-success" (click)="openAssignDialog()"></button>
         </div>
-<div>
+       <div>
           <button pButton pRipple id="Assign" label="Assign Staff" icon="pi pi-plus"
             class="p-button-rounded p-button-success" (click)="openAssignStaff()"></button>
         </div>
@@ -37,6 +39,7 @@
       <div fxLayout="row" fxLayoutAlign="space-around center" style="height:100%">
         <mat-spinner [diameter]="50" strokeWidth="5" *ngIf="visibility"></mat-spinner>
       </div>
+      
       <p-table #dt responsiveLayout="stack" [value]="users" [rows]="5" [paginator]="true"
         [globalFilterFields]="['userFirstName', 'userMiddleName', 'lastName']" [(selection)]="selectedUsers"
         [rowHover]="true" dataKey="userId"
@@ -84,13 +87,17 @@
               </div>
             </td>
           </tr>
+          
         </ng-template>
+        
         <ng-template pTemplate="summary">
           <div class="p-d-flex p-ai-center p-jc-between" style="text-align: center;"> In total there are {{users ?
             users.length : 0 }} users.</div>
         </ng-template>
       </p-table>
+      
     </mat-card-content>
+    
   </mat-card>
 
   <p-dialog [(visible)]="userDialogue" [style]="{width: '68%'}" header="User Details" [modal]="true"
@@ -248,10 +255,11 @@
           </mat-card-actions>
         </mat-card>
       </form>
+      
     </ng-template>
   </p-dialog>
   
-  <p-dialog [(visible)]="assignStaffDialogue" [style]="{width: '500px'}" header="Assign User" [modal]="true"
+  <p-dialog [(visible)]="assignStaffDialogue" [style]="{width: '500px'}" header="Assign Staff" [modal]="true"
     styleClass="p-fluid">
     <ng-template pTemplate="content">
       <form [formGroup]="assignStaffForm">
@@ -261,7 +269,7 @@
       Exists the Limits 10, so you can't to add the program/batch.
     </span>
       <div class="p-field">
-        <label for="userRoleStatus">User Role</label>
+        <label for="userRoleStatus">Staff Role Id</label>
         <input type="text" readonly pInputText id="roleId" formControlName="roleId" name="roleId" required/>
       </div>  
       <div class="p-field">
@@ -274,7 +282,7 @@
       </div>
       <div class="p-field">
         <label for="skillName">Skill</label>
-        <input type="text" pInputText id="skillName" formControlName="skillName" name="skillName"  required/>
+        <input type="text" readonly pInputText id="skillName" formControlName="skillName" name="skillName"  required/>
        </div>    
        <div class="p-field">
           <label for="programName">Program Name</label>
@@ -307,6 +315,7 @@
         Status is required.
       </div>
   </form>
+  
 </ng-template>
 <ng-template pTemplate="footer">
     <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-rounded p-button-danger"
@@ -330,7 +339,7 @@
         </div>
 
         <div class="p-field">
-          <label for="userRoleStatus">User Role</label>
+          <label for="userRoleStatus">Student Role Id</label>
         <input type="text" readonly pInputText id="roleId" formControlName="roleId" name="roleId" required/>
          <div *ngIf="submittedPB && assignProgBatchForm.get('roleId').hasError('required')" style="color:red">
           User Email Id is required.
@@ -388,7 +397,9 @@
     </ng-template>   
   </p-dialog>
   <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
 </div>
+
 <ng-template #mytemplateUser>
     <mat-card class="user-card">
         <mat-card-content>
@@ -445,5 +456,5 @@
             <button mat-button mat-dialog-close (click)="onCloseDialog()">Close</button>
         </mat-dialog-actions>
     </mat-card>
-
+ 
 </ng-template>

@@ -204,7 +204,7 @@ updateFilteredUserRoleID(){
         this.assignStaffForm.get('skillName').setValue(skillN);
       });
     if(!skillN)
-    this.assignStaffForm.get('skillName').setValue("Null");
+    this.assignStaffForm.get('skillName').setValue("N/A");
     }
 
   StudentProgramBatch(){
