@@ -1,5 +1,5 @@
 {
-  "/api": {
+  "/api":{
 
     "target":"https://lms-backend-service.herokuapp.com/lms/",
 
@@ -10,4 +10,6 @@
   }
   
 }
- 
+  
+
+
