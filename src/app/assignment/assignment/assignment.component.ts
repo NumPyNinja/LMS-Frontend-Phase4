@@ -54,7 +54,7 @@ export class AssignmentComponent implements OnInit {
   today = new Date();
   staffList:User[];
   staffIDvaule:Staff1[]=[];
-
+  addAssign:string;
   
   constructor(
     private assignmentService: AssignmentService,
@@ -101,6 +101,14 @@ export class AssignmentComponent implements OnInit {
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
+  ngDoCheck() {
+    this.addAssign=sessionStorage.getItem('AddAssign1');
+   if(this.addAssign=='true'){
+   sessionStorage.removeItem("AddAssign1");
+    this.openNew();
+  }
+   }
+
 
   private getMaxAssignmentId(max: number) {
     this.assignments.forEach((character) => {
