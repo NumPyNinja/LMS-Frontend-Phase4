@@ -12,20 +12,39 @@
     <button mat-menu-item (click)="NewBatch()">Add New Batch</button>
   </mat-menu>
   <button id="session" mat-button a routerLink="/session">Class</button>
-  <button mat-button [matMenuTriggerFor]="menuUser" (click)="User()">User</button>
+  <button mat-button [matMenuTriggerFor]="menuUser" a routerLink="/user">
+    User
+  </button>
   <mat-menu #menuUser="matMenu">
     <button mat-menu-item (click)="NewUser()">Add New User</button>
     <button mat-menu-item (click)="AssignStaff()">Assign Staff</button>
     <button mat-menu-item (click)="AssignStudent()">Assign Student</button>
   </mat-menu>
-  <button id="assignment" [matMenuTriggerFor]="menuAssign" a routerLink="/assignment" mat-button>Assignment</button>
+  <button
+    id="assignment"
+    [matMenuTriggerFor]="menuAssign"
+    a
+    routerLink="/assignment"
+    mat-button
+  >
+    Assignment
+  </button>
   <mat-menu #menuAssign="matMenu">
-    <button mat-menu-item  (click)="AddAssign()">Add New Assignment</button>
+    <button mat-menu-item (click)="AddAssign()">Add New Assignment</button>
   </mat-menu>
-  <button id="attendance" [matMenuTriggerFor]="menuAttendance" a routerLink="/attendance" mat-button>Attendance</button>
+  <button
+    id="attendance"
+    [matMenuTriggerFor]="menuAttendance"
+    a
+    routerLink="/attendance"
+    mat-button
+  >
+    Attendance
+  </button>
   <mat-menu #menuAttendance="matMenu">
-    <button mat-menu-item  (click)="AddAttendance()">Add Attendance</button>
+    <button mat-menu-item (click)="AddAttendance()">Add Attendance</button>
   </mat-menu>
-  <button id="logout" mat-button (click)="onLogout()" *ngIf="isLoggedIn">Logout</button>
+  <button id="logout" mat-button (click)="onLogout()" *ngIf="isLoggedIn">
+    Logout
+  </button>
 </mat-toolbar>
-
