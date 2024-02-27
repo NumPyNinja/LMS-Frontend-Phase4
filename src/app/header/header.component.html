@@ -19,6 +19,9 @@
   <mat-menu #menuAssign="matMenu">
     <button mat-menu-item  (click)="AddAssign()">Add New Assignment</button>
   </mat-menu>
-  <button id="attendance" mat-button a routerLink="/attendance">Attendance</button>
+  <button id="attendance" [matMenuTriggerFor]="menuAttendance" a routerLink="/attendance" mat-button>Attendance</button>
+  <mat-menu #menuAttendance="matMenu">
+    <button mat-menu-item  (click)="AddAttendance()">Add Attendance</button>
+  </mat-menu>
   <button id="logout" mat-button (click)="onLogout()" *ngIf="isLoggedIn">Logout</button>
 </mat-toolbar>
