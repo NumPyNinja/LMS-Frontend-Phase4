@@ -44,6 +44,7 @@ export class AttendanceComponent implements OnInit {
   maxDate : Date;  
   minDate = new Date();
   students: User[];
+  addAttendace:string;
 
   constructor(
     private attendanceService: AttendanceService,
@@ -74,6 +75,14 @@ export class AttendanceComponent implements OnInit {
     this.minDate.setDate(this.maxDate.getDate() - 6); 
   
   }
+
+  ngDoCheck() {
+    this.addAttendace=sessionStorage.getItem('AddAttendance1');
+   if(this.addAttendace=='true'){
+   sessionStorage.removeItem("AddAttendance1");
+    this.openNew();
+  }
+   }
 
   private getAttendanceList() {
     this.visibility = true;

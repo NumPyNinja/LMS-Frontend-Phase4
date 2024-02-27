@@ -34,6 +34,9 @@ export class HeaderComponent implements OnInit {
       sessionStorage.setItem('AddAssign1', 'true');
       
     }
+    AddAttendance(){ 
+      sessionStorage.setItem('AddAttendance1', 'true');      
+    }
   onLogout() {
     this.authService.logout();
   }
