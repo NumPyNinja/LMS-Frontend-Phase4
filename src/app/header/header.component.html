@@ -1,21 +1,30 @@
-
 <mat-toolbar color="primary" *ngIf="isLoggedIn$ | async as isLoggedIn">
-  <span>
-    LMS - Learning Management System
-  </span>
+  <span> LMS - Learning Management System </span>
   <span class="fill-remaining-space"></span>
   <button id="dashboard" mat-button a routerLink="/dashboard">Home</button>
   <button id="student" mat-button a routerLink="/student">Student</button>
   <button id="program" mat-button a routerLink="/program">Program</button>
-  <button id="batch" mat-button a routerLink="/batch">Batch</button>
+  <!-- <button id="batch" mat-button a routerLink="/batch">Batch</button> -->
+  <button mat-button [matMenuTriggerFor]="menu1" (click)="Batch()">
+    Batch
+  </button>
+  <mat-menu #menu1="matMenu">
+    <button mat-menu-item (click)="NewBatch()">Add New Batch</button>
+  </mat-menu>
   <button id="session" mat-button a routerLink="/session">Class</button>
-  <button mat-button [matMenuTriggerFor]="menu" (click)="User()" >User</button>
+  <button mat-button [matMenuTriggerFor]="menu" (click)="User()">User</button>
   <mat-menu #menu="matMenu">
-    <button mat-menu-item  (click)="NewUser()">Add New User</button>
+    <button mat-menu-item (click)="NewUser()">Add New User</button>
     <button mat-menu-item (click)="AssignStaff()">Assign Staff</button>
     <button mat-menu-item (click)="AssignStudent()">Assign Student</button>
   </mat-menu>
-  <button id="assignment" mat-button a routerLink="/assignment">Assignment</button>
-  <button id="attendance" mat-button a routerLink="/attendance">Attendance</button>
-  <button id="logout" mat-button (click)="onLogout()" *ngIf="isLoggedIn">Logout</button>
+  <button id="assignment" mat-button a routerLink="/assignment">
+    Assignment
+  </button>
+  <button id="attendance" mat-button a routerLink="/attendance">
+    Attendance
+  </button>
+  <button id="logout" mat-button (click)="onLogout()" *ngIf="isLoggedIn">
+    Logout
+  </button>
 </mat-toolbar>

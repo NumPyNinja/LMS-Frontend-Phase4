@@ -29,6 +29,14 @@ export class HeaderComponent implements OnInit {
   AssignStudent(){
     sessionStorage.setItem('AssignStudent1', 'true');
     }
+  Batch(){
+    sessionStorage.setItem('NewBatch1', 'false');
+    this.router.navigate(['/batch']);
+  }
+  NewBatch(){
+    sessionStorage.setItem('NewBatch1', 'true');
+  }
+  
   onLogout() {
     this.authService.logout();
   }
