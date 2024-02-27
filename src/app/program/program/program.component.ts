@@ -42,6 +42,7 @@ export class ProgramComponent implements OnInit {
   pattername: boolean=false;
   patternDes: boolean=false;
 
+  AddProgram:string;
 
   constructor(
     private programService: ProgramService,
@@ -54,6 +55,13 @@ export class ProgramComponent implements OnInit {
     this.getProgramList();
   }
 
+  ngDoCheck() {
+    this.AddProgram=sessionStorage.getItem('AddProgram1');
+    if(this.AddProgram=='true'){
+      sessionStorage.removeItem("AddProgram1");
+      this.openNew();
+    }
+  }  
   openNew() {
     this.program = {};
     this.submitted = false;

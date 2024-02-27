@@ -6,7 +6,10 @@
   <span class="fill-remaining-space"></span>
   <button id="dashboard" mat-button a routerLink="/dashboard">Home</button>
   <button id="student" mat-button a routerLink="/student">Student</button>
-  <button id="program" mat-button a routerLink="/program">Program</button>
+  <button id="program" mat-button [matMenuTriggerFor]="menuProgram" a routerLink="/program">Program</button>
+  <mat-menu #menuProgram="matMenu">
+    <button mat-menu-item  (click)="AddProgram()">Add New Program</button>
+  </mat-menu>
   <button id="batch" mat-button a routerLink="/batch">Batch</button>
   <button id="session" mat-button a routerLink="/session">Class</button>
   <button mat-button [matMenuTriggerFor]="menuUser" a routerLink="/user" >User</button>
