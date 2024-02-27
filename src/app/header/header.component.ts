@@ -14,13 +14,7 @@ export class HeaderComponent implements OnInit {
   ngOnInit() { 
     this.isLoggedIn$ = this.authService.isLoggedIn;
   }
-  User(){
-    sessionStorage.setItem('NewUser1', 'false');
-    sessionStorage.setItem('AssignStaff1', 'false');
-    sessionStorage.setItem('AssignStudent1', 'false');
-    this.router.navigate(['/user']);  
-  }
-  NewUser() {
+  NewUser() { 
     sessionStorage.setItem('NewUser1', 'true');
   }
   AssignStaff(){
@@ -36,7 +30,10 @@ export class HeaderComponent implements OnInit {
   NewBatch(){
     sessionStorage.setItem('NewBatch1', 'true');
   }
-  
+  AddAssign(){ 
+      sessionStorage.setItem('AddAssign1', 'true');
+      
+    }
   onLogout() {
     this.authService.logout();
   }
