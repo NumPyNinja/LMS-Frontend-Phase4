@@ -3,11 +3,11 @@
   <span class="fill-remaining-space"></span>
   <button id="dashboard" mat-button a routerLink="/dashboard">Home</button>
   <button id="student" mat-button a routerLink="/student">Student</button>
-  <button id="program" mat-button a routerLink="/program">Program</button>
-  <!-- <button id="batch" mat-button a routerLink="/batch">Batch</button> -->
-  <button mat-button [matMenuTriggerFor]="menu1" (click)="Batch()">
-    Batch
-  </button>
+  <button id="program" mat-button [matMenuTriggerFor]="menuProgram" a routerLink="/program">Program</button>
+  <mat-menu #menuProgram="matMenu">
+    <button mat-menu-item  (click)="AddProgram()">Add New Program</button>
+  </mat-menu>
+  <button mat-button [matMenuTriggerFor]="menu1" (click)="Batch()">Batch</button>
   <mat-menu #menu1="matMenu">
     <button mat-menu-item (click)="NewBatch()">Add New Batch</button>
   </mat-menu>
