@@ -36,6 +36,8 @@ export class BatchComponent implements OnInit {
   pattBatchName:boolean=false;
   pattBatchDes:boolean=false;
   checkbatchN:boolean=false;
+  newBatch1:string;
+  allBatches1:string;
   constructor(
     private batchService: BatchService,
     private programService: ProgramService,
@@ -43,6 +45,22 @@ export class BatchComponent implements OnInit {
     private confirmationService: ConfirmationService
   ) { }
 
+  ngDoCheck() {
+    this.newBatch1 = sessionStorage.getItem("NewBatch1");
+  
+
+    if (this.newBatch1 == 'true'){
+      if (this.newBatch1 == 'true') {
+        sessionStorage.removeItem("NewBatch1");
+      
+        this.openNew();
+      }
+      {
+        sessionStorage.removeItem("NewBatch1");
+        this.openNew();
+      }
+    }
+  }
 
   ngOnInit() {
     this.batchService.getBatchList().subscribe(res => {
@@ -218,4 +236,6 @@ batchNameUnique(batchN: string){
     return false;
   }
 }
+
+
 }
