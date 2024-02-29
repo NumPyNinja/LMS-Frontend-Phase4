@@ -126,7 +126,7 @@
             <input type="text" [hidden]="onEdit" pInputText id="batchProg" [style]="{'width':'50%'}" readonly  [(ngModel)]="batch.batchProg" required  />
             <input type="text" pattern="^[0-9]{0,5}$" [hidden]="onEdit" pInputText id="batchName"[style]="{'width':'50%'}" [disabled]="onEdit" [(ngModel)]="batch.batchName" required/> 
             <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && !batch.batchName" id="text-danger">Batch Name is required.</small> 
-            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="submitted && patternDesc(batch.batchName,1)" id="text-danger">This field accept only numbers and max 5 count. </small>
+            <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="patternDesc(batch.batchName,1)" id="text-danger">This field accept only numbers and max 5 count. </small>
             <small [style]="{'color':'red!important'}" class="p-invalid" *ngIf="batchNameUnique(batch.batchProg+batch.batchName)">Batch already exists with given Batch Name. </small>
             <input type="text"  [hidden]="!onEdit" pInputText id="batchName" [disabled]="onEdit" [(ngModel)]="batch.batchName" />  
         </div>
