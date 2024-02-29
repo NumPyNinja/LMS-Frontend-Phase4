@@ -88,7 +88,7 @@ export class BatchComponent implements OnInit {
   saveBatch(): void {
     this.submitted = true;
     if(this.batch.batchName && this.batch.programName && this.batch.batchDescription && this.batch.batchNoOfClasses && this.batch.batchStatus && !this.pattBatchName && !this.pattBatchDes && !this.checkbatchN){
-      if (this.batch.batchName.trim()) { //edit batch
+    //  if (this.batch.batchName.trim()) { //edit batch
 
       //const pro: any = this.batch.programName;
       //const pro1: any = this.batch.programId;
@@ -109,9 +109,11 @@ export class BatchComponent implements OnInit {
           console.log('a batch is updated')
         });
       } else {
+delete this.batch.batchProg;
           const pro: any = this.batch.programName;
+                    this.batch.programName = pro.programName;
+this.batch.batchName=pro.programName+this.batch.batchName;
           this.programSize = this.programSize + 1;
-          this.batch.programName = pro.programName;
           this.batch.programId=pro.programId;
           this.batchService.addBatch(this.batch).subscribe((res) => {
           this.messageService.add({
@@ -133,7 +135,7 @@ export class BatchComponent implements OnInit {
       this.batchList = [...this.batchList];
       this.batchDialogue = false;
       this.batch = {};
-    }
+   // }
   }
   }
 
@@ -208,10 +210,12 @@ export class BatchComponent implements OnInit {
     });
   }
   //pattern validation for batch Name and batch description
-  patternDesc(patt :string, field:number)
+  patternDesc(patt, field)
   {
+if(patt!=undefined){
      const pattern=/^[a-zA-Z][a-zA-Z0-9 ]{1}.*/;
-       if(!pattern.test(patt)&&field==1){
+       const patternN=/^[0-9]{0,5}$/;
+       if(!patternN.test(patt)&&field==1&&!this.onEdit){
        this.pattBatchName=true;
        return  this.pattBatchName;
      }
@@ -224,6 +228,7 @@ export class BatchComponent implements OnInit {
      this.pattBatchDes=false;
      this.pattBatchName=false;
      return false;}
+}
   }
 //Batch Name  unique  check
 batchNameUnique(batchN: string){
@@ -236,6 +241,10 @@ batchNameUnique(batchN: string){
     return false;
   }
 }
-
-
+ChangeProgramName()
+{
+  const pro: any = this.batch.programName;
+  this.batch.batchProg=pro.programName;
+  this.batch.batchName="";
+}
 }

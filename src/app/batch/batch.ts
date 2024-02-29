@@ -6,5 +6,6 @@ export interface Batch {
   batchNoOfClasses?: number ;
   programName?: string;
   programId?: any;
+batchProg?:any;
 }
 
