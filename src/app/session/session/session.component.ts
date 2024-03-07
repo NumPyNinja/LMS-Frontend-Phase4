@@ -48,6 +48,7 @@ export class SessionComponent implements OnInit {
   checkEdit:boolean=false;
   classTopicEdit:string;
   checkClassTopic1:boolean=false;
+  newSession1:string;
   onEdit : boolean = false;
   status: string[] = ['Active', 'Inactive'];
 
@@ -64,8 +65,18 @@ export class SessionComponent implements OnInit {
     this.userService.getAllStaff().subscribe(
       staff1List => { this.staffList = staff1List })
       this.getSessionList();
-      
   }
+
+  ngDoCheck() {
+      this.newSession1 = sessionStorage.getItem('NewSession1');
+  
+      if (this.newSession1 == 'true') {
+        sessionStorage.removeItem("NewSession1");
+        this.openNew();
+      }
+    }
+
+
 //Staff name = FirstName + Last Name Dropdown
 staffIDFunction(){
     this.staffList.forEach(item => {
@@ -261,9 +272,13 @@ staffIDFunction(){
 
   findStaffName(staffId: string) {
     var nameUser: String;
+    //staffId = 'U10';
     var userdet: User = {};
     if (this.userList.length != 0) {
+      console.log("staffid: " + staffId);
+      this.userList.forEach(user => console.log(user));
       userdet = this.userList.find(y => y.userId == staffId);
+      console.log("userdet is " + userdet);
       nameUser = userdet.userFirstName + '  ' + userdet.userLastName;
       return nameUser;
     }
