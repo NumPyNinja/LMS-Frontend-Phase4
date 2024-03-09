@@ -7,11 +7,15 @@
   <mat-menu #menuProgram="matMenu">
     <button mat-menu-item  (click)="AddProgram()">Add New Program</button>
   </mat-menu>
-  <button mat-button [matMenuTriggerFor]="menu1" (click)="Batch()">Batch</button>
-  <mat-menu #menu1="matMenu">
+  <button mat-button [matMenuTriggerFor]="menuBatch" (click)="Batch()">Batch</button>
+  <mat-menu #menuBatch="matMenu">
     <button mat-menu-item (click)="NewBatch()">Add New Batch</button>
   </mat-menu>
-  <button id="session" mat-button a routerLink="/session">Class</button>
+  <button mat-button [matMenuTriggerFor]="menuClass" a routerLink="/session">Class</button>
+  <!-- <button id="session" mat-button a routerLink="/session">Class</button> -->
+  <mat-menu #menuClass="matMenu">
+    <button mat-menu-item (click)="NewSession()">Add New Class</button>
+  </mat-menu>
   <button mat-button [matMenuTriggerFor]="menuUser" a routerLink="/user">
     User
   </button>

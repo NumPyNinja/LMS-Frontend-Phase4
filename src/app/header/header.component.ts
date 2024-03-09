@@ -36,6 +36,13 @@ export class HeaderComponent implements OnInit {
   AddAttendance(){ 
     sessionStorage.setItem('AddAttendance1', 'true');      
   }
+  Session() {
+    sessionStorage.setItem('NewSession1', 'false');
+    this.router.navigate(['/session']);
+  }
+  NewSession(){
+    sessionStorage.setItem('NewSession1', 'true');
+  }
   AddProgram(){
     sessionStorage.setItem('AddProgram1', 'true'); 
   } 
