@@ -33,6 +33,7 @@ export class UserComponent implements OnInit{
   roleStatusDropdown: SelectItem[]; //Jo
   userVisaStatus: string[] = ['Not-Specified', 'NA', 'GC-EAD', 'H4-EAD', 'H4', 'H1B', 
   'Canada-EAD', 'Indian-Citizen', 'US-Citizen', 'Canada-Citizen'];
+  timeZone: string[]=["PST", "MST", "CST", "EST", "IST"];
   userVisaStatusOptions: SelectItem[]; //Jo
   userVisaStatusControl: FormControl;
   visaStatusValue: string;
@@ -170,7 +171,6 @@ updateFilteredUserRoleID(){
     this.updateUserBasedEmailId();  
   }
 }   
-
  updateUserBasedEmailId(){
   this.userEmailUserList=[];
   this.programList = this.programListTemp;
@@ -322,14 +322,14 @@ updateFilteredBatchNames(){
 
     userForm = this.fb.group({
       userId: [''],
-      userComments: ['', Validators.required],
-      userEduPg: ['', Validators.required],
-      userEduUg: ['', Validators.required],
+      userComments: [''],
+      userEduPg: [''],
+      userEduUg: ['', Validators.required, ],
       userFirstName: ['', Validators.required],
       userLastName: ['', Validators.required],
-      userLinkedinUrl: ['', Validators.required],
+      userLinkedinUrl: [''],
       userLocation: ['', Validators.required],
-      userMiddleName: ['',Validators.required],
+      userMiddleName: [''],
       userPhoneNumber: ['', Validators.required],
       userTimeZone: ['', Validators.required],
       userVisaStatus: ['', Validators.required],
