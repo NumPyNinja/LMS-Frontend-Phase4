@@ -171,7 +171,7 @@
               </div>
             </div>
 
-            <div class="row">
+            <div class="row" style="width:100%">
               <div class="col">
               <div class="p-field">
                 <label for="userRole">User Role <label [style]="{'color':'red!important'}">*</label></label>
@@ -187,6 +187,8 @@
                 <span class="spanUser" *ngIf="submitted && userForm.get('userRoleStatus').hasError('required')">User Role status is <strong>required.</strong></span>
               </div>
               </div>
+              </div>
+              <div class="row" style="width:100%">
               <div class="col">
               <div class="p-field">
                 <label for="userVisaStatus">User Visa Status <label [style]="{'color':'red!important'}">*</label></label>
@@ -195,7 +197,16 @@
                 <span class="spanUser" *ngIf="submitted && userForm.get('userVisaStatus').hasError('required')">User Visa Status is <strong>required.</strong></span>
               </div>
               </div>
-
+              <div class="col">
+                <div class="p-field">
+                  <label  for="userVisaStatus">Time Zone <label [style]="{'color':'red!important'}">*</label></label>
+                  <p-dropdown [options]="timeZone" formControlName="userTimeZone" name="userTimeZone" id="userTimeZone" 
+                  placeholder="Select Time Zone" required></p-dropdown>
+                  <span class="spanUser" *ngIf="submitted && userForm.get('userTimeZone').hasError('required')">Time Zone is
+                    <strong>required.</strong>
+                  </span>
+                </div>
+              </div>
               <!--
               <div class="col">
                 <mat-form-field class="full-width">
@@ -246,16 +257,14 @@
                   </mat-error>
                 </mat-form-field>
               </div>
-              <div class="col-dp">
-                <div class="full-width">
-                  <label  for="userVisaStatus">Time Zone <label [style]="{'color':'red!important'}">*</label></label>
-                  <p-dropdown [options]="timeZone" formControlName="userTimeZone" name="userTimeZone" id="userTimeZone" 
-                  placeholder="Select Time Zone" required></p-dropdown>
-                  <span class="spanUser" *ngIf="submitted && userForm.get('userTimeZone').hasError('required')">Time Zone is
-                    <strong>required.</strong>
-                  </span>
-                </div>
-              </div>
+          <!--   <div class="col">
+                <mat-form-field class="full-width">
+                  <input matInput placeholder="Time Zone" formControlName="userTimeZone">
+                  <mat-error *ngIf="userForm.controls['userTimeZone'].hasError('required')">Time Zone is
+                    <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>-->
             </div>
 
             <div class="col">
