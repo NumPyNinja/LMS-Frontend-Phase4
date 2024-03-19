@@ -109,25 +109,29 @@
             <div class="row">
               <div class="col">
                 <mat-form-field class="full-width">
-                  <input matInput placeholder="First name" formControlName="userFirstName">
+                  <mat-label>First name <mat-label [style]="{'color':'red!important'}">*</mat-label></mat-label>
+                  <input pattern="^[a-zA-Z]+$" matInput formControlName="userFirstName">
                   <mat-error *ngIf="userForm.controls['userFirstName'].hasError('required')">First name is
-                    <strong>required</strong>
+                    <strong>required.</strong>
+                  </mat-error>
+                  <mat-error *ngIf="userForm.controls['userFirstName'].hasError('pattern')">Please enter on alphabets only.</mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <input pattern="^[a-zA-Z]+$" matInput placeholder="Middle name" formControlName="userMiddleName">
+                  <mat-error *ngIf="userForm.get('userMiddleName').value && userForm.controls['userMiddleName'].hasError('pattern')">Please enter on alphabets only.
                   </mat-error>
                 </mat-form-field>
               </div>
               <div class="col">
                 <mat-form-field class="full-width">
-                  <input matInput placeholder="Middle name" formControlName="userMiddleName">
-                  <mat-error *ngIf="userForm.controls['userMiddleName'].hasError('required')">Middle name is
-                    <strong>required</strong>
-                  </mat-error>
-                </mat-form-field>
-              </div>
-              <div class="col">
-                <mat-form-field class="full-width">
-                  <input matInput placeholder="Last name" formControlName="userLastName">
+                  <mat-label>Last name <mat-label [style]="{'color':'red!important'}">*</mat-label></mat-label>
+                  <input pattern="^[a-zA-Z]+$" matInput  formControlName="userLastName">
                   <mat-error *ngIf="userForm.controls['userLastName'].hasError('required')">Last name is
-                    <strong>required</strong>
+                    <strong>required.</strong>
+                  </mat-error>
+                  <mat-error *ngIf="userForm.controls['userLastName'].hasError('pattern')">Please enter on alphabets only.
                   </mat-error>
                 </mat-form-field>
               </div>
@@ -136,52 +140,73 @@
             <div class="row">
               <div class="col">
                 <mat-form-field class="full-width">
-                  <input matInput placeholder="Location" formControlName="userLocation">
-                  <mat-error *ngIf="userForm.controls['userLocation'].hasError('required')">Location is
-                    <strong>required</strong>
+                  <mat-label>Location <mat-label [style]="{'color':'red!important'}">*</mat-label></mat-label>
+                  <input matInput formControlName="userLocation" pattern="^[a-zA-Z ]+$" >
+                  <mat-error *ngIf="userForm.controls['userLocation'].hasError('required')">Location name is
+                    <strong>required.</strong>
+                  </mat-error>
+                  <mat-error *ngIf="userForm.get('userLocation') && userForm.controls['userLocation'].hasError('pattern')">Please enter on alphabets only.
                   </mat-error>
                 </mat-form-field>
               </div>
               <div class="col">
                 <mat-form-field class="full-width">
-                  <input matInput placeholder="Phone no" formControlName="userPhoneNumber">
+                  <mat-label>Phone no. <mat-label [style]="{'color':'red!important'}">*</mat-label></mat-label>
+                  <input  matInput formControlName="userPhoneNumber" maxlength="10" size="10" pattern="^[1-9]{1}[0-9]{9}.*">
                   <mat-error *ngIf="userForm.controls['userPhoneNumber'].hasError('required')">Phone number is
-                    <strong>required</strong>
+                    <strong>required.</strong></mat-error>
+                    <mat-error *ngIf="userForm.controls['userPhoneNumber'].hasError('pattern')">Please enter valid Phone number.
                   </mat-error>
                 </mat-form-field>
               </div>
               <div class="col">
                 <mat-form-field class="full-width">
-                  <input matInput placeholder="LinkedIn Url" formControlName="userLinkedinUrl">
+                  <input matInput placeholder="LinkedIn Url"  pattern="^(http(s)?:\/\/)?([\w]+\.)?linkedin\.com\/(pub|in|profile).*" formControlName="userLinkedinUrl">
                   <mat-error *ngIf="userForm.controls['userLinkedinUrl'].hasError('required')">LinkedIn Url is
-                    <strong>required</strong>
+                    <strong>required.</strong>
+                  </mat-error>
+                  <mat-error *ngIf="userForm.get('userLinkedinUrl') && userForm.controls['userLinkedinUrl'].hasError('pattern')">Please enter valid LinkedIn Url.
                   </mat-error>
                 </mat-form-field>
               </div>
             </div>
 
-            <div class="row">
+            <div class="row" style="width:100%">
               <div class="col">
               <div class="p-field">
-                <label for="userRole">User Role</label>
+                <label for="userRole">User Role <label [style]="{'color':'red!important'}">*</label></label>
                 <p-dropdown [options]="userRoleDropdown" formControlName="roleId" name="roleId" id="roleId" 
                 placeholder="Select Role" required></p-dropdown>
+                <span class="spanUser" *ngIf="submitted && userForm.get('roleId').hasError('required')">User Role is <strong>required.</strong></span>
               </div></div>
               <div class="col">
               <div class="p-field">
-                <label for="userRoleStatus">User Role Status</label>
+                <label for="userRoleStatus">User Role Status <label [style]="{'color':'red!important'}">*</label></label>
                 <p-dropdown [options]="roleStatusDropdown" formControlName="userRoleStatus" name="userRoleStatus" id="userRoleStatus" 
                 placeholder="Select Role Status" required></p-dropdown>
+                <span class="spanUser" *ngIf="submitted && userForm.get('userRoleStatus').hasError('required')">User Role status is <strong>required.</strong></span>
+              </div>
+              </div>
+              </div>
+              <div class="row" style="width:100%">
+              <div class="col">
+              <div class="p-field">
+                <label for="userVisaStatus">User Visa Status <label [style]="{'color':'red!important'}">*</label></label>
+                <p-dropdown [options]="userVisaStatusOptions" formControlName="userVisaStatus" name="userVisaStatus" id="userVisaStatus" 
+                placeholder="Select Visa Status" required></p-dropdown>
+                <span class="spanUser" *ngIf="submitted && userForm.get('userVisaStatus').hasError('required')">User Visa Status is <strong>required.</strong></span>
               </div>
               </div>
               <div class="col">
-              <div class="p-field">
-                <label for="userVisaStatus">User Visa Status</label>
-                <p-dropdown [options]="userVisaStatusOptions" formControlName="userVisaStatus" name="userVisaStatus" id="userVisaStatus" 
-                placeholder="Select Visa Status" required></p-dropdown>
+                <div class="p-field">
+                  <label  for="userVisaStatus">Time Zone <label [style]="{'color':'red!important'}">*</label></label>
+                  <p-dropdown [options]="timeZone" formControlName="userTimeZone" name="userTimeZone" id="userTimeZone" 
+                  placeholder="Select Time Zone" required></p-dropdown>
+                  <span class="spanUser" *ngIf="submitted && userForm.get('userTimeZone').hasError('required')">Time Zone is
+                    <strong>required.</strong>
+                  </span>
+                </div>
               </div>
-              </div>
-
               <!--
               <div class="col">
                 <mat-form-field class="full-width">
@@ -207,18 +232,20 @@
             <div class="row">
             <div class="col">
               <mat-form-field class="full-width" appearance="fill" formGroupName="userLogin">
-                <input matInput type="email" placeholder="Email address" formControlName="userLoginEmail">
-                <mat-error *ngIf="userForm.get('userLogin.userLoginEmail').hasError('required')">Email address is <strong>required</strong></mat-error>
-                <mat-error *ngIf="userForm.get('userLogin.userLoginEmail').hasError('email')">Please enter a valid email address</mat-error>
+                <mat-label>Email address <mat-label [style]="{'color':'red!important'}">*</mat-label></mat-label>
+                <input matInput type="email" formControlName="userLoginEmail">
+                <mat-error *ngIf="userForm.get('userLogin.userLoginEmail').hasError('required')">Email address is <strong>required.</strong></mat-error>
+                <mat-error *ngIf="userForm.get('userLogin.userLoginEmail').hasError('email')">Please enter a valid email address.</mat-error>
               </mat-form-field>
             </div></div>
             <br>
             <div class="row">
               <div class="col">
                 <mat-form-field class="full-width">
-                  <input matInput placeholder="Under Graduate" formControlName="userEduUg">
+                  <mat-label>Under Graduate <mat-label [style]="{'color':'red!important'}">*</mat-label></mat-label>
+                  <input matInput formControlName="userEduUg">
                   <mat-error *ngIf="userForm.controls['userEduUg'].hasError('required')">Under Graduate is
-                    <strong>required</strong>
+                    <strong>required.</strong>
                   </mat-error>
                 </mat-form-field>
               </div>
@@ -226,25 +253,25 @@
                 <mat-form-field class="full-width">
                   <input matInput placeholder="Post Graduate" formControlName="userEduPg">
                   <mat-error *ngIf="userForm.controls['userEduPg'].hasError('required')">Post Graduate is
-                    <strong>required</strong>
+                    <strong>required.</strong>
                   </mat-error>
                 </mat-form-field>
               </div>
-              <div class="col">
+          <!--   <div class="col">
                 <mat-form-field class="full-width">
                   <input matInput placeholder="Time Zone" formControlName="userTimeZone">
                   <mat-error *ngIf="userForm.controls['userTimeZone'].hasError('required')">Time Zone is
                     <strong>required</strong>
                   </mat-error>
                 </mat-form-field>
-              </div>
+              </div>-->
             </div>
 
             <div class="col">
               <mat-form-field class="full-width">
                 <input matInput placeholder="User Comments" formControlName="userComments">
                 <mat-error *ngIf="userForm.controls['userComments'].hasError('required')">User Comments is
-                  <strong>required</strong>
+                  <strong>required.</strong>
                 </mat-error>
               </mat-form-field>
             </div>

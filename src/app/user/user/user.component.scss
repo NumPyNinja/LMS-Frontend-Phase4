@@ -206,6 +206,11 @@ input {
   flex: 1;
   margin-right: 10px; /* Add margin between columns */
 }
+.col-dp{
+  flex: 1;
+  margin-right: 10px; /* Add margin between columns */
+  margin-top: auto;
+}
 
 mat-card-title {
   font-weight: bold;
@@ -214,3 +219,9 @@ mat-card-title {
 mat-card-subtitle {
   color: #555; /* Adjust the color as needed */
 }
+.spanUser{
+  color:red;
+  font-size:10.5px;
+  font-family:Arial, Helvetica, sans-serif;
+}
+ 
