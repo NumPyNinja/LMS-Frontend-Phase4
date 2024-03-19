@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-staffdashboard',
@@ -7,9 +8,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class StaffdashboardComponent implements OnInit {
 
-  constructor() { }
+  userId: string = "";
+ 
+  userRoles:string="";
+ 
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
+    this.authService.loggedInUserId.subscribe((res) => {
+      this.userId = res;
+    });
+   
+  this.authService.loggedInUserRole.subscribe((data:any) =>   this.userRoles =  data[0].slice(5));
+
   }
 
 }

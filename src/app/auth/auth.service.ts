@@ -80,7 +80,12 @@ get loggedInUserRole(){
   //   return token !== null;
   // }
   resetPassword(resetDto: Login, token: any): Observable<any> {
-    console.log(token)
+  
+    console.log("this.token3");
+    console.log(token);
+
+    console.log("local storage token3");
+    console.log(localStorage.getItem('token'));
     const headers = new HttpHeaders({
       'Authorization': 'Bearer ' + token, 
       'Content-Type': 'application/json' 

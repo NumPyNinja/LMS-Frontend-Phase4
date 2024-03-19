@@ -37,6 +37,8 @@ export class ResetPasswordComponent implements OnInit {
 
   ngOnInit(): void {
     this.token = this.route.snapshot.queryParamMap.get('token');
+    console.log("this.token1");
+    console.log(this.token);
     this.route.queryParams.subscribe((queryParams) => {
       this.userLoginEmailId = queryParams['email']; // Replace 'email' with the actual query parameter name
     });
@@ -83,6 +85,8 @@ export class ResetPasswordComponent implements OnInit {
         userLoginEmailId: this.userLoginEmailId,
         password: newPassword 
       };
+      console.log("this.token2");
+    console.log(this.token);
       this.authService.resetPassword(resetDto, this.token).subscribe(
         () => {
           this.router.navigate(['/login']);
