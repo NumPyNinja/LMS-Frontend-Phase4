@@ -17,6 +17,8 @@ export interface Assignment {
     programName?: string;
     batchName?: string;
     staffName?:any;
+classTopic?:any;
+    csId?:any;
 }
 
 export interface AssignmentSelect {
