@@ -9,8 +9,6 @@ import { ProgramService } from 'src/app/program/program.service';
 import { Assignment, AssignmentSelect, AssignmentSubmit, Staff1, UploadedAssignment } from '../assignment';
 import { AssignmentService } from '../assignment.service';
 
-import { Session } from 'src/app/session/session';
-import { SessionService } from 'src/app/session/session.service';
 import { User } from 'src/app/user/user';
 import { UserService } from 'src/app/user/user.service';
 
@@ -49,7 +47,6 @@ export class AssignmentComponent implements OnInit {
   assignmentsubmit: AssignmentSubmit;
   assignmentNameList:Assignment[]=[];
   userList: User[] = [];   
-  classList:Session[];
   manageDialogue: boolean;
   userManage: AssignmentSubmit[];
   userServices: UserService[];
@@ -58,9 +55,6 @@ export class AssignmentComponent implements OnInit {
   staffList:User[];
   staffIDvaule:Staff1[]=[];
   addAssign:string;
-  classListTemp: Session[];
-  emptycheckCT:boolean;
-
   
   constructor(
     private assignmentService: AssignmentService,
@@ -69,17 +63,10 @@ export class AssignmentComponent implements OnInit {
     private programService: ProgramService,
     private batchService: BatchService,
     private userService: UserService,
-    private sessionService:SessionService,
     private authService: AuthService) {
     {
       this.programService.getPrograms().subscribe(list => {
         this.programList = list;
-      })
-    }
-    {
-      this.sessionService.getSessions().subscribe(list => {
-        this.classList = list;
-        this.classListTemp=this.classList;
       })
     }
     {
@@ -247,12 +234,11 @@ patternName()
   //  this.assignment.batchId = atd.batchId;
    // const att: any = this.assignment.programName;
     //this.assignment.programId = att.programId;
-    if(this.assignment.batchName && this.assignment.programName && this.assignment.classTopic && this.assignment.dueDate && this.assignment.staffName && !this.pattername && !this.patternDes) {
+    if(this.assignment.batchName && this.assignment.programName && this.assignment.dueDate && this.assignment.staffName && !this.pattername && !this.patternDes) {
     if (this.assignment.assignmentName.trim()) {
       if (this.assignment.assignmentId) { // in Edit
         delete this.assignment.batchName;
         delete this.assignment.programName;
-        delete this.assignment.classTopic;
         const user: any = this.assignment.staffName;
         if(user.userId){
         this.assignment.graderId = user.userId;
@@ -273,15 +259,12 @@ patternName()
       } else { //create new Assignment
           const assignBname : any = this.assignment.batchName;
           this.assignment.batchId = assignBname.batchId;
-          const assigncTopic: any = this.assignment.classTopic;
-          this.assignment.csId = assigncTopic.csId;
           const user: any = this.assignment.staffName;
           this.assignment.graderId = user.userId;
           this.assignment.createdBy = user.userId;
           delete this.assignment.staffName;
           delete this.assignment.batchName;
           delete this.assignment.programName;
-          delete this.assignment.classTopic;
        // this.assignmentSize = this.assignmentSize + 1;
        //this.assignment.batchId = this.assignmentSize;
        // this.assignment.graderId = this.userId;
@@ -354,68 +337,38 @@ patternName()
   }
 
   editAssignment(assigment: Assignment) {
-    this.editMode = true;
-    this.emptycheckCT=true;
-    this.assigmentDialogue = true;
+
     this.assignment = { ...assigment };
     this.staffIDFunction();
     if(this.assignment.graderId){
       this.assignment.staffName=this.findStaffName(this.assignment.graderId);}
       else
       this.assignment.staffName="";
-   // this.batchList=this.batchListTemp;
+    this.batchList=this.batchListTemp;
     this.assignment.dueDate = new Date(this.assignment.dueDate);
-   
-
-    const batchName = this.batchListTemp.find(x => x.batchId == this.assignment.batchId);
-    this.assignment.batchName=batchName.batchName;
-    const programId =batchName.programId;
-
-    const programName = this.programList.find(x => x.programId == programId);
-    this.assignment.programName=programName.programName;
-
-    const classTopic = this.classListTemp.find(x => x.csId == this.assignment.csId);
-    this.assignment.classTopic=classTopic.classTopic;
-    //this.getBatchName(this.assignment.batchId);
-  
+    this.getBatchName(this.assignment.batchId);
+    this.editMode = true;
+    this.assigmentDialogue = true;
   }
 
   getBatchName(batchId : number){
     for (const batch of this.batchList) {
       if (batch.batchId === batchId) {
-        this.assignment.programName=batch.programName;
           this.assignment.batchName= batch.batchName;
+          this.assignment.programName=batch.programName;
           return; 
       }
     }
   }
-//Based on the  program Batch dropdown list is populate
+
   updateFilteredBatchNames(){
+   
     this.batchList = this.batchListTemp;
     const progData :any = this.assignment.programName;
     const pid :any=progData.programId;
     this.batchList = this.batchList.filter(item => item.programId === pid);
   }
-  //Based on the Batch, class topic dropdown list is populate
-  updateFilteredClassTopic(){
-    this.classList = this.classListTemp;
-    const batchData :any = this.assignment.batchName;
-    const bid :any=batchData.batchId;
-    this.classList = this.classList.filter(item => item.batchId === bid);
-  }
-  findBatchName(batchId: number) {
-    if (this.batchList.length != 0 && batchId != null) {
-      return this.batchList.filter(x => x.batchId == batchId)[0].batchName;
-    }else
-    return "";
-  }
 
-  findClassTopic(csId: any) {
-    if (this.classListTemp.length != 0 && csId != null) {
-      return this.classListTemp.filter(x => x.csId == csId)[0].classTopic ;
-    }else
-      return "";
-  }
   findIndexById(id: string): number {
     let index = -1;
     for (let i = 0; i < this.assignments.length; i++) {
